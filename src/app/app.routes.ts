@@ -1,11 +1,13 @@
 import { Routes } from '@angular/router';
 
 import { Login } from './features/auth/login/login';
+
 import { Register } from './features/auth/register/register';
 
 import { Home } from './features/home/home';
 
 import { authGuard } from './core/guards/auth-guard';
+
 import { adminGuard } from './core/guards/admin-guard';
 
 import { ProductList } from './features/products/product-list/product-list';
@@ -15,15 +17,22 @@ import { CartComponent } from './features/cart/cart/cart';
 import { Dashboard } from './features/dashboard/dashboard/dashboard';
 
 import { AddressList } from './features/address/address-list/address-list';
+
 import { AddressForm } from './features/address/address-form/address-form';
 
 import { CheckoutComponent } from './features/checkout/checkout/checkout';
 
 import { OrderDetailComponent } from './features/orders/order-detail/order-detail';
+
 import { OrderList } from './features/orders/order-list/order-list';
 
 import { AdminOrderListComponent } from './features/orders/admin-order-list/admin-order-list';
+
 import { AdminOrderDetailComponent } from './features/orders/admin-order-detail/admin-order-detail';
+
+import { UserList } from './features/admin-users/user-list/user-list';
+import { UserDetail } from './features/admin-users/user-detail/user-detail';
+import { UserEdit } from './features/admin-users/user-edit/user-edit';
 
 export const routes: Routes = [
   // =========================================================
@@ -65,6 +74,26 @@ export const routes: Routes = [
     component: AdminOrderDetailComponent,
     canActivate: [adminGuard],
   },
+
+  // =========================================================
+  // ADMIN USERS
+  // =========================================================
+
+  {
+    path: 'admin/users',
+    component: UserList,
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin/users/:id',
+    component: UserDetail,
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin/users/:id/edit',
+    component: UserEdit,
+    canActivate: [adminGuard],
+  },  
 
   // =========================================================
   // HOME

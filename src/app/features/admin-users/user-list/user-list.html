@@ -1,0 +1,454 @@
+<div class="admin-users-page">
+  <!-- =========================
+       HEADER
+  ========================== -->
+
+  <section class="users-header">
+    <div class="container">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div>
+          <span class="text-primary fw-semibold"> Shanti Enterprises </span>
+
+          <h1 class="fw-bold mb-1">User Management</h1>
+
+          <p class="text-muted mb-0">Manage customers and administrators.</p>
+        </div>
+
+        <a routerLink="/admin" class="btn btn-outline-primary">
+          <i class="bi bi-arrow-left me-2"></i>
+          Dashboard
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================
+       CONTENT
+  ========================== -->
+
+  <section class="users-section">
+    <div class="container">
+      <!-- =========================
+           SUCCESS MESSAGE
+      ========================== -->
+
+      @if (successMessage) {
+        <div class="alert alert-success d-flex align-items-center mb-4" role="alert">
+          <i class="bi bi-check-circle me-2"></i>
+
+          {{ successMessage }}
+        </div>
+      }
+
+      <!-- =========================
+           ERROR MESSAGE
+      ========================== -->
+
+      @if (errorMessage) {
+        <div
+          class="alert alert-danger d-flex align-items-center justify-content-between mb-4"
+          role="alert"
+        >
+          <div>
+            <i class="bi bi-exclamation-circle me-2"></i>
+
+            {{ errorMessage }}
+          </div>
+
+          <button type="button" class="btn btn-sm btn-outline-danger" (click)="loadUsers()">
+            Retry
+          </button>
+        </div>
+      }
+
+      <!-- =========================
+           STATISTICS
+      ========================== -->
+
+      @if (!isLoading) {
+        <div class="row g-4 mb-4">
+          <!-- Total Users -->
+
+          <div class="col-sm-6 col-xl-3">
+            <div class="user-stat-card">
+              <div class="stat-icon total-icon">
+                <i class="bi bi-people"></i>
+              </div>
+
+              <div class="stat-content">
+                <span>Total Users</span>
+
+                <h3>
+                  {{ totalUsers }}
+                </h3>
+              </div>
+            </div>
+          </div>
+
+          <!-- Customers -->
+
+          <div class="col-sm-6 col-xl-3">
+            <div class="user-stat-card">
+              <div class="stat-icon customer-icon">
+                <i class="bi bi-person"></i>
+              </div>
+
+              <div class="stat-content">
+                <span>Customers</span>
+
+                <h3>
+                  {{ customerCount }}
+                </h3>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active -->
+
+          <div class="col-sm-6 col-xl-3">
+            <div class="user-stat-card">
+              <div class="stat-icon active-icon">
+                <i class="bi bi-person-check"></i>
+              </div>
+
+              <div class="stat-content">
+                <span>Active Users</span>
+
+                <h3>
+                  {{ activeCount }}
+                </h3>
+              </div>
+            </div>
+          </div>
+
+          <!-- Inactive -->
+
+          <div class="col-sm-6 col-xl-3">
+            <div class="user-stat-card">
+              <div class="stat-icon inactive-icon">
+                <i class="bi bi-person-x"></i>
+              </div>
+
+              <div class="stat-content">
+                <span>Inactive Users</span>
+
+                <h3>
+                  {{ inactiveCount }}
+                </h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- =========================
+           MAIN CARD
+      ========================== -->
+
+      <div class="users-card">
+        <!-- Card Header -->
+
+        <div class="users-card-header">
+          <div>
+            <h4 class="fw-bold mb-1">Users</h4>
+
+            <p class="text-muted mb-0">View and manage registered users.</p>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            (click)="loadUsers()"
+            [disabled]="isLoading || isUpdating"
+          >
+            <i class="bi bi-arrow-clockwise me-2"></i>
+
+            Refresh
+          </button>
+        </div>
+
+        <!-- =========================
+             FILTERS
+        ========================== -->
+
+        <div class="filters-box">
+          <div class="row g-3">
+            <!-- Search -->
+
+            <div class="col-lg-5">
+              <label for="userSearch" class="form-label fw-semibold"> Search </label>
+
+              <div class="search-box">
+                <i class="bi bi-search"></i>
+
+                <input
+                  id="userSearch"
+                  type="text"
+                  class="form-control"
+                  placeholder="Search by name, email or mobile..."
+                  [(ngModel)]="searchTerm"
+                  (input)="onSearch()"
+                />
+              </div>
+            </div>
+
+            <!-- Role -->
+
+            <div class="col-sm-6 col-lg-3">
+              <label for="roleFilter" class="form-label fw-semibold"> Role </label>
+
+              <select
+                id="roleFilter"
+                class="form-select"
+                [(ngModel)]="selectedRole"
+                (change)="onRoleChange()"
+              >
+                <option value="All">All Roles</option>
+
+                <option value="Customer">Customer</option>
+
+                <option value="Admin">Admin</option>
+              </select>
+            </div>
+
+            <!-- Status -->
+
+            <div class="col-sm-6 col-lg-2">
+              <label for="statusFilter" class="form-label fw-semibold"> Status </label>
+
+              <select
+                id="statusFilter"
+                class="form-select"
+                [(ngModel)]="selectedStatus"
+                (change)="onStatusChange()"
+              >
+                <option value="All">All</option>
+
+                <option value="Active">Active</option>
+
+                <option value="Inactive">Inactive</option>
+              </select>
+            </div>
+
+            <!-- Clear -->
+
+            <div class="col-sm-12 col-lg-2 d-flex align-items-end">
+              <button type="button" class="btn btn-light border w-100" (click)="clearFilters()">
+                <i class="bi bi-x-circle me-2"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- =========================
+             LOADING
+        ========================== -->
+
+        @if (isLoading) {
+          <div class="users-loading">
+            <div class="spinner-border text-primary" role="status"></div>
+
+            <p class="text-muted mt-3 mb-0">Loading users...</p>
+          </div>
+        }
+
+        <!-- =========================
+             USER TABLE
+        ========================== -->
+
+        @if (!isLoading) {
+          @if (filteredUsers.length > 0) {
+            <div class="table-responsive">
+              <table class="table users-table align-middle">
+                <thead>
+                  <tr>
+                    <th>#</th>
+
+                    <th>User</th>
+
+                    <th>Contact</th>
+
+                    <th>Role</th>
+
+                    <th>Status</th>
+
+                    <th>Created</th>
+
+                    <th class="text-end">Actions</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  @for (user of filteredUsers; track user.userId) {
+                    <tr>
+                      <!-- ID -->
+
+                      <td>
+                        <span class="user-id"> #{{ user.userId }} </span>
+                      </td>
+
+                      <!-- USER -->
+
+                      <td>
+                        <div class="user-profile">
+                          <div class="user-avatar">
+                            {{ user.fullName.charAt(0).toUpperCase() }}
+                          </div>
+
+                          <div class="user-profile-info">
+                            <h6 class="mb-1">
+                              {{ user.fullName }}
+                            </h6>
+
+                            <span>
+                              {{ user.email }}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+
+                      <!-- CONTACT -->
+
+                      <td>
+                        <div class="contact-info">
+                          <div>
+                            <i class="bi bi-telephone me-2"></i>
+                            {{ user.mobile }}
+                          </div>
+
+                          <div class="email-mobile">
+                            <i class="bi bi-envelope me-2"></i>
+                            {{ user.email }}
+                          </div>
+                        </div>
+                      </td>
+
+                      <!-- ROLE -->
+
+                      <td>
+                        <span class="role-badge" [ngClass]="getRoleClass(user.role)">
+                          @if (user.role.toLowerCase() === 'admin') {
+                            <i class="bi bi-shield-check me-1"></i>
+                          } @else {
+                            <i class="bi bi-person me-1"></i>
+                          }
+
+                          {{ user.role }}
+                        </span>
+                      </td>
+
+                      <!-- STATUS -->
+
+                      <td>
+                        <span class="status-badge" [ngClass]="getStatusClass(user.isActive)">
+                          @if (user.isActive) {
+                            <i class="bi bi-check-circle me-1"></i>
+                            Active
+                          } @else {
+                            <i class="bi bi-x-circle me-1"></i>
+                            Inactive
+                          }
+                        </span>
+                      </td>
+
+                      <!-- CREATED -->
+
+                      <td>
+                        <div class="created-date">
+                          <div>
+                            {{ user.createdDate | date: 'dd MMM yyyy' }}
+                          </div>
+
+                          <small>
+                            {{ user.createdDate | date: 'hh:mm a' }}
+                          </small>
+                        </div>
+                      </td>
+
+                      <!-- ACTIONS -->
+
+                      <td>
+                        <div class="user-actions justify-content-end">
+                          <!-- View -->
+
+                          <a
+                            [routerLink]="['/admin/users', user.userId]"
+                            class="btn btn-sm btn-outline-primary"
+                            title="View User"
+                          >
+                            <i class="bi bi-eye"></i>
+                          </a>
+
+                          <!-- Edit -->
+
+                          <a
+                            [routerLink]="['/admin/users', user.userId, 'edit']"
+                            class="btn btn-sm btn-outline-secondary"
+                            title="Edit User"
+                          >
+                            <i class="bi bi-pencil"></i>
+                          </a>
+
+                          <!-- Status -->
+
+                          <button
+                            type="button"
+                            class="btn btn-sm"
+                            [ngClass]="
+                              user.isActive ? 'btn-outline-warning' : 'btn-outline-success'
+                            "
+                            [disabled]="isUpdating"
+                            (click)="toggleStatus(user)"
+                            [title]="user.isActive ? 'Deactivate User' : 'Activate User'"
+                          >
+                            @if (user.isActive) {
+                              <i class="bi bi-person-dash"></i>
+                            } @else {
+                              <i class="bi bi-person-check"></i>
+                            }
+                          </button>
+
+                          <!-- Delete -->
+
+                          <button
+                            type="button"
+                            class="btn btn-sm btn-outline-danger"
+                            [disabled]="isUpdating"
+                            (click)="deleteUser(user)"
+                            title="Delete User"
+                          >
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          } @else {
+            <!-- =========================
+                 EMPTY
+            ========================== -->
+
+            <div class="empty-users">
+              <div class="empty-icon">
+                <i class="bi bi-people"></i>
+              </div>
+
+              <h5 class="fw-bold mt-3">No Users Found</h5>
+
+              <p class="text-muted mb-3">No users match your current search or filters.</p>
+
+              <button type="button" class="btn btn-outline-primary" (click)="clearFilters()">
+                <i class="bi bi-arrow-counterclockwise me-2"></i>
+                Clear Filters
+              </button>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,320 @@
+<div class="user-edit-page">
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
+
+  <section class="edit-header">
+    <div class="container">
+      <a routerLink="/admin/users" class="back-link">
+        <i class="bi bi-arrow-left me-2"></i>
+        Back to Users
+      </a>
+
+      <div class="header-content">
+        <div>
+          <span class="text-primary fw-semibold"> Admin Panel </span>
+
+          <h1 class="fw-bold mt-1 mb-1">Edit User</h1>
+
+          <p class="text-muted mb-0">Update user account information.</p>
+        </div>
+
+        @if (user) {
+          <div class="user-header-info">
+            <div class="user-avatar">
+              {{ user.fullName.charAt(0).toUpperCase() }}
+            </div>
+
+            <div>
+              <strong>
+                {{ user.fullName }}
+              </strong>
+
+              <span> User ID: #{{ user.userId }} </span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       CONTENT
+  ========================================================== -->
+
+  <section class="edit-section">
+    <div class="container">
+      <!-- =====================================================
+           LOADING
+      ====================================================== -->
+
+      @if (isLoading) {
+        <div class="edit-loading">
+          <div class="spinner-border text-primary" role="status"></div>
+
+          <p class="text-muted mt-3 mb-0">Loading user information...</p>
+        </div>
+      }
+
+      <!-- =====================================================
+           ERROR
+      ====================================================== -->
+
+      @if (!isLoading && errorMessage) {
+        <div
+          class="alert alert-danger d-flex align-items-center justify-content-between"
+          role="alert"
+        >
+          <div>
+            <i class="bi bi-exclamation-circle me-2"></i>
+            {{ errorMessage }}
+          </div>
+
+          <button type="button" class="btn btn-sm btn-outline-danger" (click)="loadUser()">
+            Retry
+          </button>
+        </div>
+      }
+
+      <!-- =====================================================
+           FORM
+      ====================================================== -->
+
+      @if (!isLoading && user) {
+        <div class="row justify-content-center">
+          <div class="col-xl-8 col-lg-9">
+            <div class="edit-card">
+              <!-- =================================================
+                   CARD HEADER
+              ================================================== -->
+
+              <div class="edit-card-header">
+                <div class="header-icon">
+                  <i class="bi bi-person-gear"></i>
+                </div>
+
+                <div>
+                  <h4>User Information</h4>
+
+                  <p>Modify the details of this user account.</p>
+                </div>
+              </div>
+
+              <!-- =================================================
+                   SUCCESS
+              ================================================== -->
+
+              @if (successMessage) {
+                <div class="px-4 pt-4">
+                  <div class="alert alert-success mb-0" role="alert">
+                    <i class="bi bi-check-circle me-2"></i>
+                    {{ successMessage }}
+                  </div>
+                </div>
+              }
+
+              <!-- =================================================
+                   FORM BODY
+              ================================================== -->
+
+              <form #userForm="ngForm" (ngSubmit)="submit()" novalidate>
+                <div class="edit-card-body">
+                  <!-- =============================================
+                       FULL NAME
+                  ============================================== -->
+
+                  <div class="mb-4">
+                    <label for="fullName" class="form-label">
+                      Full Name
+                      <span class="text-danger">*</span>
+                    </label>
+
+                    <div class="input-group">
+                      <span class="input-group-text">
+                        <i class="bi bi-person"></i>
+                      </span>
+
+                      <input
+                        id="fullName"
+                        name="fullName"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter full name"
+                        [(ngModel)]="form.fullName"
+                        required
+                        maxlength="100"
+                      />
+                    </div>
+
+                    @if (userForm.submitted && !form.fullName.trim()) {
+                      <div class="validation-message">Full name is required.</div>
+                    }
+                  </div>
+
+                  <!-- =============================================
+                       EMAIL
+                  ============================================== -->
+
+                  <div class="mb-4">
+                    <label for="email" class="form-label">
+                      Email Address
+                      <span class="text-danger">*</span>
+                    </label>
+
+                    <div class="input-group">
+                      <span class="input-group-text">
+                        <i class="bi bi-envelope"></i>
+                      </span>
+
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        class="form-control"
+                        placeholder="Enter email address"
+                        [(ngModel)]="form.email"
+                        required
+                        maxlength="150"
+                      />
+                    </div>
+
+                    @if (userForm.submitted && !form.email.trim()) {
+                      <div class="validation-message">Email is required.</div>
+                    }
+                  </div>
+
+                  <!-- =============================================
+                       MOBILE
+                  ============================================== -->
+
+                  <div class="mb-4">
+                    <label for="mobile" class="form-label">
+                      Mobile Number
+                      <span class="text-danger">*</span>
+                    </label>
+
+                    <div class="input-group">
+                      <span class="input-group-text">
+                        <i class="bi bi-telephone"></i>
+                      </span>
+
+                      <input
+                        id="mobile"
+                        name="mobile"
+                        type="tel"
+                        class="form-control"
+                        placeholder="Enter mobile number"
+                        [(ngModel)]="form.mobile"
+                        required
+                        maxlength="20"
+                      />
+                    </div>
+
+                    @if (userForm.submitted && !form.mobile.trim()) {
+                      <div class="validation-message">Mobile number is required.</div>
+                    }
+                  </div>
+
+                  <!-- =============================================
+                       ROLE
+                  ============================================== -->
+
+                  <div class="mb-4">
+                    <label for="role" class="form-label">
+                      Role
+                      <span class="text-danger">*</span>
+                    </label>
+
+                    <div class="input-group">
+                      <span class="input-group-text">
+                        <i class="bi bi-shield-check"></i>
+                      </span>
+
+                      <select
+                        id="role"
+                        name="role"
+                        class="form-select"
+                        [(ngModel)]="form.role"
+                        required
+                      >
+                        <option value="">Select role</option>
+
+                        <option value="Customer">Customer</option>
+
+                        <option value="Admin">Admin</option>
+                      </select>
+                    </div>
+
+                    @if (userForm.submitted && !form.role.trim()) {
+                      <div class="validation-message">Role is required.</div>
+                    }
+                  </div>
+
+                  <!-- =============================================
+                       CURRENT STATUS
+                  ============================================== -->
+
+                  <div class="status-info">
+                    <div class="status-info-icon">
+                      <i class="bi bi-info-circle"></i>
+                    </div>
+
+                    <div>
+                      <strong> Account Status </strong>
+
+                      <p>
+                        The current account status is
+                        <strong>
+                          {{ user.isActive ? 'Active' : 'Inactive' }} </strong
+                        >.
+                      </p>
+
+                      <small> Account status can be changed separately from the Users list. </small>
+                    </div>
+                  </div>
+
+                  <!-- =============================================
+                       ERROR MESSAGE
+                  ============================================== -->
+
+                  @if (errorMessage) {
+                    <div class="alert alert-danger mt-4 mb-0" role="alert">
+                      <i class="bi bi-exclamation-triangle me-2"></i>
+                      {{ errorMessage }}
+                    </div>
+                  }
+                </div>
+
+                <!-- ===============================================
+                     FOOTER
+                ================================================ -->
+
+                <div class="edit-card-footer">
+                  <a
+                    [routerLink]="['/admin/users', user.userId]"
+                    class="btn btn-outline-secondary"
+                    [class.disabled]="isSaving"
+                  >
+                    <i class="bi bi-x-lg me-2"></i>
+                    Cancel
+                  </a>
+
+                  <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+                    @if (isSaving) {
+                      <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+
+                      Saving...
+                    } @else {
+                      <i class="bi bi-check2-circle me-2"></i>
+                      Save Changes
+                    }
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+</div>
