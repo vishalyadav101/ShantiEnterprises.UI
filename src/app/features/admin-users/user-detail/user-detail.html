@@ -1,0 +1,353 @@
+<div class="user-detail-page">
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
+
+  <section class="detail-header">
+    <div class="container">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div>
+          <a routerLink="/admin/users" class="back-link">
+            <i class="bi bi-arrow-left me-2"></i>
+            Back to Users
+          </a>
+
+          <span class="text-primary fw-semibold d-block mt-3"> Shanti Enterprises </span>
+
+          <h1 class="fw-bold mb-1">User Details</h1>
+
+          @if (user) {
+            <p class="text-muted mb-0">View complete information about this user.</p>
+          }
+        </div>
+
+        <div class="d-flex gap-2">
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            (click)="loadUser()"
+            [disabled]="isLoading"
+          >
+            <i class="bi bi-arrow-clockwise me-2"></i>
+            Refresh
+          </button>
+
+          @if (user) {
+            <a [routerLink]="['/admin/users', user.userId, 'edit']" class="btn btn-primary">
+              <i class="bi bi-pencil me-2"></i>
+              Edit User
+            </a>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       CONTENT
+  ========================================================== -->
+
+  <section class="detail-section">
+    <div class="container">
+      <!-- =====================================================
+           LOADING
+      ====================================================== -->
+
+      @if (isLoading) {
+        <div class="detail-loading">
+          <div class="spinner-border text-primary" role="status"></div>
+
+          <p class="text-muted mt-3 mb-0">Loading user details...</p>
+        </div>
+      }
+
+      <!-- =====================================================
+           ERROR
+      ====================================================== -->
+
+      @if (!isLoading && errorMessage) {
+        <div
+          class="alert alert-danger d-flex align-items-center justify-content-between"
+          role="alert"
+        >
+          <div>
+            <i class="bi bi-exclamation-circle me-2"></i>
+            {{ errorMessage }}
+          </div>
+
+          <button type="button" class="btn btn-sm btn-outline-danger" (click)="loadUser()">
+            Retry
+          </button>
+        </div>
+      }
+
+      <!-- =====================================================
+           USER DETAILS
+      ====================================================== -->
+
+      @if (!isLoading && !errorMessage && user) {
+        <!-- ===================================================
+             PROFILE CARD
+        ==================================================== -->
+
+        <div class="profile-card">
+          <div class="profile-main">
+            <div class="profile-avatar">
+              {{ user.fullName.charAt(0).toUpperCase() }}
+            </div>
+
+            <div class="profile-info">
+              <h2>
+                {{ user.fullName }}
+              </h2>
+
+              <p class="text-muted mb-3">User ID: #{{ user.userId }}</p>
+
+              <div class="profile-badges">
+                <span class="role-badge" [ngClass]="getRoleClass(user.role)">
+                  @if (user.role.toLowerCase() === 'admin') {
+                    <i class="bi bi-shield-check me-1"></i>
+                  } @else {
+                    <i class="bi bi-person me-1"></i>
+                  }
+
+                  {{ user.role }}
+                </span>
+
+                <span class="status-badge" [ngClass]="getStatusClass(user.isActive)">
+                  @if (user.isActive) {
+                    <i class="bi bi-check-circle me-1"></i>
+                    Active
+                  } @else {
+                    <i class="bi bi-x-circle me-1"></i>
+                    Inactive
+                  }
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===================================================
+             INFORMATION
+        ==================================================== -->
+
+        <div class="row g-4 mt-1">
+          <!-- =================================================
+               PERSONAL INFORMATION
+          ================================================== -->
+
+          <div class="col-lg-7">
+            <div class="detail-card">
+              <div class="detail-card-header">
+                <div class="detail-icon">
+                  <i class="bi bi-person"></i>
+                </div>
+
+                <div>
+                  <h4>Personal Information</h4>
+
+                  <p>Basic information about the user.</p>
+                </div>
+              </div>
+
+              <div class="detail-card-body">
+                <div class="row g-4">
+                  <!-- Full Name -->
+
+                  <div class="col-md-6">
+                    <div class="info-item">
+                      <span class="info-label"> Full Name </span>
+
+                      <strong>
+                        {{ user.fullName }}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <!-- Role -->
+
+                  <div class="col-md-6">
+                    <div class="info-item">
+                      <span class="info-label"> Role </span>
+
+                      <strong>
+                        {{ user.role }}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <!-- Email -->
+
+                  <div class="col-md-6">
+                    <div class="info-item">
+                      <span class="info-label"> Email Address </span>
+
+                      <a [href]="'mailto:' + user.email" class="info-link">
+                        <i class="bi bi-envelope me-2"></i>
+                        {{ user.email }}
+                      </a>
+                    </div>
+                  </div>
+
+                  <!-- Mobile -->
+
+                  <div class="col-md-6">
+                    <div class="info-item">
+                      <span class="info-label"> Mobile Number </span>
+
+                      <a [href]="'tel:' + user.mobile" class="info-link">
+                        <i class="bi bi-telephone me-2"></i>
+                        {{ user.mobile }}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- =================================================
+               ACCOUNT INFORMATION
+          ================================================== -->
+
+          <div class="col-lg-5">
+            <div class="detail-card">
+              <div class="detail-card-header">
+                <div class="detail-icon">
+                  <i class="bi bi-shield-check"></i>
+                </div>
+
+                <div>
+                  <h4>Account Information</h4>
+
+                  <p>Account status and registration details.</p>
+                </div>
+              </div>
+
+              <div class="detail-card-body">
+                <!-- User ID -->
+
+                <div class="account-row">
+                  <span> User ID </span>
+
+                  <strong> #{{ user.userId }} </strong>
+                </div>
+
+                <!-- Status -->
+
+                <div class="account-row">
+                  <span> Account Status </span>
+
+                  <span class="status-badge" [ngClass]="getStatusClass(user.isActive)">
+                    @if (user.isActive) {
+                      Active
+                    } @else {
+                      Inactive
+                    }
+                  </span>
+                </div>
+
+                <!-- Role -->
+
+                <div class="account-row">
+                  <span> Account Role </span>
+
+                  <strong>
+                    {{ user.role }}
+                  </strong>
+                </div>
+
+                <!-- Created -->
+
+                <div class="account-row">
+                  <span> Created Date </span>
+
+                  <strong>
+                    {{ user.createdDate | date: 'dd MMM yyyy' }}
+                  </strong>
+                </div>
+
+                <!-- Created Time -->
+
+                <div class="account-row">
+                  <span> Created Time </span>
+
+                  <strong>
+                    {{ user.createdDate | date: 'hh:mm a' }}
+                  </strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===================================================
+             CONTACT CARD
+        ==================================================== -->
+
+        <div class="detail-card mt-4">
+          <div class="detail-card-header">
+            <div class="detail-icon">
+              <i class="bi bi-person-lines-fill"></i>
+            </div>
+
+            <div>
+              <h4>Contact Information</h4>
+
+              <p>Contact details associated with this account.</p>
+            </div>
+          </div>
+
+          <div class="detail-card-body">
+            <div class="contact-grid">
+              <div class="contact-box">
+                <div class="contact-box-icon">
+                  <i class="bi bi-envelope"></i>
+                </div>
+
+                <div>
+                  <span> Email </span>
+
+                  <a [href]="'mailto:' + user.email">
+                    {{ user.email }}
+                  </a>
+                </div>
+              </div>
+
+              <div class="contact-box">
+                <div class="contact-box-icon">
+                  <i class="bi bi-telephone"></i>
+                </div>
+
+                <div>
+                  <span> Mobile </span>
+
+                  <a [href]="'tel:' + user.mobile">
+                    {{ user.mobile }}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===================================================
+             ACTIONS
+        ==================================================== -->
+
+        <div class="detail-actions">
+          <a routerLink="/admin/users" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>
+            Back to Users
+          </a>
+
+          <a [routerLink]="['/admin/users', user.userId, 'edit']" class="btn btn-primary">
+            <i class="bi bi-pencil me-2"></i>
+            Edit User
+          </a>
+        </div>
+      }
+    </div>
+  </section>
+</div>

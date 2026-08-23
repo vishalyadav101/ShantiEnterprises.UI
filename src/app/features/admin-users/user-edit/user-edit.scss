@@ -1,0 +1,501 @@
+.user-edit-page {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.edit-header {
+  padding: 38px 0 32px;
+
+  background: #ffffff;
+
+  border-bottom: 1px solid #e5e9ee;
+}
+
+.container {
+  width: min(1120px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+
+  color: #0d6efd;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  text-decoration: none;
+
+  transition: color 0.2s ease;
+}
+
+.back-link:hover {
+  color: #084298;
+}
+
+.header-content {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 25px;
+
+  margin-top: 20px;
+}
+
+.edit-header h1 {
+  color: #172033;
+
+  font-size: 32px;
+}
+
+.edit-header p {
+  font-size: 14px;
+}
+
+/* =========================================================
+   USER HEADER INFO
+========================================================= */
+
+.user-header-info {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 11px 15px;
+
+  background: #f8fafc;
+
+  border: 1px solid #e5e9ee;
+
+  border-radius: 10px;
+}
+
+.user-avatar {
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #eaf2ff;
+
+  color: #0d6efd;
+
+  font-size: 17px;
+
+  font-weight: 700;
+}
+
+.user-header-info strong {
+  display: block;
+
+  color: #172033;
+
+  font-size: 14px;
+}
+
+.user-header-info span {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #7a8494;
+
+  font-size: 12px;
+}
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+.edit-section {
+  padding: 35px 0 60px;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.edit-loading {
+  min-height: 320px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  background: #ffffff;
+
+  border: 1px solid #e1e6ec;
+
+  border-radius: 14px;
+}
+
+/* =========================================================
+   EDIT CARD
+========================================================= */
+
+.edit-card {
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border: 1px solid #e1e6ec;
+
+  border-radius: 16px;
+
+  box-shadow: 0 6px 22px rgba(20, 40, 70, 0.05);
+}
+
+/* =========================================================
+   CARD HEADER
+========================================================= */
+
+.edit-card-header {
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 23px 26px;
+
+  border-bottom: 1px solid #edf0f3;
+}
+
+.header-icon {
+  width: 44px;
+  height: 44px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  background: #eaf2ff;
+
+  color: #0d6efd;
+
+  font-size: 19px;
+}
+
+.edit-card-header h4 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 18px;
+
+  font-weight: 700;
+}
+
+.edit-card-header p {
+  margin: 4px 0 0;
+
+  color: #6c757d;
+
+  font-size: 13px;
+}
+
+/* =========================================================
+   CARD BODY
+========================================================= */
+
+.edit-card-body {
+  padding: 28px 30px;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.form-label {
+  margin-bottom: 8px;
+
+  color: #343a40;
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
+
+.form-control,
+.form-select,
+.input-group-text {
+  min-height: 46px;
+
+  border-color: #dfe4e9;
+
+  box-shadow: none;
+
+  font-size: 14px;
+}
+
+.form-control,
+.form-select {
+  color: #212529;
+}
+
+.form-control::placeholder {
+  color: #adb5bd;
+}
+
+.input-group-text {
+  width: 47px;
+
+  justify-content: center;
+
+  background: #f8f9fa;
+
+  color: #6c757d;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #86b7fe;
+
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
+}
+
+.input-group:focus-within .input-group-text {
+  border-color: #86b7fe;
+
+  color: #0d6efd;
+
+  background: #f5f9ff;
+}
+
+/* =========================================================
+   VALIDATION
+========================================================= */
+
+.validation-message {
+  margin-top: 6px;
+
+  color: #dc3545;
+
+  font-size: 12px;
+}
+
+/* =========================================================
+   STATUS INFO
+========================================================= */
+
+.status-info {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 13px;
+
+  margin-top: 8px;
+
+  padding: 16px;
+
+  background: #f8fbff;
+
+  border: 1px solid #dceaff;
+
+  border-radius: 10px;
+}
+
+.status-info-icon {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  background: #e7f1ff;
+
+  color: #0d6efd;
+
+  font-size: 15px;
+}
+
+.status-info strong {
+  color: #344054;
+
+  font-size: 13px;
+}
+
+.status-info p {
+  margin: 3px 0;
+
+  color: #667085;
+
+  font-size: 13px;
+}
+
+.status-info small {
+  color: #8a94a3;
+
+  font-size: 11px;
+}
+
+/* =========================================================
+   ALERT
+========================================================= */
+
+.alert {
+  border-radius: 9px;
+
+  font-size: 13px;
+}
+
+/* =========================================================
+   CARD FOOTER
+========================================================= */
+
+.edit-card-footer {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  padding: 20px 30px;
+
+  background: #fbfcfd;
+
+  border-top: 1px solid #edf0f3;
+}
+
+.edit-card-footer .btn {
+  min-width: 130px;
+
+  min-height: 44px;
+
+  border-radius: 8px;
+
+  font-size: 14px;
+
+  font-weight: 600;
+}
+
+/* =========================================================
+   BUTTON
+========================================================= */
+
+.edit-card-footer .btn-primary {
+  box-shadow: 0 3px 8px rgba(13, 110, 253, 0.15);
+}
+
+.edit-card-footer .btn:disabled {
+  cursor: not-allowed;
+
+  opacity: 0.7;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 991.98px) {
+  .edit-header {
+    padding: 32px 0 27px;
+  }
+
+  .edit-header h1 {
+    font-size: 28px;
+  }
+
+  .header-content {
+    align-items: flex-start;
+  }
+
+  .edit-section {
+    padding: 28px 0 45px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .container {
+    width: min(100% - 24px, 1120px);
+  }
+
+  .header-content {
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+  .user-header-info {
+    width: 100%;
+  }
+
+  .edit-header h1 {
+    font-size: 25px;
+  }
+
+  .edit-card {
+    border-radius: 13px;
+  }
+
+  .edit-card-header {
+    padding: 20px;
+  }
+
+  .edit-card-body {
+    padding: 22px 20px;
+  }
+
+  .edit-card-footer {
+    padding: 18px 20px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .edit-header {
+    padding: 25px 0 22px;
+  }
+
+  .edit-section {
+    padding: 20px 0 35px;
+  }
+
+  .edit-card-header {
+    align-items: flex-start;
+  }
+
+  .edit-card-footer {
+    flex-direction: column-reverse;
+  }
+
+  .edit-card-footer .btn {
+    width: 100%;
+  }
+
+  .status-info {
+    padding: 14px;
+  }
+}
