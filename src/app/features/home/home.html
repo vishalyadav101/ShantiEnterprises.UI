@@ -1,0 +1,172 @@
+<div class="home-page">
+  <!-- Navbar -->
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand fw-bold" routerLink="/home"> Shanti Enterprises </a>
+
+      <div class="d-flex align-items-center gap-3">
+        <span class="text-white">
+          <i class="bi bi-person-circle me-1"></i>
+          {{ user?.fullName }}
+        </span>
+
+        <button type="button" class="btn btn-light btn-sm" (click)="logout()">
+          <i class="bi bi-box-arrow-right me-1"></i>
+          Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+
+  <section class="hero-section">
+    <div class="container">
+      <div class="row align-items-center">
+        <!-- Hero Content -->
+
+        <div class="col-lg-7">
+          <span class="badge bg-primary-subtle text-primary mb-3">
+            Welcome to Shanti Enterprises
+          </span>
+
+          <h1 class="display-5 fw-bold">
+            Everything you need,
+
+            <span class="text-primary"> in one place. </span>
+          </h1>
+
+          <p class="lead text-muted mt-3">
+            Explore our products, manage your cart, place orders and track your purchases easily.
+          </p>
+
+          <!-- Action Buttons -->
+
+          <div class="d-flex gap-2 mt-4 flex-wrap">
+            <!-- Browse Products -->
+
+            <a routerLink="/products" class="btn btn-primary btn-lg">
+              <i class="bi bi-shop me-2"></i>
+              Browse Products
+            </a>
+
+            <!-- My Cart -->
+
+            <a routerLink="/cart" class="btn btn-outline-primary btn-lg">
+              <i class="bi bi-cart3 me-2"></i>
+              My Cart
+            </a>
+          </div>
+        </div>
+
+        <!-- Welcome Card -->
+
+        <div class="col-lg-5 mt-5 mt-lg-0">
+          <div class="welcome-card">
+            <div class="icon-circle">
+              <i class="bi bi-building"></i>
+            </div>
+
+            <h3 class="fw-bold mt-3">
+              Welcome,
+              {{ user?.fullName }}
+            </h3>
+
+            <p class="text-muted mb-0">Your customer account is ready.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Access -->
+
+  <section class="features-section">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="fw-bold">Quick Access</h2>
+
+        <p class="text-muted">Manage your shopping experience</p>
+      </div>
+
+      <div class="row g-4">
+        <!-- Products -->
+
+        <div class="col-md-4">
+          <div class="feature-card" routerLink="/products">
+            <div class="feature-icon">
+              <i class="bi bi-grid"></i>
+            </div>
+
+            <h5 class="fw-bold">Products</h5>
+
+            <p class="text-muted">Browse available products and find what you need.</p>
+
+            <span class="feature-link">
+              Browse Products
+
+              <i class="bi bi-arrow-right ms-1"></i>
+            </span>
+          </div>
+        </div>
+
+        <!-- Shopping Cart -->
+
+        <div class="col-md-4">
+          <div class="feature-card" routerLink="/cart">
+            <div class="feature-icon">
+              <i class="bi bi-cart3"></i>
+            </div>
+
+            <h5 class="fw-bold">Shopping Cart</h5>
+
+            <p class="text-muted">Manage your cart items and review your total.</p>
+
+            <span class="feature-link">
+              View Cart
+
+              <i class="bi bi-arrow-right ms-1"></i>
+            </span>
+          </div>
+        </div>
+
+        <!-- My Orders -->
+
+        <div class="col-md-4">
+          <div class="feature-card" routerLink="/orders">
+            <div class="feature-icon">
+              <i class="bi bi-box-seam"></i>
+            </div>
+
+            <h5 class="fw-bold">My Orders</h5>
+
+            <p class="text-muted">View your orders and track their current status.</p>
+
+            <span class="feature-link">
+              View Orders
+
+              <i class="bi bi-arrow-right ms-1"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+
+  <footer class="home-footer">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <p class="mb-0">© 2026 Shanti Enterprises. All rights reserved.</p>
+        </div>
+
+        <div class="col-md-6 text-md-end mt-2 mt-md-0">
+          <span class="text-muted"> Trusted Shopping Experience </span>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>

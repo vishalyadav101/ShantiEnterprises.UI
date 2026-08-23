@@ -1,0 +1,297 @@
+<div class="cart-page">
+  <!-- =========================
+       HEADER
+  ========================== -->
+  <section class="cart-header">
+    <div class="container">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div>
+          <span class="text-primary fw-semibold"> Shanti Enterprises </span>
+
+          <h1 class="fw-bold mb-1">Shopping Cart</h1>
+
+          <p class="text-muted mb-0">Review your items before placing your order.</p>
+        </div>
+
+        <a routerLink="/products" class="btn btn-outline-primary">
+          <i class="bi bi-arrow-left me-2"></i>
+          Continue Shopping
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================
+       CART CONTENT
+  ========================== -->
+  <section class="cart-section">
+    <div class="container">
+      <!-- =========================
+           SUCCESS MESSAGE
+      ========================== -->
+      @if (successMessage) {
+        <div class="alert alert-success d-flex align-items-center" role="alert">
+          <i class="bi bi-check-circle me-2"></i>
+
+          <span>
+            {{ successMessage }}
+          </span>
+        </div>
+      }
+
+      <!-- =========================
+           LOADING
+      ========================== -->
+      @if (isLoading) {
+        <div class="cart-loading">
+          <div class="spinner-border text-primary" role="status"></div>
+
+          <p class="text-muted mt-3 mb-0">Loading your cart...</p>
+        </div>
+      }
+
+      <!-- =========================
+           ERROR
+      ========================== -->
+      @if (!isLoading && errorMessage) {
+        <div
+          class="alert alert-danger d-flex align-items-center justify-content-between"
+          role="alert"
+        >
+          <div>
+            <i class="bi bi-exclamation-circle me-2"></i>
+
+            {{ errorMessage }}
+          </div>
+
+          <button type="button" class="btn btn-sm btn-outline-danger" (click)="loadCart()">
+            Retry
+          </button>
+        </div>
+      }
+
+      <!-- =========================
+           EMPTY CART
+      ========================== -->
+      @if (!isLoading && !errorMessage && cart && cart.items.length === 0) {
+        <div class="empty-cart">
+          <div class="empty-cart-icon">
+            <i class="bi bi-cart-x"></i>
+          </div>
+
+          <h3 class="fw-bold mt-4">Your Cart is Empty</h3>
+
+          <p class="text-muted">Looks like you haven't added anything to your cart yet.</p>
+
+          <a routerLink="/products" class="btn btn-primary mt-2">
+            <i class="bi bi-shop me-2"></i>
+            Browse Products
+          </a>
+        </div>
+      }
+
+      <!-- =========================
+           CART
+      ========================== -->
+      @if (!isLoading && !errorMessage && cart && cart.items.length > 0) {
+        <div class="row g-4">
+          <!-- =========================
+               CART ITEMS
+          ========================== -->
+          <div class="col-lg-8">
+            <div class="cart-card">
+              <!-- CART HEADER -->
+              <div class="cart-card-header">
+                <div>
+                  <h5 class="fw-bold mb-1">Cart Items</h5>
+
+                  <span class="text-muted small"> {{ cart.totalItems }} item(s) </span>
+                </div>
+
+                <!-- CLEAR COMPLETE CART -->
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-danger"
+                  [disabled]="isUpdating"
+                  (click)="clearCart()"
+                >
+                  @if (isUpdating) {
+                    <span class="spinner-border spinner-border-sm me-1"></span>
+                  } @else {
+                    <i class="bi bi-trash3 me-1"></i>
+                  }
+
+                  Clear Cart
+                </button>
+              </div>
+
+              <!-- =========================
+                   ITEMS
+              ========================== -->
+              <div class="cart-items">
+                @for (item of cart.items; track item.cartItemId) {
+                  <div class="cart-item">
+                    <!-- PRODUCT IMAGE -->
+                    <div class="cart-item-image">
+                      @if (item.imageUrl) {
+                        <img [src]="item.imageUrl" [alt]="item.productName" loading="lazy" />
+                      } @else {
+                        <div class="no-image">
+                          <i class="bi bi-image"></i>
+                        </div>
+                      }
+                    </div>
+
+                    <!-- PRODUCT DETAILS -->
+                    <div class="cart-item-details">
+                      <h5 class="product-name">
+                        {{ item.productName }}
+                      </h5>
+
+                      <div class="product-price">
+                        ₹{{ item.unitPrice }}
+
+                        <span> / item </span>
+                      </div>
+
+                      <div class="item-gst">GST {{ item.gstPercentage }}%</div>
+
+                      <!-- QUANTITY -->
+                      <div class="quantity-wrapper">
+                        <span class="quantity-label"> Quantity </span>
+
+                        <div class="quantity-control">
+                          <!-- DECREASE -->
+                          <button
+                            type="button"
+                            class="quantity-btn"
+                            [disabled]="isUpdating || item.quantity <= 1"
+                            (click)="decreaseQuantity(item)"
+                          >
+                            <i class="bi bi-dash"></i>
+                          </button>
+
+                          <!-- CURRENT QUANTITY -->
+                          <span class="quantity-value">
+                            {{ item.quantity }}
+                          </span>
+
+                          <!-- INCREASE -->
+                          <button
+                            type="button"
+                            class="quantity-btn"
+                            [disabled]="isUpdating"
+                            (click)="increaseQuantity(item)"
+                          >
+                            <i class="bi bi-plus"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- ITEM TOTAL -->
+                    <div class="cart-item-total">
+                      <div class="total-label">Total</div>
+
+                      <div class="item-total-price">₹{{ item.totalPrice }}</div>
+
+                      <div class="item-gst-amount">GST ₹{{ item.gstAmount }}</div>
+
+                      <!-- REMOVE ONLY THIS ITEM -->
+                      <button
+                        type="button"
+                        class="remove-btn"
+                        [disabled]="isUpdating"
+                        (click)="removeItem(item)"
+                      >
+                        @if (isUpdating) {
+                          <span class="spinner-border spinner-border-sm me-1"></span>
+                        } @else {
+                          <i class="bi bi-trash3 me-1"></i>
+                        }
+
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- =========================
+               ORDER SUMMARY
+          ========================== -->
+          <div class="col-lg-4">
+            <div class="summary-card">
+              <h5 class="fw-bold mb-4">Order Summary</h5>
+
+              <!-- TOTAL ITEMS -->
+              <div class="summary-row">
+                <span> Items </span>
+
+                <strong>
+                  {{ cart.totalItems }}
+                </strong>
+              </div>
+
+              <!-- SUBTOTAL -->
+              <div class="summary-row">
+                <span> Subtotal </span>
+
+                <strong> ₹{{ cart.subtotal }} </strong>
+              </div>
+
+              <!-- GST -->
+              <div class="summary-row">
+                <span> GST </span>
+
+                <strong> ₹{{ cart.gstAmount }} </strong>
+              </div>
+
+              <hr />
+
+              <!-- GRAND TOTAL -->
+              <div class="summary-total">
+                <span> Grand Total </span>
+
+                <strong> ₹{{ cart.grandTotal }} </strong>
+              </div>
+
+              <!-- =========================
+                   CHECKOUT
+              ========================== -->
+
+              <a
+                routerLink="/checkout"
+                class="btn btn-primary btn-lg w-100 mt-4"
+                [class.disabled]="isUpdating"
+                [attr.aria-disabled]="isUpdating"
+              >
+                <i class="bi bi-credit-card me-2"></i>
+
+                Proceed to Checkout
+              </a>
+
+              <!-- SECURE PAYMENT -->
+              <div class="secure-payment">
+                <i class="bi bi-shield-check me-2"></i>
+
+                Secure checkout
+              </div>
+            </div>
+
+            <!-- =========================
+                 GST INFO
+            ========================== -->
+            <div class="info-card mt-3">
+              <i class="bi bi-info-circle text-primary me-2"></i>
+
+              GST is calculated according to the product's applicable GST percentage.
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+</div>

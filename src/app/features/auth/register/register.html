@@ -1,0 +1,316 @@
+<div class="register-page">
+
+  <div class="register-card">
+
+    <!-- Header -->
+
+    <div class="text-center mb-4">
+
+      <div class="brand-icon">
+        <i class="bi bi-building"></i>
+      </div>
+
+      <h2 class="fw-bold mb-1">
+        Create Account
+      </h2>
+
+      <p class="text-muted mb-0">
+        Join Shanti Enterprises
+      </p>
+
+    </div>
+
+
+    <!-- Error -->
+
+    @if (errorMessage) {
+
+      <div
+        class="alert alert-danger"
+        role="alert"
+      >
+        <i class="bi bi-exclamation-circle me-2"></i>
+        {{ errorMessage }}
+      </div>
+
+    }
+
+
+    <!-- Success -->
+
+    @if (successMessage) {
+
+      <div
+        class="alert alert-success"
+        role="alert"
+      >
+        <i class="bi bi-check-circle me-2"></i>
+        {{ successMessage }}
+      </div>
+
+    }
+
+
+    <!-- Register Form -->
+
+    <form
+      [formGroup]="registerForm"
+      (ngSubmit)="onSubmit()"
+      novalidate
+    >
+
+      <!-- Full Name -->
+
+      <div class="mb-3">
+
+        <label
+          for="fullName"
+          class="form-label"
+        >
+          Full Name
+        </label>
+
+        <div class="input-group">
+
+          <span class="input-group-text">
+            <i class="bi bi-person"></i>
+          </span>
+
+          <input
+            id="fullName"
+            type="text"
+            class="form-control"
+            formControlName="fullName"
+            placeholder="Enter your full name"
+            autocomplete="name"
+          />
+
+        </div>
+
+        @if (
+          fullName.invalid &&
+          fullName.touched
+        ) {
+
+          <small class="text-danger">
+
+            @if (fullName.errors?.['required']) {
+              Full name is required.
+            }
+
+            @if (fullName.errors?.['minlength']) {
+              Full name must be at least 3 characters.
+            }
+
+            @if (fullName.errors?.['maxlength']) {
+              Full name cannot exceed 100 characters.
+            }
+
+          </small>
+
+        }
+
+      </div>
+
+
+      <!-- Email -->
+
+      <div class="mb-3">
+
+        <label
+          for="email"
+          class="form-label"
+        >
+          Email Address
+        </label>
+
+        <div class="input-group">
+
+          <span class="input-group-text">
+            <i class="bi bi-envelope"></i>
+          </span>
+
+          <input
+            id="email"
+            type="email"
+            class="form-control"
+            formControlName="email"
+            placeholder="Enter your email"
+            autocomplete="email"
+          />
+
+        </div>
+
+        @if (
+          email.invalid &&
+          email.touched
+        ) {
+
+          <small class="text-danger">
+
+            @if (email.errors?.['required']) {
+              Email is required.
+            }
+
+            @if (email.errors?.['email']) {
+              Enter a valid email address.
+            }
+
+          </small>
+
+        }
+
+      </div>
+
+
+      <!-- Mobile -->
+
+      <div class="mb-3">
+
+        <label
+          for="mobile"
+          class="form-label"
+        >
+          Mobile Number
+        </label>
+
+        <div class="input-group">
+
+          <span class="input-group-text">
+            <i class="bi bi-phone"></i>
+          </span>
+
+          <input
+            id="mobile"
+            type="tel"
+            class="form-control"
+            formControlName="mobile"
+            placeholder="Enter 10 digit mobile number"
+            maxlength="10"
+            autocomplete="tel"
+          />
+
+        </div>
+
+        @if (
+          mobile.invalid &&
+          mobile.touched
+        ) {
+
+          <small class="text-danger">
+
+            @if (mobile.errors?.['required']) {
+              Mobile number is required.
+            }
+
+            @if (mobile.errors?.['pattern']) {
+              Enter a valid 10 digit mobile number.
+            }
+
+          </small>
+
+        }
+
+      </div>
+
+
+      <!-- Password -->
+
+      <div class="mb-4">
+
+        <label
+          for="password"
+          class="form-label"
+        >
+          Password
+        </label>
+
+        <div class="input-group">
+
+          <span class="input-group-text">
+            <i class="bi bi-lock"></i>
+          </span>
+
+          <input
+            id="password"
+            type="password"
+            class="form-control"
+            formControlName="password"
+            placeholder="Enter your password"
+            autocomplete="new-password"
+          />
+
+        </div>
+
+        @if (
+          password.invalid &&
+          password.touched
+        ) {
+
+          <small class="text-danger">
+
+            @if (password.errors?.['required']) {
+              Password is required.
+            }
+
+            @if (password.errors?.['minlength']) {
+              Password must be at least 6 characters.
+            }
+
+          </small>
+
+        }
+
+      </div>
+
+
+      <!-- Submit -->
+
+      <button
+        type="submit"
+        class="btn btn-primary w-100 register-btn"
+        [disabled]="isLoading"
+      >
+
+        @if (isLoading) {
+
+          <span
+            class="spinner-border spinner-border-sm me-2"
+            aria-hidden="true"
+          ></span>
+
+          Creating Account...
+
+        } @else {
+
+          <i class="bi bi-person-plus me-2"></i>
+
+          Create Account
+
+        }
+
+      </button>
+
+    </form>
+
+
+    <!-- Login Link -->
+
+    <div class="text-center mt-4">
+
+      <span class="text-muted">
+        Already have an account?
+      </span>
+
+      <a
+        routerLink="/login"
+        class="login-link ms-1"
+      >
+        Login
+      </a>
+
+    </div>
+
+  </div>
+
+</div>

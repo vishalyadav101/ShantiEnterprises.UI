@@ -1,0 +1,222 @@
+<div class="products-page">
+  <!-- =========================
+       HEADER
+  ========================== -->
+  <section class="products-header">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <span class="text-primary fw-semibold"> Shanti Enterprises </span>
+
+          <h1 class="fw-bold mb-2">Our Products</h1>
+
+          <p class="text-muted mb-0">Explore our latest products and find everything you need.</p>
+        </div>
+
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+          <div class="d-flex justify-content-md-end align-items-center gap-2">
+            <span class="product-count"> {{ products.length }} Products </span>
+
+            <button type="button" class="btn btn-outline-primary" (click)="goToCart()">
+              <i class="bi bi-cart3 me-1"></i>
+              My Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================
+       PRODUCTS SECTION
+  ========================== -->
+  <section class="products-section">
+    <div class="container">
+      <!-- =========================
+           CART SUCCESS MESSAGE
+      ========================== -->
+      @if (cartMessage) {
+        <div
+          class="alert alert-success d-flex align-items-center justify-content-between"
+          role="alert"
+        >
+          <div>
+            <i class="bi bi-check-circle me-2"></i>
+
+            {{ cartMessage }}
+          </div>
+
+          <button type="button" class="btn btn-sm btn-success" (click)="goToCart()">
+            View Cart
+          </button>
+        </div>
+      }
+
+      <!-- =========================
+           ERROR
+      ========================== -->
+      @if (!isLoading && errorMessage) {
+        <div
+          class="alert alert-danger d-flex align-items-center justify-content-between"
+          role="alert"
+        >
+          <div>
+            <i class="bi bi-exclamation-circle me-2"></i>
+
+            {{ errorMessage }}
+          </div>
+
+          <button type="button" class="btn btn-sm btn-outline-danger" (click)="loadProducts()">
+            Retry
+          </button>
+        </div>
+      }
+
+      <!-- =========================
+           LOADING
+      ========================== -->
+      @if (isLoading) {
+        <div class="loading-container">
+          <div class="spinner-border text-primary" role="status"></div>
+
+          <p class="text-muted mt-3 mb-0">Loading products...</p>
+        </div>
+      }
+
+      <!-- =========================
+           EMPTY
+      ========================== -->
+      @if (!isLoading && !errorMessage && products.length === 0) {
+        <div class="empty-container">
+          <div class="empty-icon">
+            <i class="bi bi-box-seam"></i>
+          </div>
+
+          <h4 class="fw-bold mt-3">No Products Found</h4>
+
+          <p class="text-muted">There are currently no active products available.</p>
+        </div>
+      }
+
+      <!-- =========================
+           PRODUCT GRID
+      ========================== -->
+      @if (!isLoading && !errorMessage && products.length > 0) {
+        <div class="row g-4">
+          @for (product of products; track product.productId) {
+            <div class="col-sm-6 col-lg-4 col-xl-3">
+              <div class="product-card">
+                <!-- =========================
+                     PRODUCT IMAGE
+                ========================== -->
+                <div class="product-image-wrapper">
+                  @if (product.imageUrl) {
+                    <img
+                      [src]="product.imageUrl"
+                      [alt]="product.productName"
+                      class="product-image"
+                      loading="lazy"
+                    />
+                  } @else {
+                    <div class="no-image">
+                      <i class="bi bi-image"></i>
+                    </div>
+                  }
+
+                  <!-- STOCK BADGE -->
+                  @if (product.stock > 0) {
+                    <span class="stock-badge"> In Stock </span>
+                  } @else {
+                    <span class="stock-badge out-of-stock"> Out of Stock </span>
+                  }
+                </div>
+
+                <!-- =========================
+                     PRODUCT CONTENT
+                ========================== -->
+                <div class="product-content">
+                  <!-- CATEGORY -->
+                  <div class="product-category">
+                    {{ product.categoryName }}
+                  </div>
+
+                  <!-- PRODUCT NAME -->
+                  <h5 class="product-name" [title]="product.productName">
+                    {{ product.productName }}
+                  </h5>
+
+                  <!-- DESCRIPTION -->
+                  <p class="product-description" [title]="product.description">
+                    {{ product.description }}
+                  </p>
+
+                  <!-- =========================
+                       SKU / GST
+                  ========================== -->
+                  <div class="product-meta">
+                    <span>
+                      SKU:
+                      <strong>
+                        {{ product.sku }}
+                      </strong>
+                    </span>
+
+                    <span>
+                      GST:
+                      <strong> {{ product.gstPercentage }}% </strong>
+                    </span>
+                  </div>
+
+                  <!-- =========================
+                       PRICE
+                  ========================== -->
+                  <div class="price-section">
+                    <div>
+                      <span class="price-label"> Price </span>
+
+                      <div class="product-price">₹{{ product.wholesalePrice }}</div>
+
+                      <div class="mrp">
+                        MRP:
+                        <del> ₹{{ product.mrp }} </del>
+                      </div>
+                    </div>
+
+                    <!-- STOCK COUNT -->
+                    <span class="stock-count" [class.low-stock]="product.stock <= 10">
+                      {{ product.stock }} left
+                    </span>
+                  </div>
+
+                  <!-- =========================
+                       ADD TO CART
+                  ========================== -->
+                  <button
+                    type="button"
+                    class="btn btn-primary w-100"
+                    [disabled]="product.stock <= 0 || isAddingToCart"
+                    (click)="addToCart(product)"
+                  >
+                    @if (isAddingToCart && addingProductId === product.productId) {
+                      <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+
+                      Adding...
+                    } @else {
+                      <i class="bi bi-cart-plus me-2"></i>
+
+                      @if (product.stock > 0) {
+                        Add to Cart
+                      } @else {
+                        Out of Stock
+                      }
+                    }
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </section>
+</div>

@@ -1,0 +1,460 @@
+<div class="admin-orders-page">
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+
+  <section class="admin-orders-header">
+    <div class="container-fluid">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div>
+          <span class="text-primary fw-semibold"> Shanti Enterprises </span>
+
+          <h1 class="fw-bold mb-1">Order Management</h1>
+
+          <p class="text-muted mb-0">Manage customer orders, order status and payment status.</p>
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-outline-primary"
+          (click)="loadOrders()"
+          [disabled]="isLoading"
+        >
+          <i class="bi bi-arrow-clockwise me-2"></i>
+
+          Refresh
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       CONTENT
+  ====================================================== -->
+
+  <section class="admin-orders-section">
+    <div class="container-fluid">
+      <!-- =================================================
+           ERROR
+      ================================================== -->
+
+      @if (errorMessage) {
+        <div
+          class="alert alert-danger d-flex align-items-center justify-content-between"
+          role="alert"
+        >
+          <div>
+            <i class="bi bi-exclamation-circle me-2"></i>
+
+            {{ errorMessage }}
+          </div>
+
+          <button type="button" class="btn btn-sm btn-outline-danger" (click)="loadOrders()">
+            Retry
+          </button>
+        </div>
+      }
+
+      <!-- =================================================
+           SUCCESS
+      ================================================== -->
+
+      @if (successMessage) {
+        <div class="alert alert-success" role="alert">
+          <i class="bi bi-check-circle me-2"></i>
+
+          {{ successMessage }}
+        </div>
+      }
+
+      <!-- =================================================
+           STATISTICS
+      ================================================== -->
+
+      <div class="row g-3 mb-4">
+        <!-- Total -->
+
+        <div class="col-xl-3 col-md-6">
+          <div class="order-stat-card">
+            <div class="order-stat-icon total">
+              <i class="bi bi-bag-check"></i>
+            </div>
+
+            <div>
+              <span class="order-stat-label"> Total Orders </span>
+
+              <strong class="order-stat-value">
+                {{ totalOrders }}
+              </strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pending -->
+
+        <div class="col-xl-3 col-md-6">
+          <div class="order-stat-card">
+            <div class="order-stat-icon pending">
+              <i class="bi bi-clock-history"></i>
+            </div>
+
+            <div>
+              <span class="order-stat-label"> Pending </span>
+
+              <strong class="order-stat-value">
+                {{ pendingOrders }}
+              </strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Processing -->
+
+        <div class="col-xl-3 col-md-6">
+          <div class="order-stat-card">
+            <div class="order-stat-icon processing">
+              <i class="bi bi-box-seam"></i>
+            </div>
+
+            <div>
+              <span class="order-stat-label"> Processing </span>
+
+              <strong class="order-stat-value">
+                {{ processingOrders }}
+              </strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Delivered -->
+
+        <div class="col-xl-3 col-md-6">
+          <div class="order-stat-card">
+            <div class="order-stat-icon delivered">
+              <i class="bi bi-check-circle"></i>
+            </div>
+
+            <div>
+              <span class="order-stat-label"> Delivered </span>
+
+              <strong class="order-stat-value">
+                {{ deliveredOrders }}
+              </strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- =================================================
+           FILTER CARD
+      ================================================== -->
+
+      <div class="filter-card mb-4">
+        <div class="filter-header">
+          <div>
+            <h5 class="fw-bold mb-1">
+              <i class="bi bi-funnel me-2 text-primary"></i>
+
+              Search & Filter
+            </h5>
+
+            <span class="text-muted small"> Find orders by customer, order number or status. </span>
+          </div>
+
+          <button type="button" class="btn btn-sm btn-outline-secondary" (click)="resetFilters()">
+            <i class="bi bi-x-circle me-1"></i>
+
+            Reset
+          </button>
+        </div>
+
+        <div class="row g-3 mt-1">
+          <!-- Search -->
+
+          <div class="col-lg-5">
+            <label class="form-label fw-semibold"> Search </label>
+
+            <div class="search-box">
+              <i class="bi bi-search"></i>
+
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Order number, customer name, email..."
+                [(ngModel)]="searchTerm"
+                (ngModelChange)="onSearch()"
+              />
+            </div>
+          </div>
+
+          <!-- Order Status -->
+
+          <div class="col-lg-3 col-md-6">
+            <label for="orderStatusFilter" class="form-label fw-semibold"> Order Status </label>
+
+            <select
+              id="orderStatusFilter"
+              class="form-select"
+              [(ngModel)]="selectedOrderStatus"
+              (ngModelChange)="applyFilters()"
+            >
+              <option value="All">All Statuses</option>
+
+              @for (status of orderStatuses; track status) {
+                <option [value]="status">
+                  {{ status }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <!-- Payment Status -->
+
+          <div class="col-lg-3 col-md-6">
+            <label for="paymentStatusFilter" class="form-label fw-semibold"> Payment Status </label>
+
+            <select
+              id="paymentStatusFilter"
+              class="form-select"
+              [(ngModel)]="selectedPaymentStatus"
+              (ngModelChange)="applyFilters()"
+            >
+              <option value="All">All Payments</option>
+
+              @for (status of paymentStatuses; track status) {
+                <option [value]="status">
+                  {{ status }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <!-- Result Count -->
+
+          <div class="col-lg-1 col-md-12">
+            <div class="filter-result">
+              <span> Results </span>
+
+              <strong>
+                {{ filteredOrders.length }}
+              </strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- =================================================
+           LOADING
+      ================================================== -->
+
+      @if (isLoading) {
+        <div class="orders-loading">
+          <div class="spinner-border text-primary" role="status"></div>
+
+          <p class="text-muted mt-3 mb-0">Loading orders...</p>
+        </div>
+      }
+
+      <!-- =================================================
+           EMPTY
+      ================================================== -->
+
+      @if (!isLoading && !errorMessage && filteredOrders.length === 0) {
+        <div class="empty-orders">
+          <div class="empty-orders-icon">
+            <i class="bi bi-inbox"></i>
+          </div>
+
+          <h5 class="fw-bold mt-3">No orders found</h5>
+
+          <p class="text-muted mb-3">No orders match your current search or filters.</p>
+
+          <button type="button" class="btn btn-outline-primary" (click)="resetFilters()">
+            Clear Filters
+          </button>
+        </div>
+      }
+
+      <!-- =================================================
+           ORDERS TABLE
+      ================================================== -->
+
+      @if (!isLoading && filteredOrders.length > 0) {
+        <div class="orders-card">
+          <div class="orders-card-header">
+            <div>
+              <h5 class="fw-bold mb-1">All Orders</h5>
+
+              <span class="text-muted small">
+                {{ filteredOrders.length }}
+                order(s) displayed
+              </span>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table orders-table align-middle">
+              <thead>
+                <tr>
+                  <th>Order</th>
+
+                  <th>Customer</th>
+
+                  <th>Date</th>
+
+                  <th>Amount</th>
+
+                  <th>Order Status</th>
+
+                  <th>Payment</th>
+
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @for (order of filteredOrders; track order.orderId) {
+                  <tr>
+                    <!-- =================================
+                         ORDER
+                    ================================== -->
+
+                    <td>
+                      <div class="order-number">#{{ order.orderNumber }}</div>
+
+                      <div class="order-id">ID: {{ order.orderId }}</div>
+                    </td>
+
+                    <!-- =================================
+                         CUSTOMER
+                    ================================== -->
+
+                    <td>
+                      <div class="customer-info">
+                        <div class="customer-avatar">
+                          <i class="bi bi-person"></i>
+                        </div>
+
+                        <div>
+                          <strong>
+                            {{ order.customerName }}
+                          </strong>
+
+                          <span>
+                            {{ order.customerEmail }}
+                          </span>
+
+                          <small>
+                            {{ order.shippingMobile }}
+                          </small>
+                        </div>
+                      </div>
+                    </td>
+
+                    <!-- =================================
+                         DATE
+                    ================================== -->
+
+                    <td>
+                      <div class="date-info">
+                        <strong>
+                          {{ order.createdDate | date: 'dd MMM yyyy' }}
+                        </strong>
+
+                        <span>
+                          {{ order.createdDate | date: 'hh:mm a' }}
+                        </span>
+                      </div>
+                    </td>
+
+                    <!-- =================================
+                         AMOUNT
+                    ================================== -->
+
+                    <td>
+                      <strong class="order-amount">
+                        ₹{{ order.grandTotal | number: '1.2-2' }}
+                      </strong>
+                    </td>
+
+                    <!-- =================================
+                         ORDER STATUS
+                    ================================== -->
+
+                    <td>
+                      <div class="status-control">
+                        <span
+                          class="status-badge"
+                          [ngClass]="getOrderStatusClass(order.orderStatus)"
+                        >
+                          {{ order.orderStatus }}
+                        </span>
+
+                        <select
+                          class="form-select form-select-sm status-select"
+                          [value]="order.orderStatus"
+                          [disabled]="updatingOrderId === order.orderId"
+                          (change)="updateOrderStatus(order, $any($event.target).value)"
+                        >
+                          @for (status of orderStatuses; track status) {
+                            <option [value]="status">
+                              {{ status }}
+                            </option>
+                          }
+                        </select>
+                      </div>
+                    </td>
+
+                    <!-- =================================
+                         PAYMENT STATUS
+                    ================================== -->
+
+                    <td>
+                      <div class="status-control">
+                        <span
+                          class="status-badge"
+                          [ngClass]="getPaymentStatusClass(order.paymentStatus)"
+                        >
+                          {{ order.paymentStatus }}
+                        </span>
+
+                        <select
+                          class="form-select form-select-sm status-select"
+                          [value]="order.paymentStatus"
+                          [disabled]="updatingPaymentOrderId === order.orderId"
+                          (change)="updatePaymentStatus(order, $any($event.target).value)"
+                        >
+                          @for (status of paymentStatuses; track status) {
+                            <option [value]="status">
+                              {{ status }}
+                            </option>
+                          }
+                        </select>
+                      </div>
+                    </td>
+
+                    <!-- =================================
+                         ACTION
+                    ================================== -->
+
+                    <td class="text-end">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-primary"
+                        (click)="viewOrder(order.orderId)"
+                      >
+                        <i class="bi bi-eye me-1"></i>
+
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+</div>

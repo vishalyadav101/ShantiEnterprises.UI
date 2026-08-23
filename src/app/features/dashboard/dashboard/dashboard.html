@@ -1,0 +1,308 @@
+<div class="dashboard-page">
+  <!-- =====================================================
+       NAVBAR
+  ====================================================== -->
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <!-- BRAND -->
+
+      <a class="navbar-brand fw-bold" routerLink="/admin"> Shanti Enterprises </a>
+
+      <!-- NAV ACTIONS -->
+
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        <!-- PRODUCTS -->
+
+        <a routerLink="/products" class="btn btn-light btn-sm">
+          <i class="bi bi-shop me-1"></i>
+
+          Products
+        </a>
+
+        <!-- ADMIN ORDERS -->
+
+        <a routerLink="/admin/orders" class="btn btn-light btn-sm">
+          <i class="bi bi-cart-check me-1"></i>
+
+          Orders
+        </a>
+
+        <!-- LOGOUT -->
+
+        <button type="button" class="btn btn-outline-light btn-sm">
+          <i class="bi bi-box-arrow-right me-1"></i>
+
+          Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- =====================================================
+       DASHBOARD HEADER
+  ====================================================== -->
+
+  <section class="dashboard-header">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <span class="text-primary fw-semibold"> Admin Panel </span>
+
+          <h1 class="fw-bold mt-1">Dashboard</h1>
+
+          <p class="text-muted mb-0">Manage your Shanti Enterprises application from one place.</p>
+        </div>
+
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+          <span class="dashboard-badge">
+            <i class="bi bi-shield-check me-1"></i>
+
+            Administrator
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       DASHBOARD CONTENT
+  ====================================================== -->
+
+  <section class="dashboard-section">
+    <div class="container">
+      <!-- =================================================
+           LOADING
+      ================================================== -->
+
+      @if (isLoading) {
+        <div class="dashboard-loading">
+          <div class="spinner-border text-primary" role="status"></div>
+
+          <p class="text-muted mt-3 mb-0">Loading dashboard...</p>
+        </div>
+      }
+
+      <!-- =================================================
+           ERROR
+      ================================================== -->
+
+      @if (!isLoading && errorMessage) {
+        <div
+          class="alert alert-danger d-flex align-items-center justify-content-between"
+          role="alert"
+        >
+          <div>
+            <i class="bi bi-exclamation-circle me-2"></i>
+
+            {{ errorMessage }}
+          </div>
+
+          <button type="button" class="btn btn-sm btn-outline-danger" (click)="loadDashboard()">
+            Retry
+          </button>
+        </div>
+      }
+
+      <!-- =================================================
+           DASHBOARD
+      ================================================== -->
+
+      @if (!isLoading && !errorMessage && dashboard) {
+        <!-- ===============================================
+             STATISTICS
+        ================================================ -->
+
+        <div class="row g-4">
+          @for (stat of stats; track stat.title) {
+            <div class="col-sm-6 col-xl-3">
+              <a class="stat-card" [routerLink]="stat.route">
+                <div class="stat-icon">
+                  <i class="bi" [ngClass]="stat.icon"></i>
+                </div>
+
+                <div class="stat-content">
+                  <span class="stat-title">
+                    {{ stat.title }}
+                  </span>
+
+                  <h2>
+                    {{ stat.value }}
+                  </h2>
+                </div>
+
+                <i class="bi bi-arrow-right stat-arrow"></i>
+              </a>
+            </div>
+          }
+        </div>
+
+        <!-- ===============================================
+             ADDITIONAL STATISTICS
+        ================================================ -->
+
+        <div class="row g-4 mt-2">
+          <!-- ACTIVE PRODUCTS -->
+
+          <div class="col-md-4">
+            <div class="mini-stat-card">
+              <div class="mini-stat-icon">
+                <i class="bi bi-box-seam"></i>
+              </div>
+
+              <div>
+                <span> Active Products </span>
+
+                <h4>
+                  {{ dashboard.activeProducts }}
+                </h4>
+              </div>
+            </div>
+          </div>
+
+          <!-- PENDING ORDERS -->
+
+          <div class="col-md-4">
+            <div class="mini-stat-card">
+              <div class="mini-stat-icon">
+                <i class="bi bi-clock-history"></i>
+              </div>
+
+              <div>
+                <span> Pending Orders </span>
+
+                <h4>
+                  {{ dashboard.pendingOrders }}
+                </h4>
+              </div>
+            </div>
+          </div>
+
+          <!-- PENDING PAYMENTS -->
+
+          <div class="col-md-4">
+            <div class="mini-stat-card">
+              <div class="mini-stat-icon">
+                <i class="bi bi-hourglass-split"></i>
+              </div>
+
+              <div>
+                <span> Pending Payments </span>
+
+                <h4>
+                  {{ dashboard.pendingPayments }}
+                </h4>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===============================================
+             REVENUE
+        ================================================ -->
+
+        <div class="row g-4 mt-2">
+          <!-- TODAY REVENUE -->
+
+          <div class="col-md-6">
+            <div class="revenue-card">
+              <div class="revenue-icon">
+                <i class="bi bi-currency-rupee"></i>
+              </div>
+
+              <div>
+                <span> Today's Revenue </span>
+
+                <h3>₹{{ dashboard.todayRevenue }}</h3>
+              </div>
+            </div>
+          </div>
+
+          <!-- MONTHLY REVENUE -->
+
+          <div class="col-md-6">
+            <div class="revenue-card">
+              <div class="revenue-icon">
+                <i class="bi bi-graph-up-arrow"></i>
+              </div>
+
+              <div>
+                <span> Monthly Revenue </span>
+
+                <h3>₹{{ dashboard.monthlyRevenue }}</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===============================================
+             QUICK ACTIONS
+        ================================================ -->
+
+        <div class="quick-section">
+          <div class="mb-4">
+            <h4 class="fw-bold mb-1">Quick Actions</h4>
+
+            <p class="text-muted mb-0">Quickly access important sections.</p>
+          </div>
+
+          <div class="row g-4">
+            <!-- MANAGE PRODUCTS -->
+
+            <div class="col-md-4">
+              <a routerLink="/products" class="action-card">
+                <div class="action-icon">
+                  <i class="bi bi-box-seam"></i>
+                </div>
+
+                <div>
+                  <h5>Manage Products</h5>
+
+                  <p>View and manage products.</p>
+                </div>
+
+                <i class="bi bi-arrow-right ms-auto"></i>
+              </a>
+            </div>
+
+            <!-- MANAGE ORDERS -->
+
+            <div class="col-md-4">
+              <a routerLink="/admin/orders" class="action-card">
+                <div class="action-icon">
+                  <i class="bi bi-cart-check"></i>
+                </div>
+
+                <div>
+                  <h5>Manage Orders</h5>
+
+                  <p>View and manage customer orders.</p>
+                </div>
+
+                <i class="bi bi-arrow-right ms-auto"></i>
+              </a>
+            </div>
+
+            <!-- PAYMENTS -->
+
+            <div class="col-md-4">
+              <a routerLink="/payments" class="action-card">
+                <div class="action-icon">
+                  <i class="bi bi-credit-card"></i>
+                </div>
+
+                <div>
+                  <h5>Payments</h5>
+
+                  <p>View payment transactions.</p>
+                </div>
+
+                <i class="bi bi-arrow-right ms-auto"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+</div>

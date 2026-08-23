@@ -1,0 +1,308 @@
+<div class="address-form-page">
+  <!-- Header -->
+  <section class="address-form-header">
+    <div class="container">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div>
+          <span class="text-primary fw-semibold"> Shanti Enterprises </span>
+
+          <h1 class="fw-bold mb-1">
+            {{ isEditMode ? 'Edit Address' : 'Add New Address' }}
+          </h1>
+
+          <p class="text-muted mb-0">
+            {{
+              isEditMode
+                ? 'Update your delivery address details.'
+                : 'Add a new delivery address for your orders.'
+            }}
+          </p>
+        </div>
+
+        <button type="button" class="btn btn-outline-primary" (click)="cancel()">
+          <i class="bi bi-arrow-left me-2"></i>
+          Back to Addresses
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Form Section -->
+  <section class="address-form-section">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-7">
+          <!-- Loading -->
+          @if (isLoading) {
+            <div class="form-loading text-center py-5">
+              <div class="spinner-border text-primary" role="status"></div>
+
+              <p class="text-muted mt-3 mb-0">Loading address...</p>
+            </div>
+          }
+
+          @if (!isLoading) {
+            <div class="address-form-card">
+              <!-- Card Header -->
+              <div class="form-card-header">
+                <div class="form-card-icon">
+                  <i class="bi bi-geo-alt"></i>
+                </div>
+
+                <div>
+                  <h4 class="fw-bold mb-1">Delivery Address</h4>
+
+                  <p class="text-muted mb-0">Enter your complete delivery details.</p>
+                </div>
+              </div>
+
+              <!-- Success -->
+              @if (successMessage) {
+                <div class="alert alert-success mt-4 mb-0" role="alert">
+                  <i class="bi bi-check-circle me-2"></i>
+
+                  {{ successMessage }}
+                </div>
+              }
+
+              <!-- Error -->
+              @if (errorMessage) {
+                <div class="alert alert-danger mt-4 mb-0" role="alert">
+                  <i class="bi bi-exclamation-circle me-2"></i>
+
+                  {{ errorMessage }}
+                </div>
+              }
+
+              <!-- Form -->
+              <form [formGroup]="addressForm" (ngSubmit)="saveAddress()" class="mt-4">
+                <!-- Full Name -->
+                <div class="mb-3">
+                  <label for="fullName" class="form-label">
+                    Full Name
+                    <span class="text-danger">*</span>
+                  </label>
+
+                  <input
+                    id="fullName"
+                    type="text"
+                    class="form-control"
+                    formControlName="fullName"
+                    placeholder="Enter full name"
+                    [class.is-invalid]="isInvalid('fullName')"
+                  />
+
+                  @if (isInvalid('fullName')) {
+                    <div class="invalid-feedback">Full name is required.</div>
+                  }
+                </div>
+
+                <!-- Mobile -->
+                <div class="mb-3">
+                  <label for="mobileNumber" class="form-label">
+                    Mobile Number
+                    <span class="text-danger">*</span>
+                  </label>
+
+                  <input
+                    id="mobileNumber"
+                    type="tel"
+                    inputmode="numeric"
+                    maxlength="15"
+                    class="form-control"
+                    formControlName="mobileNumber"
+                    placeholder="Enter mobile number"
+                    [class.is-invalid]="isInvalid('mobileNumber')"
+                  />
+
+                  @if (isInvalid('mobileNumber')) {
+                    <div class="invalid-feedback">Enter a valid mobile number.</div>
+                  }
+                </div>
+
+                <!-- Address Line 1 -->
+                <div class="mb-3">
+                  <label for="addressLine1" class="form-label">
+                    Address Line 1
+                    <span class="text-danger">*</span>
+                  </label>
+
+                  <textarea
+                    id="addressLine1"
+                    rows="2"
+                    class="form-control"
+                    formControlName="addressLine1"
+                    placeholder="House no., street, locality"
+                    [class.is-invalid]="isInvalid('addressLine1')"
+                  ></textarea>
+
+                  @if (isInvalid('addressLine1')) {
+                    <div class="invalid-feedback">Address is required.</div>
+                  }
+                </div>
+
+                <!-- Address Line 2 -->
+                <div class="mb-3">
+                  <label for="addressLine2" class="form-label">
+                    Address Line 2
+                    <span class="text-muted"> (Optional) </span>
+                  </label>
+
+                  <textarea
+                    id="addressLine2"
+                    rows="2"
+                    class="form-control"
+                    formControlName="addressLine2"
+                    placeholder="Apartment, landmark, etc."
+                    [class.is-invalid]="isInvalid('addressLine2')"
+                  ></textarea>
+                </div>
+
+                <!-- City / State -->
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="city" class="form-label">
+                      City
+                      <span class="text-danger">*</span>
+                    </label>
+
+                    <input
+                      id="city"
+                      type="text"
+                      class="form-control"
+                      formControlName="city"
+                      placeholder="Enter city"
+                      [class.is-invalid]="isInvalid('city')"
+                    />
+
+                    @if (isInvalid('city')) {
+                      <div class="invalid-feedback">City is required.</div>
+                    }
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <label for="state" class="form-label">
+                      State
+                      <span class="text-danger">*</span>
+                    </label>
+
+                    <input
+                      id="state"
+                      type="text"
+                      class="form-control"
+                      formControlName="state"
+                      placeholder="Enter state"
+                      [class.is-invalid]="isInvalid('state')"
+                    />
+
+                    @if (isInvalid('state')) {
+                      <div class="invalid-feedback">State is required.</div>
+                    }
+                  </div>
+                </div>
+
+                <!-- Pincode / Country -->
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="pincode" class="form-label">
+                      Pincode
+                      <span class="text-danger">*</span>
+                    </label>
+
+                    <input
+                      id="pincode"
+                      type="text"
+                      inputmode="numeric"
+                      maxlength="6"
+                      class="form-control"
+                      formControlName="pincode"
+                      placeholder="6 digit pincode"
+                      [class.is-invalid]="isInvalid('pincode')"
+                    />
+
+                    @if (isInvalid('pincode')) {
+                      <div class="invalid-feedback">Pincode must be exactly 6 digits.</div>
+                    }
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <label for="country" class="form-label"> Country </label>
+
+                    <input
+                      id="country"
+                      type="text"
+                      class="form-control"
+                      formControlName="country"
+                      placeholder="Country"
+                      [class.is-invalid]="isInvalid('country')"
+                    />
+                  </div>
+                </div>
+
+                <!-- Address Type -->
+                <div class="mb-3">
+                  <label for="addressType" class="form-label">
+                    Address Type
+                    <span class="text-danger">*</span>
+                  </label>
+
+                  <select id="addressType" class="form-select" formControlName="addressType">
+                    <option value="Home">Home</option>
+
+                    <option value="Office">Office</option>
+
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
+                <!-- Default -->
+                <div class="default-address-option mb-4">
+                  <div class="form-check">
+                    <input
+                      id="isDefault"
+                      type="checkbox"
+                      class="form-check-input"
+                      formControlName="isDefault"
+                    />
+
+                    <label for="isDefault" class="form-check-label">
+                      <strong> Set as default address </strong>
+
+                      <small class="d-block text-muted">
+                        This address will be selected automatically during checkout.
+                      </small>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="form-actions d-flex gap-2 justify-content-end">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    [disabled]="isSaving"
+                    (click)="cancel()"
+                  >
+                    Cancel
+                  </button>
+
+                  <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+                    @if (isSaving) {
+                      <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+
+                      Saving...
+                    } @else {
+                      <i class="bi bi-check-lg me-2"></i>
+
+                      {{ isEditMode ? 'Update Address' : 'Save Address' }}
+                    }
+                  </button>
+                </div>
+              </form>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
