@@ -1,0 +1,518 @@
+<div class="admin-order-detail-page">
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+
+  <section class="admin-order-detail-header">
+    <div class="container-fluid">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div>
+          <div class="mb-2">
+            <a routerLink="/admin/orders" class="back-link">
+              <i class="bi bi-arrow-left me-1"></i>
+              Back to Orders
+            </a>
+          </div>
+
+          <span class="text-primary fw-semibold"> Shanti Enterprises </span>
+
+          <h1 class="fw-bold mb-1">Order Details</h1>
+
+          @if (order) {
+            <p class="text-muted mb-0">Order #{{ order.orderNumber }}</p>
+          } @else {
+            <p class="text-muted mb-0">Manage customer order information.</p>
+          }
+        </div>
+
+        <div class="d-flex gap-2 flex-wrap">
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            (click)="refreshOrder()"
+            [disabled]="isLoading"
+          >
+            <i class="bi bi-arrow-clockwise me-2"></i>
+            Refresh
+          </button>
+
+          <a routerLink="/admin/orders" class="btn btn-primary">
+            <i class="bi bi-list-ul me-2"></i>
+            All Orders
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       CONTENT
+  ====================================================== -->
+
+  <section class="admin-order-detail-section">
+    <div class="container-fluid">
+      <!-- =================================================
+           LOADING
+      ================================================== -->
+
+      @if (isLoading) {
+        <div class="detail-loading">
+          <div class="spinner-border text-primary" role="status"></div>
+
+          <p class="text-muted mt-3 mb-0">Loading order details...</p>
+        </div>
+      }
+
+      <!-- =================================================
+           ERROR
+      ================================================== -->
+
+      @if (!isLoading && errorMessage) {
+        <div
+          class="alert alert-danger d-flex align-items-center justify-content-between"
+          role="alert"
+        >
+          <div>
+            <i class="bi bi-exclamation-circle me-2"></i>
+
+            {{ errorMessage }}
+          </div>
+
+          @if (orderId) {
+            <button type="button" class="btn btn-sm btn-outline-danger" (click)="refreshOrder()">
+              Retry
+            </button>
+          }
+        </div>
+      }
+
+      <!-- =================================================
+           SUCCESS
+      ================================================== -->
+
+      @if (!isLoading && successMessage) {
+        <div class="alert alert-success" role="alert">
+          <i class="bi bi-check-circle me-2"></i>
+
+          {{ successMessage }}
+        </div>
+      }
+
+      <!-- =================================================
+           ORDER
+      ================================================== -->
+
+      @if (!isLoading && !errorMessage && order) {
+        <!-- ===============================================
+             TOP ORDER SUMMARY
+        ================================================ -->
+
+        <div class="order-top-card mb-4">
+          <div class="order-top-main">
+            <div>
+              <span class="section-label"> Order Number </span>
+
+              <h3 class="order-number">#{{ order.orderNumber }}</h3>
+
+              <div class="order-date">
+                <i class="bi bi-calendar3 me-1"></i>
+
+                {{ order.createdDate | date: 'dd MMM yyyy, hh:mm a' }}
+              </div>
+            </div>
+
+            <!-- ORDER STATUS -->
+
+            <div class="top-status-box">
+              <span class="status-label"> Order Status </span>
+
+              <span class="status-badge" [ngClass]="getOrderStatusClass(order.orderStatus)">
+                {{ order.orderStatus }}
+              </span>
+
+              <select
+                class="form-select form-select-sm mt-2"
+                [value]="order.orderStatus"
+                [disabled]="isUpdatingOrderStatus"
+                (change)="updateOrderStatus($any($event.target).value)"
+              >
+                @for (status of orderStatuses; track status) {
+                  <option [value]="status">
+                    {{ status }}
+                  </option>
+                }
+              </select>
+
+              @if (isUpdatingOrderStatus) {
+                <small class="text-muted mt-1"> Updating... </small>
+              }
+            </div>
+
+            <!-- PAYMENT STATUS -->
+
+            <div class="top-status-box">
+              <span class="status-label"> Payment Status </span>
+
+              <span class="status-badge" [ngClass]="getPaymentStatusClass(order.paymentStatus)">
+                {{ order.paymentStatus }}
+              </span>
+
+              <select
+                class="form-select form-select-sm mt-2"
+                [value]="order.paymentStatus"
+                [disabled]="isUpdatingPaymentStatus"
+                (change)="updatePaymentStatus($any($event.target).value)"
+              >
+                @for (status of paymentStatuses; track status) {
+                  <option [value]="status">
+                    {{ status }}
+                  </option>
+                }
+              </select>
+
+              @if (isUpdatingPaymentStatus) {
+                <small class="text-muted mt-1"> Updating... </small>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- ===============================================
+             MAIN GRID
+        ================================================ -->
+
+        <div class="row g-4">
+          <!-- =============================================
+               LEFT COLUMN
+          ============================================== -->
+
+          <div class="col-xl-8">
+            <!-- ===========================================
+                 CUSTOMER
+            ============================================ -->
+
+            <div class="detail-card mb-4">
+              <div class="detail-card-header">
+                <div>
+                  <h5 class="fw-bold mb-1">
+                    <i class="bi bi-person me-2 text-primary"></i>
+                    Customer Information
+                  </h5>
+
+                  <span class="text-muted small"> Customer associated with this order </span>
+                </div>
+              </div>
+
+              <div class="customer-detail">
+                <div class="customer-avatar-large">
+                  <i class="bi bi-person"></i>
+                </div>
+
+                <div class="customer-detail-content">
+                  <h5 class="fw-bold mb-1">
+                    {{ order.customerName }}
+                  </h5>
+
+                  <div class="customer-detail-row">
+                    <i class="bi bi-envelope"></i>
+
+                    <span>
+                      {{ order.customerEmail }}
+                    </span>
+                  </div>
+
+                  <div class="customer-detail-row">
+                    <i class="bi bi-telephone"></i>
+
+                    <span>
+                      {{ order.shippingMobile }}
+                    </span>
+                  </div>
+
+                  <div class="customer-detail-row">
+                    <i class="bi bi-person-badge"></i>
+
+                    <span> User ID: {{ order.userId }} </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===========================================
+                 SHIPPING ADDRESS
+            ============================================ -->
+
+            <div class="detail-card mb-4">
+              <div class="detail-card-header">
+                <div>
+                  <h5 class="fw-bold mb-1">
+                    <i class="bi bi-geo-alt me-2 text-primary"></i>
+                    Delivery Address
+                  </h5>
+
+                  <span class="text-muted small"> Shipping address used for this order </span>
+                </div>
+              </div>
+
+              <div class="shipping-address">
+                <h6 class="fw-bold mb-2">
+                  {{ order.shippingFullName }}
+                </h6>
+
+                <div class="shipping-mobile mb-2">
+                  <i class="bi bi-telephone me-2"></i>
+
+                  {{ order.shippingMobile }}
+                </div>
+
+                <div class="shipping-text">
+                  {{ order.shippingAddressLine1 }}
+
+                  @if (order.shippingAddressLine2) {
+                    <br />
+
+                    {{ order.shippingAddressLine2 }}
+                  }
+
+                  <br />
+
+                  {{ order.shippingCity }},
+                  {{ order.shippingState }}
+                  - {{ order.shippingPincode }}
+
+                  <br />
+
+                  {{ order.shippingCountry }}
+                </div>
+              </div>
+            </div>
+
+            <!-- ===========================================
+                 ORDER ITEMS
+            ============================================ -->
+
+            <div class="detail-card">
+              <div class="detail-card-header">
+                <div>
+                  <h5 class="fw-bold mb-1">
+                    <i class="bi bi-box-seam me-2 text-primary"></i>
+                    Order Items
+                  </h5>
+
+                  <span class="text-muted small"> {{ totalItems }} item(s) </span>
+                </div>
+              </div>
+
+              <div class="admin-order-items">
+                @for (item of order.items; track item.orderItemId) {
+                  <div class="admin-order-item">
+                    <!-- PRODUCT ICON -->
+
+                    <div class="item-icon">
+                      <i class="bi bi-box-seam"></i>
+                    </div>
+
+                    <!-- PRODUCT DETAILS -->
+
+                    <div class="item-details">
+                      <h6 class="fw-bold mb-1" [title]="item.productName">
+                        {{ item.productName }}
+                      </h6>
+
+                      <div class="item-meta">
+                        <span>
+                          SKU:
+                          <strong>
+                            {{ item.sku }}
+                          </strong>
+                        </span>
+
+                        <span>
+                          Product ID:
+                          <strong>
+                            {{ item.productId }}
+                          </strong>
+                        </span>
+                      </div>
+
+                      <div class="item-meta">
+                        <span>
+                          Quantity:
+                          <strong>
+                            {{ item.quantity }}
+                          </strong>
+                        </span>
+
+                        <span>
+                          GST:
+                          <strong> {{ item.gstPercentage }}% </strong>
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- PRICE -->
+
+                    <div class="item-price">
+                      <div class="item-unit-price">
+                        ₹{{ item.unitPrice | number: '1.2-2' }}
+                        <span>/ item</span>
+                      </div>
+
+                      <strong class="item-total-price">
+                        ₹{{ item.totalPrice | number: '1.2-2' }}
+                      </strong>
+
+                      <small class="item-gst"> GST ₹{{ item.gstAmount | number: '1.2-2' }} </small>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- =============================================
+               RIGHT COLUMN
+          ============================================== -->
+
+          <div class="col-xl-4">
+            <!-- ===========================================
+                 ORDER SUMMARY
+            ============================================ -->
+
+            <div class="summary-card mb-4">
+              <h5 class="fw-bold mb-4">Order Summary</h5>
+
+              <div class="summary-row">
+                <span> Items </span>
+
+                <strong>
+                  {{ totalItems }}
+                </strong>
+              </div>
+
+              <div class="summary-row">
+                <span> Subtotal </span>
+
+                <strong> ₹{{ order.subtotal | number: '1.2-2' }} </strong>
+              </div>
+
+              <div class="summary-row">
+                <span> GST </span>
+
+                <strong> ₹{{ order.gstAmount | number: '1.2-2' }} </strong>
+              </div>
+
+              <div class="summary-row">
+                <span> Shipping </span>
+
+                @if (order.shippingCharge > 0) {
+                  <strong> ₹{{ order.shippingCharge | number: '1.2-2' }} </strong>
+                } @else {
+                  <strong class="text-success"> FREE </strong>
+                }
+              </div>
+
+              <hr />
+
+              <div class="summary-total">
+                <span> Grand Total </span>
+
+                <strong> ₹{{ order.grandTotal | number: '1.2-2' }} </strong>
+              </div>
+
+              <div class="secure-payment">
+                <i class="bi bi-shield-check me-2"></i>
+
+                Secure order information
+              </div>
+            </div>
+
+            <!-- ===========================================
+                 PAYMENT INFORMATION
+            ============================================ -->
+
+            <div class="info-card mb-4">
+              <div class="info-card-title">
+                <i class="bi bi-credit-card text-primary"></i>
+
+                Payment Information
+              </div>
+
+              <div class="info-row">
+                <span> Payment Status </span>
+
+                <span class="status-badge" [ngClass]="getPaymentStatusClass(order.paymentStatus)">
+                  {{ order.paymentStatus }}
+                </span>
+              </div>
+
+              <div class="info-row">
+                <span> Order Status </span>
+
+                <span class="status-badge" [ngClass]="getOrderStatusClass(order.orderStatus)">
+                  {{ order.orderStatus }}
+                </span>
+              </div>
+
+              <div class="info-row">
+                <span> Order ID </span>
+
+                <strong>
+                  {{ order.orderId }}
+                </strong>
+              </div>
+
+              <div class="info-row">
+                <span> User ID </span>
+
+                <strong>
+                  {{ order.userId }}
+                </strong>
+              </div>
+            </div>
+
+            <!-- ===========================================
+                 ORDER TIMELINE / DATES
+            ============================================ -->
+
+            <div class="info-card">
+              <div class="info-card-title">
+                <i class="bi bi-clock-history text-primary"></i>
+
+                Order Information
+              </div>
+
+              <div class="info-row">
+                <span> Created Date </span>
+
+                <strong>
+                  {{ order.createdDate | date: 'dd MMM yyyy' }}
+                </strong>
+              </div>
+
+              <div class="info-row">
+                <span> Created Time </span>
+
+                <strong>
+                  {{ order.createdDate | date: 'hh:mm a' }}
+                </strong>
+              </div>
+
+              <div class="info-row">
+                <span> Last Updated </span>
+
+                @if (order.updatedDate) {
+                  <strong>
+                    {{ order.updatedDate | date: 'dd MMM yyyy, hh:mm a' }}
+                  </strong>
+                } @else {
+                  <strong class="text-muted"> Not updated </strong>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+</div>

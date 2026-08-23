@@ -1,0 +1,226 @@
+<p>order-list works!</p>
+<div class="orders-page">
+  <!-- =========================
+       HEADER
+  ========================== -->
+
+  <section class="orders-header">
+    <div class="container">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div>
+          <span class="text-primary fw-semibold"> Shanti Enterprises </span>
+
+          <h1 class="fw-bold mb-1">My Orders</h1>
+
+          <p class="text-muted mb-0">View and track all your orders.</p>
+        </div>
+
+        <div class="d-flex gap-2">
+          <a routerLink="/products" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-2"></i>
+            Continue Shopping
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================
+       CONTENT
+  ========================== -->
+
+  <section class="orders-section">
+    <div class="container">
+      <!-- =========================
+           ERROR
+      ========================== -->
+
+      @if (!isLoading && errorMessage) {
+        <div
+          class="alert alert-danger d-flex align-items-center justify-content-between"
+          role="alert"
+        >
+          <div>
+            <i class="bi bi-exclamation-circle me-2"></i>
+
+            {{ errorMessage }}
+          </div>
+
+          <button type="button" class="btn btn-sm btn-outline-danger" (click)="loadOrders()">
+            Retry
+          </button>
+        </div>
+      }
+
+      <!-- =========================
+           LOADING
+      ========================== -->
+
+      @if (isLoading) {
+        <div class="orders-loading">
+          <div class="spinner-border text-primary" role="status"></div>
+
+          <p class="text-muted mt-3 mb-0">Loading your orders...</p>
+        </div>
+      }
+
+      <!-- =========================
+           EMPTY
+      ========================== -->
+
+      @if (!isLoading && !errorMessage && orders.length === 0) {
+        <div class="empty-orders text-center">
+          <div class="empty-orders-icon">
+            <i class="bi bi-bag-x"></i>
+          </div>
+
+          <h3 class="fw-bold mt-4">No Orders Found</h3>
+
+          <p class="text-muted">You haven't placed any orders yet.</p>
+
+          <a routerLink="/products" class="btn btn-primary mt-2">
+            <i class="bi bi-shop me-2"></i>
+            Start Shopping
+          </a>
+        </div>
+      }
+
+      <!-- =========================
+           ORDERS
+      ========================== -->
+
+      @if (!isLoading && !errorMessage && orders.length > 0) {
+        <div class="orders-list">
+          @for (order of orders; track order.orderId) {
+            <div class="order-card">
+              <!-- =========================
+                   ORDER HEADER
+              ========================== -->
+
+              <div class="order-card-header">
+                <div>
+                  <div class="order-number">
+                    <span class="text-muted"> Order </span>
+
+                    <strong>
+                      {{ order.orderNumber }}
+                    </strong>
+                  </div>
+
+                  <div class="order-date">
+                    <i class="bi bi-calendar3 me-1"></i>
+
+                    {{ order.createdDate | date: 'dd MMM yyyy, hh:mm a' }}
+                  </div>
+                </div>
+
+                <div class="order-statuses">
+                  <span class="badge" [ngClass]="getOrderStatusClass(order.orderStatus)">
+                    {{ order.orderStatus }}
+                  </span>
+
+                  <span class="badge" [ngClass]="getPaymentStatusClass(order.paymentStatus)">
+                    Payment:
+                    {{ order.paymentStatus }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- =========================
+                   ORDER ITEMS
+              ========================== -->
+
+              <div class="order-items">
+                @for (item of order.items; track item.orderItemId) {
+                  <div class="order-item">
+                    <div class="order-item-icon">
+                      <i class="bi bi-box-seam"></i>
+                    </div>
+
+                    <div class="order-item-details">
+                      <h6 class="fw-semibold mb-1">
+                        {{ item.productName }}
+                      </h6>
+
+                      <div class="item-meta">
+                        <span>
+                          SKU:
+                          <strong>
+                            {{ item.sku }}
+                          </strong>
+                        </span>
+
+                        <span>
+                          Qty:
+                          <strong>
+                            {{ item.quantity }}
+                          </strong>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="order-item-price">₹{{ item.totalPrice | number: '1.2-2' }}</div>
+                  </div>
+                }
+              </div>
+
+              <!-- =========================
+                   ORDER FOOTER
+              ========================== -->
+
+              <div class="order-card-footer">
+                <!-- Items -->
+
+                <div class="order-summary-info">
+                  <div>
+                    <span class="text-muted"> Items </span>
+
+                    <strong>
+                      {{ order.items.length }}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span class="text-muted"> Subtotal </span>
+
+                    <strong> ₹{{ order.subtotal | number: '1.2-2' }} </strong>
+                  </div>
+
+                  <div>
+                    <span class="text-muted"> GST </span>
+
+                    <strong> ₹{{ order.gstAmount | number: '1.2-2' }} </strong>
+                  </div>
+
+                  @if (order.couponDiscount > 0) {
+                    <div>
+                      <span class="text-muted"> Discount </span>
+
+                      <strong class="text-success">
+                        -₹{{ order.couponDiscount | number: '1.2-2' }}
+                      </strong>
+                    </div>
+                  }
+
+                  <div class="grand-total">
+                    <span> Grand Total </span>
+
+                    <strong> ₹{{ order.grandTotal | number: '1.2-2' }} </strong>
+                  </div>
+                </div>
+
+                <!-- View Order -->
+
+                <button type="button" class="btn btn-primary" (click)="viewOrder(order)">
+                  View Details
+
+                  <i class="bi bi-arrow-right ms-2"></i>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </section>
+</div>

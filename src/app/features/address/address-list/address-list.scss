@@ -1,0 +1,159 @@
+.address-page {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.address-header {
+  padding: 48px 0 32px;
+  background: #ffffff;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.address-section {
+  padding: 40px 0 60px;
+}
+
+.address-loading {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-address {
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 16px;
+  padding: 60px 20px;
+}
+
+.empty-address-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: #eaf2ff;
+  color: #0d6efd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+}
+
+.address-card {
+  height: 100%;
+  background: #ffffff;
+  border: 1px solid #e2e6ea;
+  border-radius: 16px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.address-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+}
+
+.address-card.default-address {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 1px rgba(13, 110, 253, 0.12);
+}
+
+.address-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #edf0f2;
+}
+
+.address-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #0d6efd;
+  font-weight: 600;
+}
+
+.address-type i {
+  font-size: 18px;
+}
+
+.default-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: #e8f5e9;
+  color: #198754;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.address-details {
+  flex: 1;
+  padding: 20px 0;
+}
+
+.address-mobile {
+  color: #495057;
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+
+.address-mobile i {
+  color: #0d6efd;
+}
+
+.address-text {
+  color: #5f6368;
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+.address-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 16px;
+  border-top: 1px solid #edf0f2;
+}
+
+.address-actions .btn {
+  flex: 1;
+}
+
+@media (max-width: 767.98px) {
+  .address-header {
+    padding: 32px 0 24px;
+  }
+
+  .address-section {
+    padding: 28px 0 40px;
+  }
+
+  .address-card {
+    padding: 18px;
+  }
+
+  .address-card-header {
+    align-items: flex-start;
+  }
+
+  .address-actions {
+    flex-direction: column;
+  }
+
+  .address-actions .btn {
+    width: 100%;
+  }
+}
