@@ -1,0 +1,350 @@
+<div class="product-page">
+  <!-- =====================================================
+       PAGE HEADER
+  ====================================================== -->
+
+  <section class="page-header">
+    <div>
+      <div class="page-label">Admin Panel</div>
+
+      <h1>Products</h1>
+
+      <p>Manage your products from one place.</p>
+    </div>
+
+    <button type="button" class="btn btn-primary" (click)="addProduct()">
+      <span class="btn-icon">+</span>
+      Add Product
+    </button>
+  </section>
+
+  <!-- =====================================================
+       ERROR
+  ====================================================== -->
+
+  <div *ngIf="errorMessage" class="alert alert-error">
+    {{ errorMessage }}
+  </div>
+
+  <!-- =====================================================
+       SUMMARY CARDS
+  ====================================================== -->
+
+  <section class="summary-grid">
+    <!-- Total -->
+
+    <div class="summary-card">
+      <div class="summary-icon blue">◇</div>
+
+      <div>
+        <div class="summary-label">Total Products</div>
+
+        <div class="summary-value">
+          {{ totalProducts }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Active -->
+
+    <div class="summary-card">
+      <div class="summary-icon green">✓</div>
+
+      <div>
+        <div class="summary-label">Active Products</div>
+
+        <div class="summary-value">
+          {{ activeProducts }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Inactive -->
+
+    <div class="summary-card">
+      <div class="summary-icon orange">⏸</div>
+
+      <div>
+        <div class="summary-label">Inactive Products</div>
+
+        <div class="summary-value">
+          {{ inactiveProducts }}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       SEARCH & FILTER
+  ====================================================== -->
+
+  <section class="filter-card">
+    <div class="filter-header">
+      <div>
+        <h2>Search &amp; Filter</h2>
+
+        <p>Find products by name, SKU, category or description.</p>
+      </div>
+
+      <button type="button" class="btn btn-outline" (click)="clearFilters()">
+        ↻ Clear Filters
+      </button>
+    </div>
+
+    <div class="filter-grid">
+      <!-- Search -->
+
+      <div class="form-group search-group">
+        <label for="productSearch"> Search Products </label>
+
+        <div class="search-box">
+          <span class="search-icon"> ⌕ </span>
+
+          <input
+            id="productSearch"
+            type="text"
+            [(ngModel)]="searchText"
+            (input)="onSearch()"
+            placeholder="Search by product name, SKU, category..."
+          />
+        </div>
+      </div>
+
+      <!-- Status -->
+
+      <div class="form-group">
+        <label for="productStatus"> Status </label>
+
+        <select id="productStatus" [(ngModel)]="statusFilter" (change)="onStatusChange()">
+          <option value="all">All Status</option>
+
+          <option value="active">Active</option>
+
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+
+      <!-- Result -->
+
+      <div class="result-box">
+        <span> Results </span>
+
+        <strong>
+          {{ filteredProducts.length }}
+        </strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       PRODUCT LIST
+  ====================================================== -->
+
+  <section class="list-card">
+    <!-- List Header -->
+
+    <div class="list-header">
+      <div>
+        <h2>Product List</h2>
+
+        <p>Showing {{ filteredProducts.length }} of {{ totalProducts }} products</p>
+      </div>
+
+      <button type="button" class="btn btn-primary" (click)="addProduct()">
+        <span class="btn-icon">+</span>
+        Add Product
+      </button>
+    </div>
+
+    <!-- =================================================
+         LOADING
+    ================================================== -->
+
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner"></div>
+
+      <p>Loading products...</p>
+    </div>
+
+    <!-- =================================================
+         EMPTY
+    ================================================== -->
+
+    <div *ngIf="!isLoading && filteredProducts.length === 0" class="empty-state">
+      <div class="empty-icon">◇</div>
+
+      <h3>No products found</h3>
+
+      <p>Try changing your search or filter.</p>
+
+      <button type="button" class="btn btn-outline" (click)="clearFilters()">Clear Filters</button>
+    </div>
+
+    <!-- =================================================
+         PRODUCT TABLE
+    ================================================== -->
+
+    <div *ngIf="!isLoading && filteredProducts.length > 0" class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>PRODUCT</th>
+
+            <th>CATEGORY</th>
+
+            <th>SKU</th>
+
+            <th>PRICE</th>
+
+            <th>STOCK</th>
+
+            <th>STATUS</th>
+
+            <th>CREATED DATE</th>
+
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let product of filteredProducts">
+            <!-- PRODUCT -->
+
+            <td>
+              <div class="product-info">
+                <div class="product-image">
+                  <img
+                    *ngIf="product.imageUrl"
+                    [src]="product.imageUrl"
+                    [alt]="product.productName"
+                  />
+
+                  <div *ngIf="!product.imageUrl" class="no-image">◇</div>
+                </div>
+
+                <div class="product-details">
+                  <strong>
+                    {{ product.productName }}
+                  </strong>
+
+                  <span> ID #{{ product.productId }} </span>
+                </div>
+              </div>
+            </td>
+
+            <!-- CATEGORY -->
+
+            <td>
+              <span class="category-text">
+                {{ product.categoryName }}
+              </span>
+            </td>
+
+            <!-- SKU -->
+
+            <td>
+              <span class="sku">
+                {{ product.sku }}
+              </span>
+            </td>
+
+            <!-- PRICE -->
+
+            <td>
+              <div class="price-info">
+                <strong> ₹{{ product.mrp | number: '1.2-2' }} </strong>
+
+                <span> Wholesale: ₹{{ product.wholesalePrice | number: '1.2-2' }} </span>
+              </div>
+            </td>
+
+            <!-- STOCK -->
+
+            <td>
+              <div
+                class="stock"
+                [class.stock-low]="product.stock <= 10"
+                [class.stock-out]="product.stock === 0"
+              >
+                <strong>
+                  {{ product.stock }}
+                </strong>
+
+                <span>
+                  {{
+                    product.stock === 0
+                      ? 'Out of Stock'
+                      : product.stock <= 10
+                        ? 'Low Stock'
+                        : 'In Stock'
+                  }}
+                </span>
+              </div>
+            </td>
+
+            <!-- STATUS -->
+
+            <td>
+              <span
+                class="status-badge"
+                [class.active]="product.isActive"
+                [class.inactive]="!product.isActive"
+              >
+                <span class="status-dot"></span>
+
+                {{ product.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+
+            <!-- CREATED DATE -->
+
+            <td>
+              <span class="created-date">
+                {{ product.createdDate | date: 'dd MMM yyyy' }}
+              </span>
+            </td>
+
+            <!-- ACTIONS -->
+
+            <td>
+              <div class="actions">
+                <!-- View -->
+
+                <button
+                  type="button"
+                  class="action-btn view"
+                  title="View Product"
+                  (click)="viewProduct(product.productId)"
+                >
+                  👁
+                </button>
+
+                <!-- Edit -->
+
+                <button
+                  type="button"
+                  class="action-btn edit"
+                  title="Edit Product"
+                  (click)="editProduct(product.productId)"
+                >
+                  ✎
+                </button>
+
+                <!-- Delete -->
+
+                <button
+                  type="button"
+                  class="action-btn delete"
+                  title="Delete Product"
+                  (click)="deleteProduct(product)"
+                >
+                  🗑
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

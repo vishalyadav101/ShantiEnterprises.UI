@@ -1,0 +1,290 @@
+<div class="page">
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+
+  <header class="page-header">
+    <div>
+      <div class="breadcrumb">Admin Panel / Products / Product Details</div>
+
+      <h1>Product Details</h1>
+
+      <p>View complete product information.</p>
+    </div>
+
+    <button type="button" class="back-btn" (click)="goBack()">← Back to Products</button>
+  </header>
+
+  <!-- =====================================================
+       LOADING
+  ====================================================== -->
+
+  <div class="state-card" *ngIf="isLoading">
+    <div class="loader"></div>
+
+    <p>Loading product details...</p>
+  </div>
+
+  <!-- =====================================================
+       ERROR
+  ====================================================== -->
+
+  <div class="error-card" *ngIf="!isLoading && errorMessage">
+    <div class="error-icon">!</div>
+
+    <h3>Unable to load product</h3>
+
+    <p>
+      {{ errorMessage }}
+    </p>
+
+    <button type="button" (click)="goBack()">Back to Products</button>
+  </div>
+
+  <!-- =====================================================
+       PRODUCT DETAILS
+  ====================================================== -->
+
+  <main *ngIf="!isLoading && product">
+    <!-- =================================================
+         TOP PRODUCT SECTION
+    ================================================== -->
+
+    <section class="product-card">
+      <!-- ===============================================
+           IMAGE SECTION
+      ================================================ -->
+
+      <div class="image-section">
+        <div class="main-image">
+          <img
+            *ngIf="selectedImage"
+            [src]="getImageUrl(selectedImage)"
+            [alt]="product.productName"
+          />
+
+          <div class="no-image" *ngIf="!selectedImage">No Image Available</div>
+        </div>
+
+        <!-- =============================================
+             THUMBNAILS
+        ============================================== -->
+
+        <div class="thumbnail-list" *ngIf="product.images.length">
+          <button
+            type="button"
+            class="thumbnail"
+            *ngFor="let image of product.images"
+            [class.selected]="selectedImage === image.imageUrl"
+            (click)="selectImage(image.imageUrl)"
+          >
+            <img [src]="getImageUrl(image.imageUrl)" [alt]="product.productName" />
+          </button>
+        </div>
+      </div>
+
+      <!-- ===============================================
+           PRODUCT BASIC INFORMATION
+      ================================================ -->
+
+      <div class="basic-info">
+        <!-- STATUS -->
+
+        <div class="status-row">
+          <span
+            class="status"
+            [class.active]="product.isActive"
+            [class.inactive]="!product.isActive"
+          >
+            <span class="status-dot"></span>
+
+            {{ product.isActive ? 'Active' : 'Inactive' }}
+          </span>
+
+          <span class="sku"> SKU: {{ product.sku }} </span>
+        </div>
+
+        <!-- PRODUCT NAME -->
+
+        <h2>
+          {{ product.productName }}
+        </h2>
+
+        <!-- CATEGORY -->
+
+        <div class="category">
+          {{ product.categoryName }}
+        </div>
+
+        <!-- DESCRIPTION -->
+
+        <p class="description">
+          {{ product.description || 'No description available.' }}
+        </p>
+
+        <!-- =============================================
+             PRICE
+        ============================================== -->
+
+        <div class="price-section">
+          <div class="price-item">
+            <span class="label"> MRP </span>
+
+            <strong> ₹{{ product.mrp | number: '1.2-2' }} </strong>
+          </div>
+
+          <div class="price-item">
+            <span class="label"> Wholesale Price </span>
+
+            <strong> ₹{{ product.wholesalePrice | number: '1.2-2' }} </strong>
+          </div>
+
+          <div class="price-item">
+            <span class="label"> GST </span>
+
+            <strong> {{ product.gstPercentage }}% </strong>
+          </div>
+        </div>
+
+        <!-- =============================================
+             STOCK
+        ============================================== -->
+
+        <div class="stock-section">
+          <span class="label"> Available Stock </span>
+
+          <strong>
+            {{ product.stock }}
+          </strong>
+
+          <span class="stock-status" [ngClass]="stockClass">
+            {{ stockStatus }}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================
+         INFORMATION GRID
+    ================================================== -->
+
+    <section class="info-grid">
+      <!-- ===============================================
+           PRODUCT INFORMATION
+      ================================================ -->
+
+      <div class="info-card">
+        <div class="card-header">
+          <div>
+            <h3>Product Information</h3>
+
+            <p>Basic product details</p>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <span> Product ID </span>
+
+          <strong> #{{ product.productId }} </strong>
+        </div>
+
+        <div class="info-row">
+          <span> Product Name </span>
+
+          <strong>
+            {{ product.productName }}
+          </strong>
+        </div>
+
+        <div class="info-row">
+          <span> Category </span>
+
+          <strong>
+            {{ product.categoryName }}
+          </strong>
+        </div>
+
+        <div class="info-row">
+          <span> SKU </span>
+
+          <strong>
+            {{ product.sku }}
+          </strong>
+        </div>
+
+        <div class="info-row">
+          <span> GST Percentage </span>
+
+          <strong> {{ product.gstPercentage }}% </strong>
+        </div>
+
+        <div class="info-row">
+          <span> Created Date </span>
+
+          <strong>
+            {{ product.createdDate | date: 'dd MMM yyyy' }}
+          </strong>
+        </div>
+
+        <div class="info-row">
+          <span> Status </span>
+
+          <strong [class.active-text]="product.isActive" [class.inactive-text]="!product.isActive">
+            {{ product.isActive ? 'Active' : 'Inactive' }}
+          </strong>
+        </div>
+      </div>
+
+      <!-- ===============================================
+           PRICE TIERS
+      ================================================ -->
+
+      <div class="info-card">
+        <div class="card-header">
+          <div>
+            <h3>Price Tiers</h3>
+
+            <p>Quantity based pricing</p>
+          </div>
+        </div>
+
+        <!-- NO PRICE TIERS -->
+
+        <div class="empty" *ngIf="!product.priceTiers.length">
+          <div class="empty-icon">₹</div>
+
+          <p>No price tiers available.</p>
+        </div>
+
+        <!-- PRICE TIERS -->
+
+        <div class="tier" *ngFor="let tier of product.priceTiers">
+          <div class="tier-quantity">
+            <strong>
+              {{ tier.minQuantity }}
+
+              <span *ngIf="tier.maxQuantity !== null">
+                -
+                {{ tier.maxQuantity }}
+              </span>
+
+              <span *ngIf="tier.maxQuantity === null"> + </span>
+            </strong>
+
+            <small> Quantity </small>
+          </div>
+
+          <div class="tier-price">₹{{ tier.price | number: '1.2-2' }}</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================
+         PRODUCT IMAGE MANAGEMENT
+    ================================================== -->
+
+    <section class="images-card">
+      <app-product-images [productId]="product.productId"></app-product-images>
+    </section>
+  </main>
+</div>

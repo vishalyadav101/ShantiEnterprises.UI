@@ -1,0 +1,724 @@
+/* =========================================================
+   PAGE
+========================================================= */
+
+.page {
+  min-height: 100vh;
+  background: #f6f8fc;
+  padding-bottom: 50px;
+}
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.page-header {
+  background: #ffffff;
+  border-bottom: 1px solid #dbe3ef;
+  padding: 28px 32px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  margin-bottom: 8px;
+
+  font-size: 13px;
+  color: #71809a;
+}
+
+.breadcrumb a {
+  color: #1268ff;
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.page-header h1 {
+  margin: 0;
+
+  color: #071a35;
+
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.page-header p {
+  margin: 7px 0 0;
+
+  color: #657894;
+
+  font-size: 14px;
+}
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 40px;
+
+  padding: 0 17px;
+
+  border: 1px solid #1268ff;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #1268ff;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  text-decoration: none;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.back-button:hover {
+  background: #1268ff;
+  color: #ffffff;
+
+  box-shadow: 0 4px 12px rgba(18, 104, 255, 0.15);
+}
+
+/* =========================================================
+   MAIN FORM
+========================================================= */
+
+.product-form {
+  width: min(900px, calc(100% - 40px));
+
+  margin: 28px auto 0;
+}
+
+/* =========================================================
+   FORM CARD
+========================================================= */
+
+.form-card {
+  margin-bottom: 20px;
+
+  background: #ffffff;
+
+  border: 1px solid #dbe3ef;
+  border-radius: 10px;
+
+  overflow: hidden;
+
+  box-shadow: 0 3px 12px rgba(17, 42, 78, 0.035);
+}
+
+/* =========================================================
+   CARD HEADER
+========================================================= */
+
+.card-header {
+  padding: 24px 25px 20px;
+
+  border-bottom: 1px solid #e5ebf3;
+}
+
+.card-header h2 {
+  margin: 0;
+
+  color: #071a35;
+
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.card-header p {
+  margin: 6px 0 0;
+
+  color: #6d7e98;
+
+  font-size: 13px;
+}
+
+/* =========================================================
+   FORM BODY
+========================================================= */
+
+.form-body {
+  padding: 24px 25px;
+
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.form-body.two-column {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* =========================================================
+   FORM GROUP
+========================================================= */
+
+.form-group {
+  min-width: 0;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #152b4a;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.required {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+/* =========================================================
+   INPUTS
+========================================================= */
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  box-sizing: border-box;
+
+  border: 1px solid #cfd9e7;
+  border-radius: 6px;
+
+  background: #ffffff;
+
+  color: #172b4d;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.form-group input,
+.form-group select {
+  height: 44px;
+
+  padding: 0 13px;
+}
+
+.form-group textarea {
+  min-height: 120px;
+
+  padding: 12px 13px;
+
+  resize: vertical;
+
+  line-height: 1.5;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #9aa9bf;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #1268ff;
+
+  box-shadow: 0 0 0 3px rgba(18, 104, 255, 0.1);
+}
+
+.form-group input:disabled,
+.form-group textarea:disabled,
+.form-group select:disabled {
+  background: #f5f7fa;
+
+  color: #8290a5;
+
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   LABEL ROW
+========================================================= */
+
+.label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.character-count {
+  color: #8796ac;
+
+  font-size: 11px;
+}
+
+/* =========================================================
+   SMALL HELP TEXT
+========================================================= */
+
+.form-group small {
+  display: block;
+
+  margin-top: 6px;
+
+  color: #8090a8;
+
+  font-size: 11px;
+}
+
+/* =========================================================
+   INPUT PREFIX / SUFFIX
+========================================================= */
+
+.input-with-prefix,
+.input-with-suffix {
+  display: flex;
+
+  width: 100%;
+}
+
+.input-prefix,
+.input-suffix {
+  height: 44px;
+
+  min-width: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #cfd9e7;
+
+  background: #f5f7fa;
+
+  color: #52647e;
+
+  font-size: 13px;
+}
+
+.input-prefix {
+  border-right: 0;
+
+  border-radius: 6px 0 0 6px;
+}
+
+.input-suffix {
+  border-left: 0;
+
+  border-radius: 0 6px 6px 0;
+}
+
+.input-with-prefix input {
+  border-radius: 0 6px 6px 0;
+}
+
+.input-with-suffix input {
+  border-radius: 6px 0 0 6px;
+}
+
+/* =========================================================
+   STATUS TOGGLE
+========================================================= */
+
+.status-toggle {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  width: fit-content;
+
+  cursor: pointer;
+
+  user-select: none;
+}
+
+.status-toggle input {
+  position: absolute;
+
+  opacity: 0;
+
+  pointer-events: none;
+}
+
+.toggle {
+  position: relative;
+
+  width: 44px;
+  height: 24px;
+
+  flex-shrink: 0;
+
+  border-radius: 30px;
+
+  background: #cbd5e1;
+
+  transition: background 0.2s ease;
+}
+
+.toggle::after {
+  content: '';
+
+  position: absolute;
+
+  top: 3px;
+  left: 3px;
+
+  width: 18px;
+  height: 18px;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+
+  transition: transform 0.2s ease;
+}
+
+.status-toggle input:checked + .toggle {
+  background: #10b981;
+}
+
+.status-toggle input:checked + .toggle::after {
+  transform: translateX(20px);
+}
+
+.status-toggle input:disabled + .toggle {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+}
+
+.status-content {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.status-content strong {
+  color: #172b4d;
+
+  font-size: 13px;
+}
+
+.status-content small {
+  margin: 0;
+
+  color: #7a8aa3;
+
+  font-size: 11px;
+}
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
+.message {
+  width: min(900px, calc(100% - 40px));
+
+  margin: 20px auto 0;
+
+  padding: 13px 16px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  border-radius: 7px;
+
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.message-icon {
+  width: 22px;
+  height: 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.error-message {
+  border: 1px solid #fecaca;
+
+  background: #fff5f5;
+
+  color: #b42318;
+}
+
+.error-message .message-icon {
+  background: #fee2e2;
+
+  color: #dc2626;
+}
+
+.success-message {
+  border: 1px solid #bbf7d0;
+
+  background: #f0fdf4;
+
+  color: #15803d;
+}
+
+.success-message .message-icon {
+  background: #dcfce7;
+
+  color: #16a34a;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading-container {
+  width: min(900px, calc(100% - 40px));
+
+  min-height: 300px;
+
+  margin: 28px auto;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  background: #ffffff;
+
+  border: 1px solid #dbe3ef;
+  border-radius: 10px;
+}
+
+.loading-container p {
+  margin-top: 14px;
+
+  color: #71809a;
+
+  font-size: 13px;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+
+  border: 3px solid #dbe3ef;
+  border-top-color: #1268ff;
+
+  border-radius: 50%;
+
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   FORM ACTIONS
+========================================================= */
+
+.form-actions {
+  display: flex;
+
+  justify-content: flex-end;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 2px 0 20px;
+}
+
+.cancel-button,
+.save-button {
+  min-height: 42px;
+
+  padding: 0 20px;
+
+  border-radius: 6px;
+
+  font-family: inherit;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.cancel-button {
+  border: 1px solid #cbd5e1;
+
+  background: #ffffff;
+
+  color: #334155;
+}
+
+.cancel-button:hover:not(:disabled) {
+  background: #f8fafc;
+
+  border-color: #94a3b8;
+}
+
+.save-button {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  border: 1px solid #1268ff;
+
+  background: #1268ff;
+
+  color: #ffffff;
+}
+
+.save-button:hover:not(:disabled) {
+  background: #0b5de7;
+
+  border-color: #0b5de7;
+
+  box-shadow: 0 5px 14px rgba(18, 104, 255, 0.2);
+}
+
+.cancel-button:disabled,
+.save-button:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   BUTTON SPINNER
+========================================================= */
+
+.button-spinner {
+  width: 14px;
+  height: 14px;
+
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #ffffff;
+
+  border-radius: 50%;
+
+  animation: spin 0.7s linear infinite;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+  .page-header {
+    padding: 22px 20px;
+
+    flex-direction: column;
+  }
+
+  .page-header h1 {
+    font-size: 26px;
+  }
+
+  .back-button {
+    align-self: flex-start;
+  }
+
+  .product-form,
+  .message,
+  .loading-container {
+    width: calc(100% - 28px);
+  }
+
+  .form-body.two-column {
+    grid-template-columns: 1fr;
+  }
+
+  .form-body {
+    padding: 20px;
+  }
+
+  .card-header {
+    padding: 20px;
+  }
+
+  .form-actions {
+    padding-bottom: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header {
+    padding: 18px 14px;
+  }
+
+  .page-header h1 {
+    font-size: 23px;
+  }
+
+  .product-form,
+  .message,
+  .loading-container {
+    width: calc(100% - 20px);
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+
+    align-items: stretch;
+  }
+
+  .cancel-button,
+  .save-button {
+    width: 100%;
+  }
+}
