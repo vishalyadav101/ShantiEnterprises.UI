@@ -1,0 +1,210 @@
+<div class="category-detail-page">
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
+
+  <section class="detail-header">
+    <div class="container">
+      <a routerLink="/admin/categories" class="back-link">
+        <i class="bi bi-arrow-left me-2"></i>
+        Back to Categories
+      </a>
+
+      <div class="header-content">
+        <div>
+          <span class="text-primary fw-semibold"> Admin Panel </span>
+
+          <h1 class="fw-bold mt-1 mb-1">Category Details</h1>
+
+          <p class="text-muted mb-0">View complete category information.</p>
+        </div>
+
+        @if (category) {
+          <a
+            class="btn btn-primary"
+            [routerLink]="['/admin/categories', category.categoryId, 'edit']"
+          >
+            <i class="bi bi-pencil me-2"></i>
+            Edit Category
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       CONTENT
+  ========================================================== -->
+
+  <section class="detail-section">
+    <div class="container">
+      <!-- =====================================================
+           LOADING
+      ====================================================== -->
+
+      @if (isLoading) {
+        <div class="loading-card">
+          <div class="spinner-border text-primary" role="status"></div>
+
+          <p class="text-muted mt-3 mb-0">Loading category details...</p>
+        </div>
+      }
+
+      <!-- =====================================================
+           ERROR
+      ====================================================== -->
+
+      @if (!isLoading && errorMessage) {
+        <div
+          class="alert alert-danger d-flex align-items-center justify-content-between"
+          role="alert"
+        >
+          <div>
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            {{ errorMessage }}
+          </div>
+
+          <button type="button" class="btn btn-sm btn-outline-danger" (click)="loadCategory()">
+            Retry
+          </button>
+        </div>
+      }
+
+      <!-- =====================================================
+           CATEGORY DETAILS
+      ====================================================== -->
+
+      @if (!isLoading && category) {
+        <div class="row g-4">
+          <!-- =================================================
+               IMAGE
+          ================================================== -->
+
+          <div class="col-lg-5">
+            <div class="image-card">
+              <div class="category-image">
+                @if (category.imageUrl) {
+                  <img [src]="getImageUrl(category.imageUrl)" [alt]="category.categoryName" />
+                } @else {
+                  <div class="image-placeholder">
+                    <i class="bi bi-grid"></i>
+
+                    <span> No Image Available </span>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- =================================================
+               BASIC INFORMATION
+          ================================================== -->
+
+          <div class="col-lg-7">
+            <div class="detail-card">
+              <div class="detail-card-header">
+                <div class="header-icon">
+                  <i class="bi bi-grid"></i>
+                </div>
+
+                <div>
+                  <h4>Category Information</h4>
+
+                  <p>Basic information about this category.</p>
+                </div>
+              </div>
+
+              <div class="detail-card-body">
+                <!-- CATEGORY NAME -->
+
+                <div class="detail-item">
+                  <span class="detail-label"> Category Name </span>
+
+                  <strong class="detail-value">
+                    {{ category.categoryName }}
+                  </strong>
+                </div>
+
+                <!-- CATEGORY ID -->
+
+                <div class="detail-item">
+                  <span class="detail-label"> Category ID </span>
+
+                  <strong class="detail-value"> #{{ category.categoryId }} </strong>
+                </div>
+
+                <!-- DESCRIPTION -->
+
+                <div class="detail-item">
+                  <span class="detail-label"> Description </span>
+
+                  <p class="detail-description">
+                    {{ category.description || 'No description available.' }}
+                  </p>
+                </div>
+
+                <!-- STATUS -->
+
+                <div class="detail-item">
+                  <span class="detail-label"> Status </span>
+
+                  <span class="status-badge" [ngClass]="getStatusClass(category.isActive)">
+                    @if (category.isActive) {
+                      <i class="bi bi-check-circle me-1"></i>
+                      Active
+                    } @else {
+                      <i class="bi bi-pause-circle me-1"></i>
+                      Inactive
+                    }
+                  </span>
+                </div>
+
+                <!-- CREATED DATE -->
+
+                <div class="detail-item">
+                  <span class="detail-label"> Created Date </span>
+
+                  <span class="detail-value">
+                    <i class="bi bi-calendar3 me-2"></i>
+                    {{ category.createdDate | date: 'dd MMMM yyyy, hh:mm a' }}
+                  </span>
+                </div>
+
+                <!-- IMAGE URL -->
+
+                @if (category.imageUrl) {
+                  <div class="detail-item">
+                    <span class="detail-label"> Image URL </span>
+
+                    <span class="image-url">
+                      {{ category.imageUrl }}
+                    </span>
+                  </div>
+                }
+              </div>
+
+              <!-- =================================================
+                   FOOTER
+              ================================================== -->
+
+              <div class="detail-card-footer">
+                <a routerLink="/admin/categories" class="btn btn-outline-secondary">
+                  <i class="bi bi-arrow-left me-2"></i>
+                  Back
+                </a>
+
+                <a
+                  class="btn btn-primary"
+                  [routerLink]="['/admin/categories', category.categoryId, 'edit']"
+                >
+                  <i class="bi bi-pencil me-2"></i>
+                  Edit Category
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+</div>

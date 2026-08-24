@@ -33,6 +33,9 @@ import { AdminOrderDetailComponent } from './features/orders/admin-order-detail/
 import { UserList } from './features/admin-users/user-list/user-list';
 import { UserDetail } from './features/admin-users/user-detail/user-detail';
 import { UserEdit } from './features/admin-users/user-edit/user-edit';
+import { CategoryList } from './features/categories/category-list/category-list';
+import { CategoryDetail } from './features/categories/category-detail/category-detail';
+import { CategoryForm } from './features/categories/category-form/category-form';
 
 export const routes: Routes = [
   // =========================================================
@@ -93,7 +96,34 @@ export const routes: Routes = [
     path: 'admin/users/:id/edit',
     component: UserEdit,
     canActivate: [adminGuard],
-  },  
+  },
+  // =========================================================
+  // ADMIN CATEGORIES
+  // =========================================================
+
+  {
+    path: 'admin/categories',
+    component: CategoryList,
+    canActivate: [adminGuard],
+  },
+
+  {
+    path: 'admin/categories/new',
+    component: CategoryForm,
+    canActivate: [adminGuard],
+  },
+
+  {
+    path: 'admin/categories/:id/edit',
+    component: CategoryForm,
+    canActivate: [adminGuard],
+  },
+
+  {
+    path: 'admin/categories/:id',
+    component: CategoryDetail,
+    canActivate: [adminGuard],
+  },
 
   // =========================================================
   // HOME
