@@ -1,0 +1,343 @@
+<div class="product-form-page">
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">Admin Panel / Products / Add Product</div>
+
+      <h1>
+        {{ pageTitle }}
+      </h1>
+
+      <p>
+        {{ pageDescription }}
+      </p>
+    </div>
+
+    <button type="button" class="back-btn" (click)="cancel()">← Back to Products</button>
+  </div>
+
+  <!-- =====================================================
+       FORM CONTAINER
+  ====================================================== -->
+
+  <div class="form-container">
+    <!-- ===================================================
+         ERROR MESSAGE
+    ==================================================== -->
+
+    <div *ngIf="errorMessage" class="alert error">
+      {{ errorMessage }}
+    </div>
+
+    <!-- ===================================================
+         SUCCESS MESSAGE
+    ==================================================== -->
+
+    <div *ngIf="successMessage" class="alert success">
+      {{ successMessage }}
+    </div>
+
+    <!-- ===================================================
+         FORM
+    ==================================================== -->
+
+    <form #productForm="ngForm" (ngSubmit)="submit()" novalidate>
+      <!-- =================================================
+           BASIC INFORMATION
+      ================================================== -->
+
+      <section class="form-card">
+        <div class="section-header">
+          <div>
+            <h2>Basic Information</h2>
+
+            <p>Enter the basic product details.</p>
+          </div>
+        </div>
+
+        <!-- PRODUCT NAME -->
+
+        <div class="form-group">
+          <label for="productName">
+            Product Name
+
+            <span>*</span>
+          </label>
+
+          <input
+            id="productName"
+            type="text"
+            name="productName"
+            [(ngModel)]="form.productName"
+            placeholder="Enter product name"
+            maxlength="150"
+            autocomplete="off"
+            required
+          />
+        </div>
+
+        <!-- DESCRIPTION -->
+
+        <div class="form-group">
+          <label for="description"> Description </label>
+
+          <textarea
+            id="description"
+            name="description"
+            [(ngModel)]="form.description"
+            placeholder="Enter product description"
+            maxlength="2000"
+            rows="5"
+          ></textarea>
+
+          <div class="field-info">{{ form.description.length }}/2000</div>
+        </div>
+
+        <!-- CATEGORY -->
+
+        <div class="form-group">
+          <label for="categoryId">
+            Category
+
+            <span>*</span>
+          </label>
+
+          <select id="categoryId" name="categoryId" [(ngModel)]="form.categoryId" required>
+            <option [ngValue]="0">Select Category</option>
+
+            <option *ngFor="let category of categories" [ngValue]="category.categoryId">
+              {{ category.categoryName }}
+            </option>
+          </select>
+
+          <!-- LOADING -->
+
+          <small class="loading-text" *ngIf="isLoadingCategories"> Loading categories... </small>
+
+          <!-- NO CATEGORIES -->
+
+          <small class="helper-text" *ngIf="!isLoadingCategories && categories.length === 0">
+            No active categories available.
+          </small>
+        </div>
+      </section>
+
+      <!-- =================================================
+           PRICING & STOCK
+      ================================================== -->
+
+      <section class="form-card">
+        <div class="section-header">
+          <div>
+            <h2>Pricing & Stock</h2>
+
+            <p>Enter pricing and inventory information.</p>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <!-- MRP -->
+
+          <div class="form-group">
+            <label for="mrp">
+              MRP
+
+              <span>*</span>
+            </label>
+
+            <div class="input-prefix">
+              <span> ₹ </span>
+
+              <input
+                id="mrp"
+                type="number"
+                name="mrp"
+                [(ngModel)]="form.mrp"
+                placeholder="1299"
+                min="0.01"
+                step="0.01"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- WHOLESALE PRICE -->
+
+          <div class="form-group">
+            <label for="wholesalePrice">
+              Wholesale Price
+
+              <span>*</span>
+            </label>
+
+            <div class="input-prefix">
+              <span> ₹ </span>
+
+              <input
+                id="wholesalePrice"
+                type="number"
+                name="wholesalePrice"
+                [(ngModel)]="form.wholesalePrice"
+                placeholder="850"
+                min="0.01"
+                step="0.01"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- STOCK -->
+
+          <div class="form-group">
+            <label for="stock">
+              Stock
+
+              <span>*</span>
+            </label>
+
+            <input
+              id="stock"
+              type="number"
+              name="stock"
+              [(ngModel)]="form.stock"
+              min="0"
+              step="1"
+              required
+            />
+          </div>
+
+          <!-- GST -->
+
+          <div class="form-group">
+            <label for="gstPercentage"> GST Percentage </label>
+
+            <div class="input-suffix">
+              <input
+                id="gstPercentage"
+                type="number"
+                name="gstPercentage"
+                [(ngModel)]="form.gstPercentage"
+                min="0"
+                max="100"
+                step="0.01"
+              />
+
+              <span> % </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================
+           PRODUCT IDENTIFICATION
+      ================================================== -->
+
+      <section class="form-card">
+        <div class="section-header">
+          <div>
+            <h2>Product Identification</h2>
+
+            <p>Enter SKU and product image information.</p>
+          </div>
+        </div>
+
+        <!-- SKU -->
+
+        <div class="form-group">
+          <label for="sku">
+            SKU
+
+            <span>*</span>
+          </label>
+
+          <input
+            id="sku"
+            type="text"
+            name="sku"
+            [(ngModel)]="form.sku"
+            placeholder="EB-001"
+            maxlength="50"
+            autocomplete="off"
+            required
+          />
+
+          <small class="helper-text"> SKU must be unique. </small>
+        </div>
+
+        <!-- =================================================
+             PRODUCT IMAGE
+        ================================================== -->
+
+        <div class="form-group">
+          <label for="productImage"> Product Image </label>
+
+          <input
+            id="productImage"
+            type="file"
+            name="productImage"
+            accept="image/jpeg,image/png,image/webp"
+            (change)="onFileSelected($event)"
+          />
+
+          <small class="helper-text"> JPG, JPEG, PNG or WEBP only. Maximum size 5 MB. </small>
+
+          <!-- SELECTED FILE -->
+
+          <div class="selected-file" *ngIf="selectedFile">
+            <strong> Selected Image: </strong>
+
+            <span>
+              {{ selectedFileName }}
+            </span>
+
+            <small>
+              {{ selectedFileSize }}
+            </small>
+          </div>
+
+          <!-- PRIMARY IMAGE -->
+
+          <div class="primary-image-option" *ngIf="selectedFile">
+            <label class="checkbox-label">
+              <input type="checkbox" name="isPrimary" [(ngModel)]="isPrimary" />
+
+              <span> Set as primary image </span>
+            </label>
+
+            <small class="helper-text"> This image will be used as the main product image. </small>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================
+           ACTIONS
+      ================================================== -->
+
+      <div class="form-actions">
+        <!-- CANCEL -->
+
+        <button
+          type="button"
+          class="cancel-btn"
+          (click)="cancel()"
+          [disabled]="isSaving || isUploadingImage"
+        >
+          Cancel
+        </button>
+
+        <!-- CREATE -->
+
+        <button type="submit" class="save-btn" [disabled]="isSaving || isUploadingImage">
+          <span *ngIf="!isSaving && !isUploadingImage"> + Create Product </span>
+
+          <span *ngIf="isSaving && !isUploadingImage"> Creating Product... </span>
+
+          <span *ngIf="isUploadingImage"> Uploading Image... </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,378 @@
+<div class="page">
+  <!-- ===================================================== -->
+  <!-- PAGE HEADER -->
+  <!-- ===================================================== -->
+
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a routerLink="/admin">Admin Panel</a>
+        <span>/</span>
+        <a routerLink="/admin/products">Products</a>
+        <span>/</span>
+        <span>Edit Product</span>
+      </div>
+
+      <h1>{{ pageTitle }}</h1>
+
+      <p>{{ pageDescription }}</p>
+    </div>
+
+    <a routerLink="/admin/products" class="back-button"> ← Back to Products </a>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- LOADING -->
+  <!-- ===================================================== -->
+
+  <div class="loading-container" *ngIf="isLoadingProduct">
+    <div class="spinner"></div>
+
+    <p>Loading product...</p>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- ERROR -->
+  <!-- ===================================================== -->
+
+  <div class="message error-message" *ngIf="errorMessage && !isLoadingProduct">
+    <span class="message-icon">!</span>
+
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- SUCCESS -->
+  <!-- ===================================================== -->
+
+  <div class="message success-message" *ngIf="successMessage">
+    <span class="message-icon">✓</span>
+
+    <span>{{ successMessage }}</span>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- FORM -->
+  <!-- ===================================================== -->
+
+  <form *ngIf="!isLoadingProduct && productId > 0" class="product-form" (ngSubmit)="submit()">
+    <!-- =================================================== -->
+    <!-- BASIC INFORMATION -->
+    <!-- =================================================== -->
+
+    <section class="form-card">
+      <div class="card-header">
+        <div>
+          <h2>Basic Information</h2>
+
+          <p>Update the basic product information.</p>
+        </div>
+      </div>
+
+      <div class="form-body">
+        <!-- PRODUCT NAME -->
+
+        <div class="form-group full-width">
+          <label for="productName">
+            Product Name
+
+            <span class="required">*</span>
+          </label>
+
+          <input
+            id="productName"
+            type="text"
+            name="productName"
+            [(ngModel)]="form.productName"
+            maxlength="150"
+            placeholder="Enter product name"
+            [disabled]="isSaving"
+          />
+        </div>
+
+        <!-- DESCRIPTION -->
+
+        <div class="form-group full-width">
+          <div class="label-row">
+            <label for="description"> Description </label>
+
+            <span class="character-count"> {{ form.description.length }}/2000 </span>
+          </div>
+
+          <textarea
+            id="description"
+            name="description"
+            [(ngModel)]="form.description"
+            maxlength="2000"
+            rows="6"
+            placeholder="Enter product description"
+            [disabled]="isSaving"
+          ></textarea>
+        </div>
+
+        <!-- CATEGORY -->
+
+        <div class="form-group full-width">
+          <label for="categoryId">
+            Category
+
+            <span class="required">*</span>
+          </label>
+
+          <select
+            id="categoryId"
+            name="categoryId"
+            [(ngModel)]="form.categoryId"
+            [disabled]="isSaving || isLoadingCategories"
+          >
+            <option [ngValue]="0">Select Category</option>
+
+            <option *ngFor="let category of categories" [ngValue]="category.categoryId">
+              {{ category.categoryName }}
+            </option>
+          </select>
+
+          <small *ngIf="isLoadingCategories"> Loading categories... </small>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================== -->
+    <!-- PRICING & STOCK -->
+    <!-- =================================================== -->
+
+    <section class="form-card">
+      <div class="card-header">
+        <div>
+          <h2>Pricing & Stock</h2>
+
+          <p>Update pricing and inventory information.</p>
+        </div>
+      </div>
+
+      <div class="form-body two-column">
+        <!-- MRP -->
+
+        <div class="form-group">
+          <label for="mrp">
+            MRP
+
+            <span class="required">*</span>
+          </label>
+
+          <div class="input-with-prefix">
+            <span class="input-prefix"> ₹ </span>
+
+            <input
+              id="mrp"
+              type="number"
+              name="mrp"
+              [(ngModel)]="form.mrp"
+              min="0.01"
+              step="0.01"
+              placeholder="0"
+              [disabled]="isSaving"
+            />
+          </div>
+        </div>
+
+        <!-- WHOLESALE PRICE -->
+
+        <div class="form-group">
+          <label for="wholesalePrice">
+            Wholesale Price
+
+            <span class="required">*</span>
+          </label>
+
+          <div class="input-with-prefix">
+            <span class="input-prefix"> ₹ </span>
+
+            <input
+              id="wholesalePrice"
+              type="number"
+              name="wholesalePrice"
+              [(ngModel)]="form.wholesalePrice"
+              min="0.01"
+              step="0.01"
+              placeholder="0"
+              [disabled]="isSaving"
+            />
+          </div>
+        </div>
+
+        <!-- STOCK -->
+
+        <div class="form-group">
+          <label for="stock">
+            Stock
+
+            <span class="required">*</span>
+          </label>
+
+          <input
+            id="stock"
+            type="number"
+            name="stock"
+            [(ngModel)]="form.stock"
+            min="0"
+            step="1"
+            placeholder="0"
+            [disabled]="isSaving"
+          />
+        </div>
+
+        <!-- GST -->
+
+        <div class="form-group">
+          <label for="gstPercentage"> GST Percentage </label>
+
+          <div class="input-with-suffix">
+            <input
+              id="gstPercentage"
+              type="number"
+              name="gstPercentage"
+              [(ngModel)]="form.gstPercentage"
+              min="0"
+              max="100"
+              step="0.01"
+              placeholder="18"
+              [disabled]="isSaving"
+            />
+
+            <span class="input-suffix"> % </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================== -->
+    <!-- PRODUCT IDENTIFICATION -->
+    <!-- =================================================== -->
+
+    <section class="form-card">
+      <div class="card-header">
+        <div>
+          <h2>Product Identification</h2>
+
+          <p>Update the product SKU.</p>
+        </div>
+      </div>
+
+      <div class="form-body">
+        <!-- SKU -->
+
+        <div class="form-group full-width">
+          <label for="sku">
+            SKU
+
+            <span class="required">*</span>
+          </label>
+
+          <input
+            id="sku"
+            type="text"
+            name="sku"
+            [(ngModel)]="form.sku"
+            maxlength="50"
+            placeholder="Enter SKU"
+            [disabled]="isSaving"
+          />
+
+          <small> SKU must be unique. </small>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================== -->
+    <!-- PRODUCT IMAGES INFO -->
+    <!-- =================================================== -->
+
+    <section class="form-card">
+      <div class="card-header">
+        <div>
+          <h2>Product Images</h2>
+
+          <p>Product images are managed separately from product information.</p>
+        </div>
+      </div>
+
+      <div class="form-body">
+        <div class="image-management-info">
+          <div class="image-info-icon">🖼</div>
+
+          <div>
+            <strong> Manage Product Images </strong>
+
+            <p>
+              You can upload, set primary and delete product images from the Product Details page.
+            </p>
+          </div>
+
+          <a [routerLink]="['/admin/products', productId]" class="manage-images-button">
+            Manage Images
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================== -->
+    <!-- PRODUCT STATUS -->
+    <!-- =================================================== -->
+
+    <section class="form-card">
+      <div class="card-header">
+        <div>
+          <h2>Product Status</h2>
+
+          <p>Control whether this product is available.</p>
+        </div>
+      </div>
+
+      <div class="form-body">
+        <label class="status-toggle">
+          <input
+            type="checkbox"
+            name="isActive"
+            [(ngModel)]="form.isActive"
+            [disabled]="isSaving"
+          />
+
+          <span class="toggle"></span>
+
+          <span class="status-content">
+            <strong>
+              {{ form.isActive ? 'Active Product' : 'Inactive Product' }}
+            </strong>
+
+            <small>
+              {{
+                form.isActive
+                  ? 'This product is currently active.'
+                  : 'This product is currently inactive.'
+              }}
+            </small>
+          </span>
+        </label>
+      </div>
+    </section>
+
+    <!-- =================================================== -->
+    <!-- FORM ACTIONS -->
+    <!-- =================================================== -->
+
+    <div class="form-actions">
+      <button type="button" class="cancel-button" (click)="cancel()" [disabled]="isSaving">
+        Cancel
+      </button>
+
+      <button type="submit" class="save-button" [disabled]="isSaving">
+        <span class="button-spinner" *ngIf="isSaving"></span>
+
+        <span>
+          {{ isSaving ? 'Updating...' : '✓ Update Product' }}
+        </span>
+      </button>
+    </div>
+  </form>
+</div>

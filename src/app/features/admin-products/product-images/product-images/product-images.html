@@ -1,0 +1,183 @@
+<div class="product-images-section">
+  <!-- ===================================================== -->
+  <!-- HEADER -->
+  <!-- ===================================================== -->
+
+  <div class="section-header">
+    <div>
+      <h2>Product Images</h2>
+
+      <p>Upload and manage images for this product.</p>
+    </div>
+
+    <div class="image-count">
+      {{ images.length }}
+      {{ images.length === 1 ? 'Image' : 'Images' }}
+    </div>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- MESSAGES -->
+  <!-- ===================================================== -->
+
+  <div class="message error-message" *ngIf="errorMessage">
+    <span class="message-icon">!</span>
+
+    <span>
+      {{ errorMessage }}
+    </span>
+  </div>
+
+  <div class="message success-message" *ngIf="successMessage">
+    <span class="message-icon">✓</span>
+
+    <span>
+      {{ successMessage }}
+    </span>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- UPLOAD AREA -->
+  <!-- ===================================================== -->
+
+  <div class="upload-card">
+    <div class="upload-header">
+      <div>
+        <h3>Upload New Image</h3>
+
+        <p>JPG, JPEG, PNG or WEBP. Maximum size 5 MB.</p>
+      </div>
+    </div>
+
+    <div class="upload-body">
+      <!-- ================================================= -->
+      <!-- FILE INPUT -->
+      <!-- ================================================= -->
+
+      <label class="file-drop-zone" [class.has-file]="selectedFile">
+        <input
+          type="file"
+          accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+          (change)="onFileSelected($event)"
+          [disabled]="isUploading"
+        />
+
+        <div class="upload-icon">↑</div>
+
+        <div class="upload-text" *ngIf="!selectedFile">
+          <strong> Click to select an image </strong>
+
+          <span> JPG, JPEG, PNG or WEBP </span>
+        </div>
+
+        <div class="selected-file" *ngIf="selectedFile">
+          <strong>
+            {{ selectedFileName }}
+          </strong>
+
+          <span>
+            {{ selectedFileSize }}
+          </span>
+        </div>
+      </label>
+
+      <!-- ================================================= -->
+      <!-- PRIMARY IMAGE -->
+      <!-- ================================================= -->
+
+      <label class="primary-option">
+        <input type="checkbox" [(ngModel)]="isPrimary" [disabled]="isUploading" />
+
+        <span class="checkbox"></span>
+
+        <span class="primary-content">
+          <strong> Set as primary image </strong>
+
+          <small> This image will be used as the main product image. </small>
+        </span>
+      </label>
+
+      <!-- ================================================= -->
+      <!-- UPLOAD BUTTON -->
+      <!-- ================================================= -->
+
+      <button
+        type="button"
+        class="upload-button"
+        (click)="uploadImage()"
+        [disabled]="isUploading || !selectedFile"
+      >
+        <span class="button-spinner" *ngIf="isUploading"></span>
+
+        <span>
+          {{ isUploading ? 'Uploading...' : 'Upload Image' }}
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- LOADING -->
+  <!-- ===================================================== -->
+
+  <div class="images-loading" *ngIf="isLoading">
+    <div class="spinner"></div>
+
+    <span> Loading images... </span>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- IMAGE GALLERY -->
+  <!-- ===================================================== -->
+
+  <div class="gallery" *ngIf="!isLoading && images.length > 0">
+    <div class="image-card" *ngFor="let image of images">
+      <!-- IMAGE -->
+
+      <div class="image-wrapper">
+        <img [src]="getImageUrl(image.imageUrl)" [alt]="'Product image ' + image.productImageId" />
+
+        <!-- PRIMARY BADGE -->
+
+        <span class="primary-badge" *ngIf="image.isPrimary"> ★ Primary </span>
+      </div>
+
+      <!-- IMAGE FOOTER -->
+
+      <div class="image-footer">
+        <div class="image-info">
+          <span class="image-id"> Image #{{ image.productImageId }} </span>
+
+          <span class="image-status" *ngIf="image.isPrimary"> Primary Image </span>
+        </div>
+
+        <!-- DELETE -->
+
+        <button
+          type="button"
+          class="delete-button"
+          (click)="deleteImage(image)"
+          [disabled]="deletingImageId === image.productImageId"
+        >
+          <span class="button-spinner dark" *ngIf="deletingImageId === image.productImageId"></span>
+
+          <span *ngIf="deletingImageId !== image.productImageId"> 🗑 Delete </span>
+
+          <span *ngIf="deletingImageId === image.productImageId"> Deleting... </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- EMPTY STATE -->
+  <!-- ===================================================== -->
+
+  <div class="empty-state" *ngIf="!isLoading && images.length === 0">
+    <div class="empty-icon">🖼</div>
+
+    <h3>No product images</h3>
+
+    <p>Upload an image to start building the product gallery.</p>
+  </div>
+</div>
