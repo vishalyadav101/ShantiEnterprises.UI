@@ -1,0 +1,351 @@
+<div class="category-form-page">
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
+
+  <section class="form-header">
+    <div class="container">
+      <a
+        [routerLink]="isEditMode ? ['/admin/categories', categoryId] : ['/admin/categories']"
+        class="back-link"
+      >
+        <i class="bi bi-arrow-left me-2"></i>
+        Back to Categories
+      </a>
+
+      <div class="header-content">
+        <div>
+          <span class="text-primary fw-semibold"> Admin Panel </span>
+
+          <h1 class="fw-bold mt-1 mb-1">
+            {{ pageTitle }}
+          </h1>
+
+          <p class="text-muted mb-0">
+            {{ pageDescription }}
+          </p>
+        </div>
+
+        @if (isEditMode && category) {
+          <div class="category-header-info">
+            <div class="category-avatar">
+              <i class="bi bi-grid"></i>
+            </div>
+
+            <div>
+              <strong>
+                {{ category.categoryName }}
+              </strong>
+
+              <span> Category ID: #{{ category.categoryId }} </span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       CONTENT
+  ========================================================== -->
+
+  <section class="form-section">
+    <div class="container">
+      <!-- =====================================================
+           LOADING
+      ====================================================== -->
+
+      @if (isLoading) {
+        <div class="loading-card">
+          <div class="spinner-border text-primary" role="status"></div>
+
+          <p class="text-muted mt-3 mb-0">Loading category information...</p>
+        </div>
+      }
+
+      <!-- =====================================================
+           ERROR WHILE LOADING
+      ====================================================== -->
+
+      @if (!isLoading && errorMessage && !category && isEditMode) {
+        <div
+          class="alert alert-danger d-flex align-items-center justify-content-between"
+          role="alert"
+        >
+          <div>
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            {{ errorMessage }}
+          </div>
+
+          <button type="button" class="btn btn-sm btn-outline-danger" (click)="loadCategory()">
+            Retry
+          </button>
+        </div>
+      }
+
+      <!-- =====================================================
+           FORM
+      ====================================================== -->
+
+      @if (!isLoading && (!isEditMode || category)) {
+        <div class="row justify-content-center">
+          <div class="col-xl-8 col-lg-9">
+            <div class="form-card">
+              <!-- =================================================
+                   CARD HEADER
+              ================================================== -->
+
+              <div class="form-card-header">
+                <div class="header-icon">
+                  <i class="bi" [ngClass]="isEditMode ? 'bi-pencil-square' : 'bi-grid'"></i>
+                </div>
+
+                <div>
+                  <h4>Category Information</h4>
+
+                  <p>
+                    {{
+                      isEditMode
+                        ? 'Update the category details below.'
+                        : 'Enter the details for the new category.'
+                    }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- =================================================
+                   SUCCESS MESSAGE
+              ================================================== -->
+
+              @if (successMessage) {
+                <div class="px-4 pt-4">
+                  <div class="alert alert-success mb-0" role="alert">
+                    <i class="bi bi-check-circle me-2"></i>
+
+                    {{ successMessage }}
+                  </div>
+                </div>
+              }
+
+              <!-- =================================================
+                   FORM
+              ================================================== -->
+
+              <form #categoryForm="ngForm" (ngSubmit)="submit()" novalidate>
+                <div class="form-card-body">
+                  <!-- =============================================
+                       CATEGORY NAME
+                  ============================================== -->
+
+                  <div class="mb-4">
+                    <label for="categoryName" class="form-label">
+                      Category Name
+                      <span class="text-danger">*</span>
+                    </label>
+
+                    <div class="input-group">
+                      <span class="input-group-text">
+                        <i class="bi bi-grid"></i>
+                      </span>
+
+                      <input
+                        id="categoryName"
+                        name="categoryName"
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter category name"
+                        [(ngModel)]="form.categoryName"
+                        required
+                        maxlength="100"
+                      />
+                    </div>
+
+                    <div class="field-hint">Maximum 100 characters.</div>
+
+                    @if (categoryForm.submitted && !form.categoryName.trim()) {
+                      <div class="validation-message">Category name is required.</div>
+                    }
+                  </div>
+
+                  <!-- =============================================
+                       DESCRIPTION
+                  ============================================== -->
+
+                  <div class="mb-4">
+                    <label for="description" class="form-label"> Description </label>
+
+                    <textarea
+                      id="description"
+                      name="description"
+                      class="form-control description-input"
+                      placeholder="Enter category description"
+                      [(ngModel)]="form.description"
+                      maxlength="500"
+                      rows="5"
+                    ></textarea>
+
+                    <div class="field-hint">Maximum 500 characters.</div>
+                  </div>
+
+                  <!-- =============================================
+                       CATEGORY IMAGE
+                  ============================================== -->
+
+                  <div class="mb-4">
+                    <label for="imageFile" class="form-label"> Category Image </label>
+
+                    <div class="input-group">
+                      <span class="input-group-text">
+                        <i class="bi bi-image"></i>
+                      </span>
+
+                      <input
+                        id="imageFile"
+                        name="imageFile"
+                        type="file"
+                        class="form-control"
+                        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                        (change)="onImageSelected($event)"
+                      />
+                    </div>
+
+                    <div class="field-hint">Allowed: JPG, JPEG, PNG, WEBP. Maximum size: 5 MB.</div>
+                  </div>
+
+                  <!-- =============================================
+                       IMAGE PREVIEW
+                  ============================================== -->
+
+                  @if (imagePreviewUrl || currentImageUrl) {
+                    <div class="image-preview-section mb-4">
+                      <label class="form-label"> Image Preview </label>
+
+                      <div class="image-preview">
+                        @if (imagePreviewUrl) {
+                          <!-- NEW SELECTED IMAGE -->
+
+                          <img
+                            [src]="imagePreviewUrl"
+                            [alt]="form.categoryName || 'Category image preview'"
+                          />
+                        } @else if (currentImageUrl) {
+                          <!-- EXISTING IMAGE -->
+
+                          <img
+                            [src]="getImageUrl(currentImageUrl)"
+                            [alt]="form.categoryName || 'Category image'"
+                          />
+                        }
+                      </div>
+                    </div>
+                  }
+
+                  <!-- =============================================
+                       STATUS
+                  ============================================== -->
+
+                  @if (isEditMode) {
+                    <div class="status-section mb-4">
+                      <div class="status-content">
+                        <div class="status-icon">
+                          <i class="bi bi-toggle-on"></i>
+                        </div>
+
+                        <div>
+                          <strong> Category Status </strong>
+
+                          <p>Control whether this category is active or inactive.</p>
+                        </div>
+                      </div>
+
+                      <div class="form-check form-switch">
+                        <input
+                          id="isActive"
+                          name="isActive"
+                          class="form-check-input"
+                          type="checkbox"
+                          role="switch"
+                          [(ngModel)]="isActive"
+                        />
+
+                        <label for="isActive" class="form-check-label">
+                          {{ isActive ? 'Active' : 'Inactive' }}
+                        </label>
+                      </div>
+                    </div>
+                  }
+
+                  <!-- =============================================
+                       CREATE INFO
+                  ============================================== -->
+
+                  @if (!isEditMode) {
+                    <div class="info-box">
+                      <div class="info-icon">
+                        <i class="bi bi-info-circle"></i>
+                      </div>
+
+                      <div>
+                        <strong> Category Status </strong>
+
+                        <p>
+                          New categories are created as
+                          <strong>Active</strong>
+                          by default.
+                        </p>
+                      </div>
+                    </div>
+                  }
+
+                  <!-- =============================================
+                       ERROR
+                  ============================================== -->
+
+                  @if (errorMessage) {
+                    <div class="alert alert-danger mt-4 mb-0" role="alert">
+                      <i class="bi bi-exclamation-triangle me-2"></i>
+
+                      {{ errorMessage }}
+                    </div>
+                  }
+                </div>
+
+                <!-- =================================================
+                     FOOTER
+                ================================================== -->
+
+                <div class="form-card-footer">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    [disabled]="isSaving"
+                    (click)="cancel()"
+                  >
+                    <i class="bi bi-x-lg me-2"></i>
+
+                    Cancel
+                  </button>
+
+                  <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+                    @if (isSaving) {
+                      <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+
+                      Saving...
+                    } @else {
+                      <i
+                        class="bi me-2"
+                        [ngClass]="isEditMode ? 'bi-check2-circle' : 'bi-plus-lg'"
+                      ></i>
+
+                      {{ isEditMode ? 'Save Changes' : 'Create Category' }}
+                    }
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+</div>
