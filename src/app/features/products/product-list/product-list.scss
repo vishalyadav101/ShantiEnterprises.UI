@@ -96,6 +96,7 @@
   border: 1px solid #e8ebf0;
   border-radius: 16px;
   box-shadow: 0 5px 18px rgba(0, 0, 0, 0.05);
+
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease;
@@ -122,6 +123,7 @@
   height: 100%;
   object-fit: cover;
   display: block;
+
   transition: transform 0.3s ease;
 }
 
@@ -129,14 +131,214 @@
   transform: scale(1.04);
 }
 
+/* =========================
+   No Image
+========================= */
+
 .no-image {
   width: 100%;
   height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  color: #adb5bd;
+  font-size: 3rem;
+}
+
+.no-image span {
+  font-size: 0.8rem;
+}
+
+/* =========================
+   Image Loading
+========================= */
+
+.image-loading {
+  width: 100%;
+  height: 100%;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #adb5bd;
-  font-size: 3rem;
+
+  background: #f8f9fb;
+}
+
+/* =========================
+   Carousel Buttons
+========================= */
+
+.carousel-btn {
+  position: absolute;
+
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.95);
+  color: #0d6efd;
+
+  cursor: pointer;
+
+  z-index: 5;
+
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.carousel-btn:hover {
+  background: #ffffff;
+
+  transform: translateY(-50%) scale(1.08);
+
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.2);
+}
+
+.carousel-btn:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.carousel-btn i {
+  font-size: 17px;
+  line-height: 1;
+}
+
+.carousel-prev {
+  left: 10px;
+}
+
+.carousel-next {
+  right: 10px;
+}
+
+/* =========================
+   Image Counter
+========================= */
+
+.image-counter {
+  position: absolute;
+
+  right: 10px;
+  bottom: 10px;
+
+  padding: 5px 9px;
+
+  border-radius: 20px;
+
+  background: rgba(0, 0, 0, 0.68);
+  color: #ffffff;
+
+  font-size: 0.72rem;
+  font-weight: 700;
+
+  line-height: 1;
+
+  z-index: 5;
+}
+
+/* =========================
+   Product Thumbnails
+========================= */
+
+.product-thumbnails {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 9px 10px;
+
+  overflow-x: auto;
+
+  background: #ffffff;
+
+  border-top: 1px solid #edf0f4;
+
+  scrollbar-width: thin;
+}
+
+.product-thumbnails::-webkit-scrollbar {
+  height: 4px;
+}
+
+.product-thumbnails::-webkit-scrollbar-track {
+  background: #f1f3f5;
+  border-radius: 10px;
+}
+
+.product-thumbnails::-webkit-scrollbar-thumb {
+  background: #c9d2df;
+  border-radius: 10px;
+}
+
+/* =========================
+   Thumbnail
+========================= */
+
+.product-thumbnail {
+  flex: 0 0 44px;
+
+  width: 44px;
+  height: 44px;
+
+  padding: 2px;
+
+  display: block;
+
+  border: 1px solid #dce3ec;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  overflow: hidden;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.product-thumbnail img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  border-radius: 5px;
+}
+
+.product-thumbnail:hover {
+  transform: translateY(-1px);
+
+  border-color: #8bb5ff;
+}
+
+.product-thumbnail.active {
+  border: 2px solid #0d6efd;
+
+  box-shadow: 0 0 0 1px rgba(13, 110, 253, 0.12);
 }
 
 /* =========================
@@ -145,14 +347,21 @@
 
 .stock-badge {
   position: absolute;
+
   top: 14px;
   right: 14px;
+
   padding: 6px 11px;
+
   border-radius: 20px;
+
   background: #d1fae5;
   color: #087443;
+
   font-size: 0.75rem;
   font-weight: 700;
+
+  z-index: 6;
 }
 
 .stock-badge.out-of-stock {
@@ -166,44 +375,58 @@
 
 .product-content {
   flex: 1;
+
   display: flex;
   flex-direction: column;
+
   padding: 20px;
 }
 
 .product-category {
   margin-bottom: 7px;
+
   color: #0d6efd;
+
   font-size: 0.78rem;
   font-weight: 700;
+
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
 
 .product-name {
   min-height: 48px;
+
   margin-bottom: 8px;
+
   color: #172033;
+
   font-size: 1.1rem;
   font-weight: 700;
+
   line-height: 1.4;
 
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+
   overflow: hidden;
 }
 
 .product-description {
   min-height: 60px;
+
   margin-bottom: 15px;
+
   color: #6c757d;
+
   font-size: 0.86rem;
   line-height: 1.5;
 
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
+
   overflow: hidden;
 }
 
@@ -213,13 +436,20 @@
 
 .product-meta {
   display: flex;
+
   justify-content: space-between;
+
   gap: 10px;
+
   padding: 10px 0;
+
   margin-bottom: 14px;
+
   border-top: 1px solid #edf0f4;
   border-bottom: 1px solid #edf0f4;
+
   color: #7a8494;
+
   font-size: 0.75rem;
 }
 
@@ -234,29 +464,40 @@
 
 .price-section {
   display: flex;
+
   align-items: flex-end;
+
   justify-content: space-between;
+
   gap: 10px;
+
   margin-bottom: 18px;
 }
 
 .price-label {
   display: block;
+
   margin-bottom: 2px;
+
   color: #8a94a6;
+
   font-size: 0.72rem;
 }
 
 .product-price {
   color: #0d6efd;
+
   font-size: 1.45rem;
   font-weight: 800;
+
   line-height: 1.2;
 }
 
 .mrp {
   margin-top: 3px;
+
   color: #8a94a6;
+
   font-size: 0.76rem;
 }
 
@@ -266,11 +507,15 @@
 
 .stock-count {
   padding: 5px 9px;
+
   border-radius: 6px;
+
   background: #eef8f1;
   color: #198754;
+
   font-size: 0.75rem;
   font-weight: 600;
+
   white-space: nowrap;
 }
 
@@ -285,9 +530,13 @@
 
 .product-content .btn-primary {
   margin-top: auto;
+
   padding: 10px 14px;
+
   border-radius: 9px;
+
   font-weight: 600;
+
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -295,6 +544,7 @@
 
 .product-content .btn-primary:hover:not(:disabled) {
   transform: translateY(-1px);
+
   box-shadow: 0 5px 12px rgba(13, 110, 253, 0.22);
 }
 
@@ -309,6 +559,7 @@
 
 .products-section .alert {
   border-radius: 10px;
+
   margin-bottom: 25px;
 }
 
@@ -350,6 +601,19 @@
   .product-count {
     margin-top: 10px;
   }
+
+  .carousel-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .carousel-prev {
+    left: 8px;
+  }
+
+  .carousel-next {
+    right: 8px;
+  }
 }
 
 @media (max-width: 575.98px) {
@@ -363,5 +627,17 @@
 
   .product-content {
     padding: 18px;
+  }
+
+  .product-thumbnail {
+    flex-basis: 40px;
+
+    width: 40px;
+    height: 40px;
+  }
+
+  .image-counter {
+    right: 8px;
+    bottom: 8px;
   }
 }

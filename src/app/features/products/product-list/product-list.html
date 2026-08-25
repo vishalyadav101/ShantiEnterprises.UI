@@ -1,7 +1,8 @@
 <div class="products-page">
-  <!-- =========================
+  <!-- =====================================================
        HEADER
-  ========================== -->
+  ====================================================== -->
+
   <section class="products-header">
     <div class="container">
       <div class="row align-items-center">
@@ -27,14 +28,16 @@
     </div>
   </section>
 
-  <!-- =========================
+  <!-- =====================================================
        PRODUCTS SECTION
-  ========================== -->
+  ====================================================== -->
+
   <section class="products-section">
     <div class="container">
-      <!-- =========================
-           CART SUCCESS MESSAGE
-      ========================== -->
+      <!-- =================================================
+           CART MESSAGE
+      ================================================== -->
+
       @if (cartMessage) {
         <div
           class="alert alert-success d-flex align-items-center justify-content-between"
@@ -52,9 +55,10 @@
         </div>
       }
 
-      <!-- =========================
+      <!-- =================================================
            ERROR
-      ========================== -->
+      ================================================== -->
+
       @if (!isLoading && errorMessage) {
         <div
           class="alert alert-danger d-flex align-items-center justify-content-between"
@@ -72,9 +76,10 @@
         </div>
       }
 
-      <!-- =========================
+      <!-- =================================================
            LOADING
-      ========================== -->
+      ================================================== -->
+
       @if (isLoading) {
         <div class="loading-container">
           <div class="spinner-border text-primary" role="status"></div>
@@ -83,9 +88,10 @@
         </div>
       }
 
-      <!-- =========================
+      <!-- =================================================
            EMPTY
-      ========================== -->
+      ================================================== -->
+
       @if (!isLoading && !errorMessage && products.length === 0) {
         <div class="empty-container">
           <div class="empty-icon">
@@ -98,21 +104,29 @@
         </div>
       }
 
-      <!-- =========================
+      <!-- =================================================
            PRODUCT GRID
-      ========================== -->
+      ================================================== -->
+
       @if (!isLoading && !errorMessage && products.length > 0) {
         <div class="row g-4">
           @for (product of products; track product.productId) {
             <div class="col-sm-6 col-lg-4 col-xl-3">
               <div class="product-card">
-                <!-- =========================
-                     PRODUCT IMAGE
-                ========================== -->
+                <!-- =======================================
+                     PRODUCT IMAGE CAROUSEL
+                ======================================== -->
+
                 <div class="product-image-wrapper">
-                  @if (product.imageUrl) {
+                  <!-- IMAGE -->
+
+                  @if (isImageLoading(product)) {
+                    <div class="image-loading">
+                      <div class="spinner-border spinner-border-sm text-primary"></div>
+                    </div>
+                  } @else if (getCurrentImageUrl(product)) {
                     <img
-                      [src]="product.imageUrl"
+                      [src]="getCurrentImageUrl(product)"
                       [alt]="product.productName"
                       class="product-image"
                       loading="lazy"
@@ -120,10 +134,51 @@
                   } @else {
                     <div class="no-image">
                       <i class="bi bi-image"></i>
+
+                      <span>No Image</span>
                     </div>
                   }
 
-                  <!-- STOCK BADGE -->
+                  <!-- =====================================
+                       PREVIOUS BUTTON
+                  ====================================== -->
+
+                  @if (getImages(product).length > 1) {
+                    <button
+                      type="button"
+                      class="carousel-btn carousel-prev"
+                      (click)="previousImage(product)"
+                      aria-label="Previous image"
+                    >
+                      <i class="bi bi-chevron-left"></i>
+                    </button>
+
+                    <!-- NEXT BUTTON -->
+
+                    <button
+                      type="button"
+                      class="carousel-btn carousel-next"
+                      (click)="nextImage(product)"
+                      aria-label="Next image"
+                    >
+                      <i class="bi bi-chevron-right"></i>
+                    </button>
+
+                    <!-- IMAGE COUNT -->
+
+                    <span class="image-counter">
+                      {{ (currentImageIndex[product.productId] ?? 0) + 1 }}
+
+                      /
+
+                      {{ getImages(product).length }}
+                    </span>
+                  }
+
+                  <!-- =====================================
+                       STOCK BADGE
+                  ====================================== -->
+
                   @if (product.stock > 0) {
                     <span class="stock-badge"> In Stock </span>
                   } @else {
@@ -131,31 +186,63 @@
                   }
                 </div>
 
-                <!-- =========================
+                <!-- =======================================
+                     THUMBNAILS
+                ======================================== -->
+
+                @if (getImages(product).length > 1) {
+                  <div class="product-thumbnails">
+                    @for (
+                      image of getImages(product);
+                      track image.productImageId;
+                      let imageIndex = $index
+                    ) {
+                      <button
+                        type="button"
+                        class="product-thumbnail"
+                        [class.active]="(currentImageIndex[product.productId] ?? 0) === imageIndex"
+                        (click)="selectImage(product, imageIndex)"
+                        [attr.aria-label]="'View image ' + (imageIndex + 1)"
+                      >
+                        <img
+                          [src]="getImageUrl(image.imageUrl)"
+                          [alt]="product.productName"
+                          loading="lazy"
+                        />
+                      </button>
+                    }
+                  </div>
+                }
+
+                <!-- =======================================
                      PRODUCT CONTENT
-                ========================== -->
+                ======================================== -->
+
                 <div class="product-content">
                   <!-- CATEGORY -->
+
                   <div class="product-category">
                     {{ product.categoryName }}
                   </div>
 
                   <!-- PRODUCT NAME -->
+
                   <h5 class="product-name" [title]="product.productName">
                     {{ product.productName }}
                   </h5>
 
                   <!-- DESCRIPTION -->
+
                   <p class="product-description" [title]="product.description">
                     {{ product.description }}
                   </p>
 
-                  <!-- =========================
-                       SKU / GST
-                  ========================== -->
+                  <!-- SKU / GST -->
+
                   <div class="product-meta">
                     <span>
                       SKU:
+
                       <strong>
                         {{ product.sku }}
                       </strong>
@@ -163,13 +250,13 @@
 
                     <span>
                       GST:
+
                       <strong> {{ product.gstPercentage }}% </strong>
                     </span>
                   </div>
 
-                  <!-- =========================
-                       PRICE
-                  ========================== -->
+                  <!-- PRICE -->
+
                   <div class="price-section">
                     <div>
                       <span class="price-label"> Price </span>
@@ -178,19 +265,20 @@
 
                       <div class="mrp">
                         MRP:
+
                         <del> ₹{{ product.mrp }} </del>
                       </div>
                     </div>
 
-                    <!-- STOCK COUNT -->
+                    <!-- STOCK -->
+
                     <span class="stock-count" [class.low-stock]="product.stock <= 10">
                       {{ product.stock }} left
                     </span>
                   </div>
 
-                  <!-- =========================
-                       ADD TO CART
-                  ========================== -->
+                  <!-- ADD TO CART -->
+
                   <button
                     type="button"
                     class="btn btn-primary w-100"
