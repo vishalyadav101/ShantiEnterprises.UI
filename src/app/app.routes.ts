@@ -74,12 +74,11 @@ import { CategoryForm } from './features/categories/category-form/category-form'
 // =========================================================
 
 import { ProductList as AdminProductList } from './features/admin-products/product-list/product-list';
-
 import { ProductDetail } from './features/admin-products/product-detail/product-detail';
-
 import { ProductForm } from './features/admin-products/product-form/product-form';
-
 import { ProductEdit } from './features/admin-products/product-edit/product-edit';
+import { Wishlist } from './features/wishlist/wishlist';
+import { ProductDetail as CustomerProductDetail } from './features/products/product-detail/product-detail';
 
 export const routes: Routes = [
   // =========================================================
@@ -222,6 +221,20 @@ export const routes: Routes = [
   {
     path: 'products',
     component: ProductList,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'products/:id',
+    component: CustomerProductDetail,
+    canActivate: [authGuard],
+  },
+  // =========================================================
+  // WISHLIST
+  // =========================================================
+
+  {
+    path: 'wishlist',
+    component: Wishlist,
     canActivate: [authGuard],
   },
 
