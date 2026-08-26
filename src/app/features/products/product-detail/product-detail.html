@@ -1,0 +1,273 @@
+<div class="product-detail-page">
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+
+  <section class="detail-header">
+    <div class="container">
+      <div class="header-top">
+        <div>
+          <span class="brand-name"> Shanti Enterprises </span>
+
+          <h1>Product Details</h1>
+
+          <p>View complete product information.</p>
+        </div>
+
+        <div class="header-actions">
+          <button type="button" class="btn btn-outline-primary" (click)="backToProducts()">
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Products
+          </button>
+
+          <button type="button" class="btn btn-outline-primary" (click)="goToWishlist()">
+            <i class="bi bi-heart me-1"></i>
+            Wishlist
+          </button>
+
+          <button type="button" class="btn btn-primary" (click)="goToCart()">
+            <i class="bi bi-cart3 me-1"></i>
+            My Cart
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       CONTENT
+  ====================================================== -->
+
+  <section class="detail-section">
+    <div class="container">
+      <!-- ERROR -->
+
+      @if (errorMessage) {
+        <div class="alert alert-danger">
+          <i class="bi bi-exclamation-circle me-2"></i>
+          {{ errorMessage }}
+        </div>
+      }
+
+      <!-- LOADING -->
+
+      @if (isLoading) {
+        <div class="loading-container">
+          <div class="spinner-border text-primary" role="status"></div>
+
+          <p>Loading product details...</p>
+        </div>
+      }
+
+      <!-- PRODUCT -->
+
+      @if (!isLoading && product) {
+        <div class="product-detail-card">
+          <!-- =================================================
+               IMAGE SECTION
+          ================================================== -->
+
+          <div class="image-section">
+            <div class="main-image-wrapper">
+              @if (getCurrentImage()) {
+                <img
+                  [src]="getImageUrl(getCurrentImage()?.imageUrl ?? null)"
+                  [alt]="product.productName"
+                  class="main-image"
+                />
+              } @else {
+                <div class="no-image">
+                  <i class="bi bi-image"></i>
+                  <span>No Image Available</span>
+                </div>
+              }
+
+              <!-- PREVIOUS -->
+
+              @if (images.length > 1) {
+                <button type="button" class="image-nav prev" (click)="previousImage()">
+                  <i class="bi bi-chevron-left"></i>
+                </button>
+
+                <!-- NEXT -->
+
+                <button type="button" class="image-nav next" (click)="nextImage()">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+
+                <!-- COUNTER -->
+
+                <span class="image-counter">
+                  {{ currentImageIndex + 1 }}
+                  /
+                  {{ images.length }}
+                </span>
+              }
+            </div>
+
+            <!-- THUMBNAILS -->
+
+            @if (images.length > 1) {
+              <div class="thumbnail-list">
+                @for (image of images; track image.productImageId; let i = $index) {
+                  <button
+                    type="button"
+                    class="thumbnail"
+                    [class.active]="currentImageIndex === i"
+                    (click)="selectImage(i)"
+                  >
+                    <img [src]="getImageUrl(image.imageUrl)" [alt]="product.productName" />
+                  </button>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- =================================================
+               PRODUCT INFORMATION
+          ================================================== -->
+
+          <div class="product-info">
+            <div class="status-row">
+              @if (product.isActive) {
+                <span class="status active">
+                  <i class="bi bi-check-circle me-1"></i>
+                  Active
+                </span>
+              } @else {
+                <span class="status inactive"> Inactive </span>
+              }
+
+              @if (isInWishlist) {
+                <span class="saved-label">
+                  <i class="bi bi-heart-fill me-1"></i>
+                  Saved
+                </span>
+              }
+            </div>
+
+            <!-- PRODUCT NAME -->
+
+            <h2>
+              {{ product.productName }}
+            </h2>
+
+            <!-- CATEGORY -->
+
+            <div class="category">
+              {{ product.categoryName }}
+            </div>
+
+            <!-- DESCRIPTION -->
+
+            <p class="description">
+              {{ product.description }}
+            </p>
+
+            <!-- SKU -->
+
+            <div class="sku-row">
+              <span> SKU </span>
+
+              <strong>
+                {{ product.sku }}
+              </strong>
+            </div>
+
+            <!-- PRICE -->
+
+            <div class="price-box">
+              <div class="price-item">
+                <span> Wholesale Price </span>
+
+                <strong> ₹{{ product.wholesalePrice | number: '1.2-2' }} </strong>
+              </div>
+
+              <div class="price-item">
+                <span> MRP </span>
+
+                <strong class="mrp"> ₹{{ product.mrp | number: '1.2-2' }} </strong>
+              </div>
+
+              <div class="price-item">
+                <span> GST </span>
+
+                <strong> {{ product.gstPercentage }}% </strong>
+              </div>
+            </div>
+
+            <!-- STOCK -->
+
+            <div class="stock-box">
+              <span> Available Stock </span>
+
+              @if (product.stock > 0) {
+                <strong class="in-stock"> {{ product.stock }} available </strong>
+              } @else {
+                <strong class="out-stock"> Out of Stock </strong>
+              }
+            </div>
+
+            <!-- ACTIONS -->
+
+            <div class="action-buttons">
+              <button
+                type="button"
+                class="wishlist-button"
+                [class.active]="isInWishlist"
+                [disabled]="isAddingToWishlist"
+                (click)="toggleWishlist()"
+              >
+                @if (isAddingToWishlist) {
+                  <span class="spinner-border spinner-border-sm me-2"></span>
+                } @else {
+                  <i
+                    class="bi"
+                    [class.bi-heart-fill]="isInWishlist"
+                    [class.bi-heart]="!isInWishlist"
+                  ></i>
+                }
+
+                @if (isInWishlist) {
+                  Remove from Wishlist
+                } @else {
+                  Add to Wishlist
+                }
+              </button>
+
+              <button
+                type="button"
+                class="cart-button"
+                [disabled]="product.stock <= 0 || isAddingToCart"
+                (click)="addToCart()"
+              >
+                @if (isAddingToCart) {
+                  <span class="spinner-border spinner-border-sm me-2"></span>
+
+                  Adding...
+                } @else {
+                  <i class="bi bi-cart-plus me-2"></i>
+
+                  @if (product.stock > 0) {
+                    Add to Cart
+                  } @else {
+                    Out of Stock
+                  }
+                }
+              </button>
+            </div>
+
+            <!-- MESSAGES -->
+
+            @if (successMessage) {
+              <div class="success-message">
+                <i class="bi bi-check-circle me-2"></i>
+                {{ successMessage }}
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+</div>

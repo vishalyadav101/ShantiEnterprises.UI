@@ -6,6 +6,7 @@ import { finalize } from 'rxjs';
 import { ProductService } from '../../../core/services/product';
 import { CartService } from '../../../core/services/cart';
 import { ProductImageService, ProductImage } from '../../../core/services/product-image';
+import { WishlistService } from '../../../core/services/wishlist';
 
 import { Product } from '../../../core/models/product.model';
 
@@ -26,6 +27,8 @@ export class ProductList implements OnInit {
   private readonly productImageService = inject(ProductImageService);
 
   private readonly cartService = inject(CartService);
+
+  private readonly wishlistService = inject(WishlistService);
 
   private readonly router = inject(Router);
 
@@ -52,9 +55,35 @@ export class ProductList implements OnInit {
   productImages: Record<number, ProductImage[]> = {};
 
   /**
-   * Current image index for each product.
+   * Current image index for every product.
    */
   currentImageIndex: Record<number, number> = {};
+
+  // =========================================================
+  // WISHLIST
+  // =========================================================
+
+  /**
+   * Stores product IDs which are currently
+   * available in user's wishlist.
+   */
+  wishlistProductIds = new Set<number>();
+
+  /**
+   * Wishlist API loading state.
+   */
+  isWishlistLoading = false;
+
+  /**
+   * Product currently being added/removed
+   * from wishlist.
+   */
+  wishlistProductId: number | null = null;
+
+  /**
+   * Wishlist success message.
+   */
+  wishlistMessage = '';
 
   // =========================================================
   // STATES
@@ -78,6 +107,8 @@ export class ProductList implements OnInit {
 
   ngOnInit(): void {
     this.loadProducts();
+
+    this.loadWishlist();
   }
 
   // =========================================================
@@ -102,12 +133,20 @@ export class ProductList implements OnInit {
 
           this.products = products.filter((product) => product.isActive);
 
-          // Reset image state
+          // ---------------------------------------------------
+          // RESET IMAGE STATE
+          // ---------------------------------------------------
+
           this.productImages = {};
 
           this.currentImageIndex = {};
 
-          // Load uploaded images for every product
+          this.isLoadingImages = {};
+
+          // ---------------------------------------------------
+          // LOAD IMAGES FOR EVERY PRODUCT
+          // ---------------------------------------------------
+
           this.products.forEach((product) => {
             this.loadProductImages(product);
           });
@@ -119,6 +158,143 @@ export class ProductList implements OnInit {
           this.errorMessage = error?.error?.message || 'Unable to load products.';
         },
       });
+  }
+
+  // =========================================================
+  // LOAD WISHLIST
+  // =========================================================
+
+  loadWishlist(): void {
+    this.wishlistService.getWishlist().subscribe({
+      next: (response) => {
+        console.log('Wishlist Response:', response);
+
+        this.wishlistProductIds = new Set(response.items.map((item) => item.productId));
+      },
+
+      error: (error) => {
+        console.error('Wishlist Load Error:', error);
+
+        // Wishlist error ko products page
+        // ka main error nahi banayenge.
+      },
+    });
+  }
+
+  // =========================================================
+  // CHECK WISHLIST
+  // =========================================================
+
+  isInWishlist(productId: number): boolean {
+    return this.wishlistProductIds.has(productId);
+  }
+
+  // =========================================================
+  // TOGGLE WISHLIST
+  // =========================================================
+
+  toggleWishlist(product: Product): void {
+    // -------------------------------------------------------
+    // PREVENT MULTIPLE REQUESTS
+    // -------------------------------------------------------
+
+    if (this.isWishlistLoading) {
+      return;
+    }
+
+    this.isWishlistLoading = true;
+
+    this.wishlistProductId = product.productId;
+
+    this.wishlistMessage = '';
+
+    this.errorMessage = '';
+
+    const isAlreadyInWishlist = this.isInWishlist(product.productId);
+
+    // -------------------------------------------------------
+    // REMOVE
+    // -------------------------------------------------------
+
+    if (isAlreadyInWishlist) {
+      this.wishlistService
+        .removeFromWishlist(product.productId)
+        .pipe(
+          finalize(() => {
+            this.isWishlistLoading = false;
+
+            this.wishlistProductId = null;
+          }),
+        )
+        .subscribe({
+          next: (response) => {
+            console.log('Wishlist Item Removed:', response);
+
+            this.wishlistProductIds.delete(product.productId);
+
+            // Create a new Set so Angular
+            // change detection updates correctly.
+            this.wishlistProductIds = new Set(this.wishlistProductIds);
+
+            this.wishlistMessage = `${product.productName} removed from wishlist.`;
+
+            this.clearWishlistMessage();
+          },
+
+          error: (error) => {
+            console.error('Remove Wishlist Error:', error);
+
+            this.errorMessage = error?.error?.message || 'Unable to remove product from wishlist.';
+          },
+        });
+
+      return;
+    }
+
+    // -------------------------------------------------------
+    // ADD
+    // -------------------------------------------------------
+
+    this.wishlistService
+      .addToWishlist(product.productId)
+      .pipe(
+        finalize(() => {
+          this.isWishlistLoading = false;
+
+          this.wishlistProductId = null;
+        }),
+      )
+      .subscribe({
+        next: (response) => {
+          console.log('Wishlist Item Added:', response);
+
+          this.wishlistProductIds.add(product.productId);
+
+          // Create a new Set so Angular
+          // change detection updates correctly.
+          this.wishlistProductIds = new Set(this.wishlistProductIds);
+
+          this.wishlistMessage = `${product.productName} added to wishlist.`;
+
+          this.clearWishlistMessage();
+        },
+
+        error: (error) => {
+          console.error('Add Wishlist Error:', error);
+
+          this.errorMessage = error?.error?.message || 'Unable to add product to wishlist.';
+        },
+      });
+  }
+
+  // =========================================================
+  // CLEAR WISHLIST MESSAGE
+  // =========================================================
+
+  private clearWishlistMessage(): void {
+    setTimeout(() => {
+      this.wishlistMessage = '';
+    }, 3000);
   }
 
   // =========================================================
@@ -139,9 +315,9 @@ export class ProductList implements OnInit {
         next: (images) => {
           console.log(`Images for Product ${product.productId}:`, images);
 
-          // ---------------------------------------------------
+          // -------------------------------------------------
           // PRIMARY IMAGE FIRST
-          // ---------------------------------------------------
+          // -------------------------------------------------
 
           const sortedImages = [...images].sort((a, b) => {
             if (a.isPrimary && !b.isPrimary) {
@@ -157,23 +333,29 @@ export class ProductList implements OnInit {
 
           this.productImages[product.productId] = sortedImages;
 
-          // Always start from primary / first image
+          // -------------------------------------------------
+          // START FROM PRIMARY IMAGE
+          // -------------------------------------------------
+
           this.currentImageIndex[product.productId] = 0;
         },
 
         error: (error) => {
           console.error(`Product Image Error (${product.productId}):`, error);
 
-          // ---------------------------------------------------
-          // FALLBACK TO PRODUCT.imageUrl
-          // ---------------------------------------------------
+          // -------------------------------------------------
+          // FALLBACK TO PRODUCT IMAGE URL
+          // -------------------------------------------------
 
           if (product.imageUrl) {
             this.productImages[product.productId] = [
               {
                 productImageId: 0,
+
                 productId: product.productId,
+
                 imageUrl: product.imageUrl,
+
                 isPrimary: true,
               },
             ];
@@ -319,6 +501,7 @@ export class ProductList implements OnInit {
     this.cartService
       .addItem({
         productId: product.productId,
+
         quantity: 1,
       })
       .pipe(

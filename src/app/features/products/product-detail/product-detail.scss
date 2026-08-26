@@ -1,0 +1,589 @@
+.product-detail-page {
+  min-height: 100vh;
+  background: #f5f7fb;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.detail-header {
+  background: #ffffff;
+  padding: 35px 0;
+  border-bottom: 1px solid #e8ebf0;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+}
+
+.brand-name {
+  color: #0d6efd;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.detail-header h1 {
+  margin: 5px 0;
+  color: #172033;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.detail-header p {
+  margin: 0;
+  color: #6c757d;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+.detail-section {
+  padding: 45px 0 70px;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading-container {
+  min-height: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-container .spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+.loading-container p {
+  margin-top: 15px;
+  color: #6c757d;
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.product-detail-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 45px;
+
+  padding: 30px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e9ef;
+  border-radius: 18px;
+
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+}
+
+/* =========================================================
+   IMAGE
+========================================================= */
+
+.image-section {
+  min-width: 0;
+}
+
+.main-image-wrapper {
+  position: relative;
+
+  height: 520px;
+
+  overflow: hidden;
+
+  background: #f8f9fb;
+
+  border-radius: 14px;
+}
+
+.main-image {
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+
+  display: block;
+}
+
+.no-image {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  color: #adb5bd;
+}
+
+.no-image i {
+  font-size: 4rem;
+}
+
+/* =========================================================
+   IMAGE NAV
+========================================================= */
+
+.image-nav {
+  position: absolute;
+
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 42px;
+  height: 42px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.95);
+
+  color: #0d6efd;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+
+  z-index: 3;
+
+  transition: 0.2s ease;
+}
+
+.image-nav:hover {
+  transform: translateY(-50%) scale(1.08);
+}
+
+.image-nav.prev {
+  left: 15px;
+}
+
+.image-nav.next {
+  right: 15px;
+}
+
+.image-nav i {
+  font-size: 20px;
+}
+
+/* =========================================================
+   COUNTER
+========================================================= */
+
+.image-counter {
+  position: absolute;
+
+  right: 15px;
+  bottom: 15px;
+
+  padding: 6px 11px;
+
+  border-radius: 20px;
+
+  background: rgba(0, 0, 0, 0.7);
+
+  color: #ffffff;
+
+  font-size: 0.75rem;
+  font-weight: 700;
+
+  z-index: 4;
+}
+
+/* =========================================================
+   THUMBNAILS
+========================================================= */
+
+.thumbnail-list {
+  display: flex;
+  gap: 10px;
+
+  margin-top: 15px;
+
+  overflow-x: auto;
+
+  padding-bottom: 5px;
+}
+
+.thumbnail {
+  flex: 0 0 75px;
+
+  width: 75px;
+  height: 75px;
+
+  padding: 3px;
+
+  background: #ffffff;
+
+  border: 1px solid #dce3ec;
+  border-radius: 9px;
+
+  overflow: hidden;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.thumbnail:hover {
+  border-color: #8bb5ff;
+}
+
+.thumbnail.active {
+  border: 2px solid #0d6efd;
+
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.1);
+}
+
+.thumbnail img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  border-radius: 6px;
+}
+
+/* =========================================================
+   PRODUCT INFO
+========================================================= */
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+  padding: 15px 5px;
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin-bottom: 15px;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 6px 11px;
+
+  border-radius: 20px;
+
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.status.active {
+  background: #d1fae5;
+  color: #087443;
+}
+
+.status.inactive {
+  background: #ffe2e2;
+  color: #c62828;
+}
+
+.saved-label {
+  color: #e63946;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.product-info h2 {
+  margin-bottom: 8px;
+
+  color: #172033;
+
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.category {
+  margin-bottom: 22px;
+
+  color: #0d6efd;
+
+  font-size: 0.82rem;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.description {
+  margin-bottom: 25px;
+
+  color: #667085;
+
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   SKU
+========================================================= */
+
+.sku-row {
+  display: flex;
+  justify-content: space-between;
+
+  padding: 14px 0;
+
+  border-top: 1px solid #edf0f4;
+  border-bottom: 1px solid #edf0f4;
+
+  color: #7a8494;
+
+  font-size: 0.85rem;
+}
+
+.sku-row strong {
+  color: #172033;
+}
+
+/* =========================================================
+   PRICE
+========================================================= */
+
+.price-box {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 12px;
+
+  margin-top: 20px;
+}
+
+.price-item {
+  padding: 16px;
+
+  background: #f8faff;
+
+  border: 1px solid #e5ebf5;
+  border-radius: 10px;
+}
+
+.price-item span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #7a8494;
+
+  font-size: 0.75rem;
+}
+
+.price-item strong {
+  color: #0d6efd;
+
+  font-size: 1.15rem;
+}
+
+.price-item strong.mrp {
+  color: #7a8494;
+
+  text-decoration: line-through;
+}
+
+/* =========================================================
+   STOCK
+========================================================= */
+
+.stock-box {
+  display: flex;
+  justify-content: space-between;
+
+  margin-top: 20px;
+  padding: 15px;
+
+  background: #f8f9fb;
+
+  border-radius: 10px;
+
+  color: #667085;
+
+  font-size: 0.85rem;
+}
+
+.in-stock {
+  color: #198754;
+}
+
+.out-stock {
+  color: #dc3545;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.action-buttons {
+  display: flex;
+
+  gap: 12px;
+
+  margin-top: 25px;
+}
+
+.wishlist-button,
+.cart-button {
+  flex: 1;
+
+  min-height: 48px;
+
+  border-radius: 9px;
+
+  font-weight: 700;
+
+  transition: 0.2s ease;
+}
+
+.wishlist-button {
+  border: 1px solid #e63946;
+
+  background: #ffffff;
+
+  color: #e63946;
+}
+
+.wishlist-button:hover:not(:disabled) {
+  background: #fff1f2;
+}
+
+.wishlist-button.active {
+  background: #e63946;
+  color: #ffffff;
+}
+
+.cart-button {
+  border: none;
+
+  background: #0d6efd;
+
+  color: #ffffff;
+}
+
+.cart-button:hover:not(:disabled) {
+  background: #0b5ed7;
+
+  transform: translateY(-1px);
+}
+
+.wishlist-button:disabled,
+.cart-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+/* =========================================================
+   SUCCESS
+========================================================= */
+
+.success-message {
+  margin-top: 15px;
+
+  padding: 12px 15px;
+
+  border-radius: 8px;
+
+  background: #d1fae5;
+
+  color: #087443;
+
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 991.98px) {
+  .product-detail-card {
+    grid-template-columns: 1fr;
+
+    gap: 30px;
+  }
+
+  .main-image-wrapper {
+    height: 450px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .detail-header {
+    padding: 25px 0;
+  }
+
+  .header-top {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .detail-section {
+    padding: 30px 0 50px;
+  }
+
+  .product-detail-card {
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  .main-image-wrapper {
+    height: 350px;
+  }
+
+  .product-info h2 {
+    font-size: 1.6rem;
+  }
+
+  .price-box {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .main-image-wrapper {
+    height: 300px;
+  }
+
+  .thumbnail {
+    flex-basis: 60px;
+
+    width: 60px;
+    height: 60px;
+  }
+}

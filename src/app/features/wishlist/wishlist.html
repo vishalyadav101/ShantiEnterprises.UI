@@ -1,0 +1,322 @@
+<div class="wishlist-page">
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+
+  <section class="wishlist-header">
+    <div class="container">
+      <div class="header-content">
+        <div>
+          <div class="brand-name">Shanti Enterprises</div>
+
+          <h1>
+            <i class="bi bi-heart-fill"></i>
+            My Wishlist
+          </h1>
+
+          <p>Save your favorite products and easily add them to your cart.</p>
+        </div>
+
+        <div class="header-actions">
+          <span class="wishlist-count">
+            <i class="bi bi-heart"></i>
+
+            {{ totalItems }}
+            {{ totalItems === 1 ? 'Item' : 'Items' }}
+          </span>
+
+          <button type="button" class="cart-button" (click)="goToCart()">
+            <i class="bi bi-cart3"></i>
+
+            My Cart
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       WISHLIST SECTION
+  ====================================================== -->
+
+  <section class="wishlist-section">
+    <div class="container">
+      <!-- =================================================
+           SUCCESS MESSAGE
+      ================================================== -->
+
+      @if (successMessage) {
+        <div class="alert-message success-message">
+          <div>
+            <i class="bi bi-check-circle-fill"></i>
+
+            <span>
+              {{ successMessage }}
+            </span>
+          </div>
+        </div>
+      }
+
+      <!-- =================================================
+           CART MESSAGE
+      ================================================== -->
+
+      @if (cartMessage) {
+        <div class="alert-message cart-message">
+          <div>
+            <i class="bi bi-cart-check-fill"></i>
+
+            <span>
+              {{ cartMessage }}
+            </span>
+          </div>
+
+          <button type="button" class="view-cart-button" (click)="goToCart()">View Cart</button>
+        </div>
+      }
+
+      <!-- =================================================
+           ERROR MESSAGE
+      ================================================== -->
+
+      @if (!isLoading && errorMessage) {
+        <div class="alert-message error-message">
+          <div>
+            <i class="bi bi-exclamation-circle-fill"></i>
+
+            <span>
+              {{ errorMessage }}
+            </span>
+          </div>
+
+          <button type="button" class="retry-button" (click)="loadWishlist()">Retry</button>
+        </div>
+      }
+
+      <!-- =================================================
+           LOADING
+      ================================================== -->
+
+      @if (isLoading) {
+        <div class="loading-container">
+          <div class="spinner-border text-primary" role="status"></div>
+
+          <h4>Loading your wishlist...</h4>
+
+          <p>Please wait while we fetch your saved products.</p>
+        </div>
+      }
+
+      <!-- =================================================
+           EMPTY WISHLIST
+      ================================================== -->
+
+      @if (!isLoading && !errorMessage && isEmpty) {
+        <div class="empty-wishlist">
+          <div class="empty-icon">
+            <i class="bi bi-heart"></i>
+          </div>
+
+          <h2>Your Wishlist is Empty</h2>
+
+          <p>You haven't added any products to your wishlist yet.</p>
+
+          <button type="button" class="browse-button" (click)="goToProducts()">
+            <i class="bi bi-shop"></i>
+
+            Browse Products
+          </button>
+        </div>
+      }
+
+      <!-- =================================================
+           WISHLIST CONTENT
+      ================================================== -->
+
+      @if (!isLoading && !errorMessage && !isEmpty) {
+        <!-- =================================================
+             TOOLBAR
+        ================================================== -->
+
+        <div class="wishlist-toolbar">
+          <div>
+            <h2>Saved Products</h2>
+
+            <p>
+              {{ totalItems }}
+              {{ totalItems === 1 ? 'product' : 'products' }}
+              saved in your wishlist.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="clear-button"
+            (click)="clearWishlist()"
+            [disabled]="isClearing || isRemoving"
+          >
+            @if (isClearing) {
+              <span class="spinner-border spinner-border-sm" role="status"></span>
+
+              Clearing...
+            } @else {
+              <i class="bi bi-trash3"></i>
+
+              Clear Wishlist
+            }
+          </button>
+        </div>
+
+        <!-- =================================================
+             WISHLIST GRID
+        ================================================== -->
+
+        <div class="wishlist-grid">
+          @for (item of items; track item.wishlistItemId) {
+            <article class="wishlist-card">
+              <!-- =========================================
+                   PRODUCT IMAGE
+              ========================================== -->
+
+              <div class="wishlist-image-wrapper">
+                @if (item.imageUrl) {
+                  <img
+                    [src]="item.imageUrl"
+                    [alt]="item.productName"
+                    class="wishlist-image"
+                    loading="lazy"
+                  />
+                } @else {
+                  <div class="no-image">
+                    <i class="bi bi-image"></i>
+                  </div>
+                }
+
+                <!-- PRODUCT STATUS -->
+
+                @if (item.isActive) {
+                  <span class="status-badge active">
+                    <span class="status-dot"></span>
+
+                    Active
+                  </span>
+                } @else {
+                  <span class="status-badge inactive">
+                    <span class="status-dot"></span>
+
+                    Inactive
+                  </span>
+                }
+
+                <!-- REMOVE -->
+
+                <button
+                  type="button"
+                  class="remove-icon-button"
+                  title="Remove from wishlist"
+                  (click)="removeItem(item)"
+                  [disabled]="isRemovingItem(item.productId) || isClearing"
+                >
+                  @if (isRemovingItem(item.productId)) {
+                    <span class="spinner-border spinner-border-sm" role="status"></span>
+                  } @else {
+                    <i class="bi bi-heart-fill"></i>
+                  }
+                </button>
+              </div>
+
+              <!-- =========================================
+                   PRODUCT CONTENT
+              ========================================== -->
+
+              <div class="wishlist-content">
+                <!-- PRODUCT NAME -->
+
+                <h3 class="product-name" [title]="item.productName">
+                  {{ item.productName }}
+                </h3>
+
+                <!-- SKU -->
+
+                <div class="product-sku">
+                  <span> SKU </span>
+
+                  <strong>
+                    {{ item.sku }}
+                  </strong>
+                </div>
+
+                <!-- PRICE -->
+
+                <div class="price-row">
+                  <div>
+                    <span class="price-label"> Wholesale Price </span>
+
+                    <div class="product-price">₹{{ item.unitPrice | number: '1.2-2' }}</div>
+                  </div>
+
+                  <span class="saved-badge">
+                    <i class="bi bi-heart-fill"></i>
+
+                    Saved
+                  </span>
+                </div>
+
+                <!-- ADDED DATE -->
+
+                <div class="added-date">
+                  <i class="bi bi-calendar3"></i>
+
+                  <span>
+                    Added
+                    {{ item.addedDate | date: 'dd MMM yyyy' }}
+                  </span>
+                </div>
+
+                <!-- =======================================
+                     ACTIONS
+                ======================================== -->
+
+                <div class="product-actions">
+                  <!-- ADD TO CART -->
+
+                  <button
+                    type="button"
+                    class="add-cart-button"
+                    (click)="addToCart(item)"
+                    [disabled]="!item.isActive || isAddingToCart || isRemoving || isClearing"
+                  >
+                    @if (isAddingItem(item.productId)) {
+                      <span class="spinner-border spinner-border-sm" role="status"></span>
+
+                      Adding...
+                    } @else {
+                      <i class="bi bi-cart-plus"></i>
+
+                      @if (item.isActive) {
+                        Add to Cart
+                      } @else {
+                        Unavailable
+                      }
+                    }
+                  </button>
+
+                  <!-- VIEW PRODUCT -->
+
+                  <button
+                    type="button"
+                    class="view-button"
+                    title="View Product"
+                    (click)="viewProduct(item.productId)"
+                  >
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </div>
+  </section>
+</div>
