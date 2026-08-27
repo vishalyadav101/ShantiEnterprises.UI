@@ -1,13 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
-
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { DashboardService, DashboardResponse } from '../../../core/services/dashboard';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -16,11 +15,60 @@ export class Dashboard implements OnInit {
 
   private readonly cdr = inject(ChangeDetectorRef);
 
+  private readonly router = inject(Router);
+
+  // =========================================================
+  // DASHBOARD DATA
+  // =========================================================
+
   dashboard: DashboardResponse | null = null;
 
   isLoading = false;
 
   errorMessage = '';
+
+  // =========================================================
+  // SIDEBAR
+  // =========================================================
+
+  isSidebarOpen = false;
+
+  adminMenu = [
+    {
+      title: 'Dashboard',
+      icon: 'bi-grid-1x2-fill',
+      route: '/admin',
+    },
+    {
+      title: 'Orders',
+      icon: 'bi-cart-check',
+      route: '/admin/orders',
+    },
+    {
+      title: 'Users',
+      icon: 'bi-people',
+      route: '/admin/users',
+    },
+    {
+      title: 'Categories',
+      icon: 'bi-folder',
+      route: '/admin/categories',
+    },
+    {
+      title: 'Products',
+      icon: 'bi-box-seam',
+      route: '/admin/products',
+    },
+    {
+      title: 'Banners',
+      icon: 'bi-images',
+      route: '/admin/banners',
+    },
+  ];
+
+  // =========================================================
+  // DASHBOARD STATISTICS
+  // =========================================================
 
   stats: {
     title: string;
@@ -63,15 +111,13 @@ export class Dashboard implements OnInit {
             title: 'Products',
             value: response.totalProducts,
             icon: 'bi-box-seam',
-            route: '/products',
+            route: '/admin/products',
           },
 
           {
             title: 'Orders',
             value: response.totalOrders,
             icon: 'bi-cart-check',
-
-            // Admin Orders
             route: '/admin/orders',
           },
 
@@ -79,14 +125,14 @@ export class Dashboard implements OnInit {
             title: 'Customers',
             value: response.totalCustomers,
             icon: 'bi-people',
-            route: '/customers',
+            route: '/admin/users',
           },
 
           {
             title: 'Payments',
             value: response.totalPayments,
             icon: 'bi-credit-card',
-            route: '/payments',
+            route: '/admin/orders',
           },
         ];
 
@@ -109,6 +155,34 @@ export class Dashboard implements OnInit {
         console.log('Dashboard Loading:', this.isLoading);
       },
     });
+  }
+
+  // =========================================================
+  // TOGGLE SIDEBAR
+  // =========================================================
+
+  toggleSidebar(): void {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  // =========================================================
+  // CLOSE SIDEBAR
+  // =========================================================
+
+  closeSidebar(): void {
+    this.isSidebarOpen = false;
+  }
+
+  // =========================================================
+  // LOGOUT
+  // =========================================================
+
+  logout(): void {
+    localStorage.removeItem('token');
+
+    localStorage.removeItem('user');
+
+    this.router.navigate(['/login']);
   }
 
   // =========================================================
