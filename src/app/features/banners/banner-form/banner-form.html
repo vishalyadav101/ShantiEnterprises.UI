@@ -1,0 +1,411 @@
+<div class="banner-form-page">
+  <!-- ===================================================== -->
+  <!-- PAGE HEADER -->
+  <!-- ===================================================== -->
+
+  <section class="page-header">
+    <div>
+      <span class="page-label">Admin Panel</span>
+
+      <h1>
+        {{ isEditMode ? 'Edit Banner' : 'Create Banner' }}
+      </h1>
+
+      <p>
+        {{
+          isEditMode
+            ? 'Update your banner details and image.'
+            : 'Create a new promotional banner for your store.'
+        }}
+      </p>
+    </div>
+
+    <button type="button" class="btn btn-outline" (click)="cancel()">← Back to Banners</button>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- LOADING -->
+  <!-- ===================================================== -->
+
+  @if (isLoading) {
+    <div class="loading-card">
+      <div class="spinner"></div>
+
+      <p>Loading banner...</p>
+    </div>
+  }
+
+  @if (!isLoading) {
+    <!-- =================================================== -->
+    <!-- ERROR -->
+    <!-- =================================================== -->
+
+    @if (errorMessage) {
+      <div class="alert alert-error">
+        <span>⚠</span>
+
+        <span>
+          {{ errorMessage }}
+        </span>
+      </div>
+    }
+
+    <!-- =================================================== -->
+    <!-- SUCCESS -->
+    <!-- =================================================== -->
+
+    @if (successMessage) {
+      <div class="alert alert-success">
+        <span>✓</span>
+
+        <span>
+          {{ successMessage }}
+        </span>
+      </div>
+    }
+
+    <!-- =================================================== -->
+    <!-- FORM -->
+    <!-- =================================================== -->
+
+    <form [formGroup]="bannerForm" (ngSubmit)="submit()" class="banner-form">
+      <div class="form-layout">
+        <!-- ================================================= -->
+        <!-- LEFT SIDE -->
+        <!-- ================================================= -->
+
+        <div class="form-main">
+          <!-- =============================================== -->
+          <!-- BASIC INFORMATION -->
+          <!-- =============================================== -->
+
+          <section class="form-card">
+            <div class="card-header">
+              <div>
+                <h2>Banner Information</h2>
+
+                <p>Enter the basic information for your banner.</p>
+              </div>
+            </div>
+
+            <!-- TITLE -->
+
+            <div class="form-group">
+              <label for="title">
+                Banner Title
+                <span class="required">*</span>
+              </label>
+
+              <input
+                id="title"
+                type="text"
+                formControlName="title"
+                placeholder="e.g. Summer Sale"
+                maxlength="150"
+                [class.invalid]="isFieldInvalid('title')"
+              />
+
+              @if (isFieldInvalid('title')) {
+                <small class="field-error"> Banner title is required. </small>
+              }
+            </div>
+
+            <!-- SUBTITLE -->
+
+            <div class="form-group">
+              <label for="subtitle">
+                Subtitle
+                <span class="required">*</span>
+              </label>
+
+              <textarea
+                id="subtitle"
+                rows="4"
+                formControlName="subtitle"
+                placeholder="e.g. Latest products at amazing prices"
+                maxlength="250"
+                [class.invalid]="isFieldInvalid('subtitle')"
+              ></textarea>
+
+              @if (isFieldInvalid('subtitle')) {
+                <small class="field-error"> Banner subtitle is required. </small>
+              }
+            </div>
+          </section>
+
+          <!-- =============================================== -->
+          <!-- BUTTON SETTINGS -->
+          <!-- =============================================== -->
+
+          <section class="form-card">
+            <div class="card-header">
+              <div>
+                <h2>Button Settings</h2>
+
+                <p>Configure the optional action button.</p>
+              </div>
+            </div>
+
+            <div class="two-column">
+              <!-- BUTTON TEXT -->
+
+              <div class="form-group">
+                <label for="buttonText"> Button Text </label>
+
+                <input
+                  id="buttonText"
+                  type="text"
+                  formControlName="buttonText"
+                  placeholder="e.g. Shop Now"
+                  maxlength="50"
+                />
+              </div>
+
+              <!-- BUTTON URL -->
+
+              <div class="form-group">
+                <label for="buttonUrl"> Button URL </label>
+
+                <input
+                  id="buttonUrl"
+                  type="text"
+                  formControlName="buttonUrl"
+                  placeholder="e.g. /products"
+                  maxlength="500"
+                />
+              </div>
+            </div>
+          </section>
+
+          <!-- =============================================== -->
+          <!-- DISPLAY SETTINGS -->
+          <!-- =============================================== -->
+
+          <section class="form-card">
+            <div class="card-header">
+              <div>
+                <h2>Display Settings</h2>
+
+                <p>Control banner order and visibility.</p>
+              </div>
+            </div>
+
+            <div class="two-column">
+              <!-- DISPLAY ORDER -->
+
+              <div class="form-group">
+                <label for="displayOrder">
+                  Display Order
+                  <span class="required">*</span>
+                </label>
+
+                <input
+                  id="displayOrder"
+                  type="number"
+                  formControlName="displayOrder"
+                  min="0"
+                  [class.invalid]="isFieldInvalid('displayOrder')"
+                />
+
+                @if (isFieldInvalid('displayOrder')) {
+                  <small class="field-error"> Display order must be 0 or greater. </small>
+                }
+              </div>
+
+              <!-- STATUS -->
+
+              <div class="form-group status-group">
+                <label> Banner Status </label>
+
+                <label class="switch-row">
+                  <input type="checkbox" formControlName="isActive" />
+
+                  <span class="switch"></span>
+
+                  <span class="switch-text">
+                    {{ bannerForm.get('isActive')?.value ? 'Active' : 'Inactive' }}
+                  </span>
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <!-- =============================================== -->
+          <!-- FORM ACTIONS -->
+          <!-- =============================================== -->
+
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn-outline"
+              (click)="cancel()"
+              [disabled]="isSubmitting"
+            >
+              Cancel
+            </button>
+
+            <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+              @if (isSubmitting) {
+                <span class="button-spinner"></span>
+
+                {{ isEditMode ? 'Updating...' : 'Creating...' }}
+              } @else {
+                <span>
+                  {{ isEditMode ? 'Update Banner' : 'Create Banner' }}
+                </span>
+              }
+            </button>
+          </div>
+        </div>
+
+        <!-- ================================================= -->
+        <!-- RIGHT SIDE - IMAGE -->
+        <!-- ================================================= -->
+
+        <div class="form-sidebar">
+          <section class="form-card image-card">
+            <div class="card-header">
+              <div>
+                <h2>Banner Image</h2>
+
+                <p>Upload your promotional banner image.</p>
+              </div>
+            </div>
+
+            <!-- ============================================= -->
+            <!-- IMAGE PREVIEW -->
+            <!-- ============================================= -->
+
+            <div class="image-preview">
+              @if (imagePreview) {
+                <img [src]="imagePreview" alt="Selected banner preview" />
+
+                <button
+                  type="button"
+                  class="remove-image"
+                  title="Remove selected image"
+                  (click)="removeSelectedImage()"
+                >
+                  ×
+                </button>
+              } @else if (existingImageUrl) {
+                <img [src]="existingImageUrl" alt="Current banner image" />
+
+                <div class="current-image-label">Current Image</div>
+              } @else {
+                <div class="image-placeholder">
+                  <div class="upload-icon">🖼</div>
+
+                  <strong> No Image Selected </strong>
+
+                  <span> Upload a banner image </span>
+                </div>
+              }
+            </div>
+
+            <!-- ============================================= -->
+            <!-- FILE INPUT -->
+            <!-- ============================================= -->
+
+            <div class="upload-area">
+              <label for="bannerImage" class="upload-button">
+                <span>📁</span>
+
+                {{ selectedImage ? 'Choose Another Image' : 'Choose Image' }}
+              </label>
+
+              <input
+                id="bannerImage"
+                type="file"
+                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                (change)="onImageSelected($event)"
+                hidden
+              />
+
+              <p class="upload-help">
+                JPG, JPEG, PNG or WEBP
+                <br />
+                Maximum size: 5 MB
+              </p>
+            </div>
+
+            <!-- ============================================= -->
+            <!-- SELECTED FILE -->
+            <!-- ============================================= -->
+
+            @if (selectedImage) {
+              <div class="selected-file">
+                <div class="file-icon">✓</div>
+
+                <div class="file-info">
+                  <strong>
+                    {{ selectedImage.name }}
+                  </strong>
+
+                  <span>
+                    {{ selectedImage.size / 1024 / 1024 | number: '1.2-2' }}
+                    MB
+                  </span>
+                </div>
+              </div>
+            }
+
+            <!-- ============================================= -->
+            <!-- IMAGE NOTE -->
+            <!-- ============================================= -->
+
+            <div class="image-note">
+              <span>ℹ</span>
+
+              <p>For best results, use a wide promotional image suitable for a website banner.</p>
+            </div>
+          </section>
+
+          <!-- =============================================== -->
+          <!-- LIVE CONTENT PREVIEW -->
+          <!-- =============================================== -->
+
+          <section class="form-card preview-card">
+            <div class="card-header">
+              <div>
+                <h2>Content Preview</h2>
+
+                <p>Preview your banner content.</p>
+              </div>
+            </div>
+
+            <div class="content-preview">
+              @if (imagePreview || existingImageUrl) {
+                <div class="preview-image">
+                  <img [src]="imagePreview || existingImageUrl" alt="Banner preview" />
+
+                  <div class="preview-overlay">
+                    <span class="preview-title">
+                      {{ bannerForm.get('title')?.value || 'Banner Title' }}
+                    </span>
+
+                    <span class="preview-subtitle">
+                      {{ bannerForm.get('subtitle')?.value || 'Banner subtitle' }}
+                    </span>
+
+                    @if (bannerForm.get('buttonText')?.value) {
+                      <span class="preview-button">
+                        {{ bannerForm.get('buttonText')?.value }}
+                      </span>
+                    }
+                  </div>
+                </div>
+              } @else {
+                <div class="preview-empty">
+                  <span>🖼</span>
+
+                  <p>Select an image to see the preview.</p>
+                </div>
+              }
+            </div>
+          </section>
+        </div>
+      </div>
+    </form>
+  }
+</div>

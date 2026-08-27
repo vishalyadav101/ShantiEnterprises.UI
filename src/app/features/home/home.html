@@ -1,9 +1,5 @@
 <div class="home-page">
   <!-- ===================================================== -->
-  <!-- NAVBAR -->
-  <!-- ===================================================== -->
-
-  <!-- ===================================================== -->
   <!-- GLOBAL LOADING -->
   <!-- ===================================================== -->
 
@@ -40,12 +36,277 @@
 
   @if (!isLoading) {
     <!-- =================================================== -->
+    <!-- HOME BANNER -->
+    <!-- =================================================== -->
+
+    @if (banners.length > 0) {
+      <section class="home-banner-section">
+        <div class="container">
+          <div class="home-banner">
+            <!-- BANNER IMAGE -->
+
+            <div class="home-banner-image">
+              @for (banner of banners; track banner.bannerId; let bannerIndex = $index) {
+                @if (currentBannerIndex === bannerIndex) {
+                  <img
+                    [src]="getBannerImageUrl(banner.imageUrl)"
+                    [alt]="banner.title"
+                    class="home-banner-img"
+                  />
+
+                  <!-- OVERLAY -->
+
+                  <div class="home-banner-overlay">
+                    <div class="home-banner-content">
+                      @if (banner.title) {
+                        <h1>
+                          {{ banner.title }}
+                        </h1>
+                      }
+
+                      @if (banner.subtitle) {
+                        <p>
+                          {{ banner.subtitle }}
+                        </p>
+                      }
+
+                      @if (banner.buttonText && banner.buttonUrl) {
+                        <button
+                          type="button"
+                          class="btn btn-primary btn-lg home-banner-button"
+                          (click)="openBannerUrl(banner.buttonUrl)"
+                        >
+                          {{ banner.buttonText }}
+
+                          <i class="bi bi-arrow-right ms-2"></i>
+                        </button>
+                      }
+                    </div>
+                  </div>
+                }
+              }
+            </div>
+
+            <!-- PREVIOUS -->
+
+            @if (banners.length > 1) {
+              <button
+                type="button"
+                class="home-banner-control previous"
+                (click)="previousBanner()"
+                aria-label="Previous banner"
+              >
+                <i class="bi bi-chevron-left"></i>
+              </button>
+            }
+
+            <!-- NEXT -->
+
+            @if (banners.length > 1) {
+              <button
+                type="button"
+                class="home-banner-control next"
+                (click)="nextBanner()"
+                aria-label="Next banner"
+              >
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            }
+
+            <!-- DOTS -->
+
+            @if (banners.length > 1) {
+              <div class="home-banner-dots">
+                @for (banner of banners; track banner.bannerId; let bannerIndex = $index) {
+                  <button
+                    type="button"
+                    class="home-banner-dot"
+                    [class.active]="currentBannerIndex === bannerIndex"
+                    (click)="selectBanner(bannerIndex)"
+                    [attr.aria-label]="'Go to banner ' + (bannerIndex + 1)"
+                  ></button>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- =================================================== -->
     <!-- HERO -->
     <!-- =================================================== -->
+
+    <section class="hero-section">
+      <div class="container">
+        <div class="row align-items-center">
+          <!-- HERO CONTENT -->
+
+          <div class="col-lg-7">
+            <span class="welcome-badge"> Welcome to Shanti Enterprises </span>
+
+            <h1 class="hero-title">
+              Welcome back,
+
+              <span class="text-primary">
+                {{ user?.name }}
+              </span>
+            </h1>
+
+            <p class="hero-description">
+              Explore our products, manage your wishlist and cart, place orders and track your
+              purchases easily.
+            </p>
+
+            <div class="hero-actions">
+              <a routerLink="/products" class="btn btn-primary btn-lg">
+                <i class="bi bi-shop me-2"></i>
+
+                Browse Products
+              </a>
+
+              <a routerLink="/cart" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-cart3 me-2"></i>
+
+                My Cart
+
+                @if (cartItemCount > 0) {
+                  <span class="ms-1"> ({{ cartItemCount }}) </span>
+                }
+              </a>
+            </div>
+          </div>
+
+          <!-- ACCOUNT CARD -->
+
+          <div class="col-lg-5 mt-5 mt-lg-0">
+            <div class="welcome-card">
+              <div class="welcome-icon">
+                <i class="bi bi-person-check"></i>
+              </div>
+
+              <h3>
+                {{ user?.name }}
+              </h3>
+
+              <p>
+                {{ user?.email }}
+              </p>
+
+              <div class="account-status">
+                <i class="bi bi-check-circle-fill"></i>
+
+                Account Active
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- =================================================== -->
     <!-- ACCOUNT OVERVIEW -->
     <!-- =================================================== -->
+
+    <section class="overview-section">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <h2>Account Overview</h2>
+
+            <p>Quick summary of your shopping activity.</p>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <!-- CART -->
+
+          <div class="col-6 col-lg-3">
+            <div class="overview-card" routerLink="/cart">
+              <div class="overview-icon cart-icon">
+                <i class="bi bi-cart3"></i>
+              </div>
+
+              <div class="overview-info">
+                <span> Cart </span>
+
+                <strong>
+                  {{ cartItemCount }}
+                </strong>
+
+                <small> Items </small>
+              </div>
+
+              <i class="bi bi-arrow-right overview-arrow"></i>
+            </div>
+          </div>
+
+          <!-- WISHLIST -->
+
+          <div class="col-6 col-lg-3">
+            <div class="overview-card" routerLink="/wishlist">
+              <div class="overview-icon wishlist-icon">
+                <i class="bi bi-heart"></i>
+              </div>
+
+              <div class="overview-info">
+                <span> Wishlist </span>
+
+                <strong>
+                  {{ wishlistCount }}
+                </strong>
+
+                <small> Saved Items </small>
+              </div>
+
+              <i class="bi bi-arrow-right overview-arrow"></i>
+            </div>
+          </div>
+
+          <!-- ORDERS -->
+
+          <div class="col-6 col-lg-3">
+            <div class="overview-card" routerLink="/orders">
+              <div class="overview-icon order-icon">
+                <i class="bi bi-box-seam"></i>
+              </div>
+
+              <div class="overview-info">
+                <span> Orders </span>
+
+                <strong>
+                  {{ orderCount }}
+                </strong>
+
+                <small> Total Orders </small>
+              </div>
+
+              <i class="bi bi-arrow-right overview-arrow"></i>
+            </div>
+          </div>
+
+          <!-- ADDRESS -->
+
+          <div class="col-6 col-lg-3">
+            <div class="overview-card" routerLink="/addresses">
+              <div class="overview-icon address-icon">
+                <i class="bi bi-geo-alt"></i>
+              </div>
+
+              <div class="overview-info">
+                <span> Addresses </span>
+
+                <strong> Manage </strong>
+
+                <small> Saved Addresses </small>
+              </div>
+
+              <i class="bi bi-arrow-right overview-arrow"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- =================================================== -->
     <!-- CART MESSAGE -->
@@ -108,9 +369,7 @@
             @for (product of featuredProducts; track product.productId) {
               <div class="col-sm-6 col-lg-4 col-xl-3">
                 <div class="home-product-card">
-                  <!-- ===================================== -->
                   <!-- IMAGE -->
-                  <!-- ===================================== -->
 
                   <div class="home-product-image">
                     @if (isImageLoading(product)) {
@@ -201,9 +460,7 @@
                     }
                   </div>
 
-                  <!-- ===================================== -->
                   <!-- THUMBNAILS -->
-                  <!-- ===================================== -->
 
                   @if (getImages(product).length > 1) {
                     <div class="home-thumbnails">
@@ -226,9 +483,7 @@
                     </div>
                   }
 
-                  <!-- ===================================== -->
                   <!-- CONTENT -->
-                  <!-- ===================================== -->
 
                   <div class="home-product-content">
                     <span class="home-product-category">
@@ -253,6 +508,7 @@
 
                         <div class="home-product-mrp">
                           MRP:
+
                           <del> ₹{{ product.mrp }} </del>
                         </div>
                       </div>
@@ -482,6 +738,7 @@
 
               <span>
                 Browse
+
                 <i class="bi bi-arrow-right"></i>
               </span>
             </div>
@@ -501,6 +758,7 @@
 
               <span>
                 View Wishlist
+
                 <i class="bi bi-arrow-right"></i>
               </span>
             </div>
@@ -520,6 +778,7 @@
 
               <span>
                 View Cart
+
                 <i class="bi bi-arrow-right"></i>
               </span>
             </div>
@@ -539,6 +798,7 @@
 
               <span>
                 View Orders
+
                 <i class="bi bi-arrow-right"></i>
               </span>
             </div>
@@ -558,6 +818,7 @@
 
               <span>
                 Manage
+
                 <i class="bi bi-arrow-right"></i>
               </span>
             </div>
@@ -565,9 +826,5 @@
         </div>
       </div>
     </section>
-
-    <!-- =================================================== -->
-    <!-- FOOTER -->
-    <!-- =================================================== -->
   }
 </div>

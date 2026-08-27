@@ -18,21 +18,15 @@
 
 .nav-icon-link {
   position: relative;
-
   width: 38px;
   height: 38px;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   border-radius: 50%;
-
   color: #ffffff;
   text-decoration: none;
-
   font-size: 1.15rem;
-
   transition:
     background 0.2s ease,
     transform 0.2s ease;
@@ -45,27 +39,19 @@
 
 .nav-badge {
   position: absolute;
-
   top: -2px;
   right: -2px;
-
   min-width: 18px;
   height: 18px;
-
   padding: 0 4px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   border-radius: 20px;
-
   background: #dc3545;
   color: #ffffff;
-
   font-size: 0.65rem;
   font-weight: 700;
-
   border: 2px solid #0d6efd;
 }
 
@@ -75,15 +61,200 @@
 }
 
 /* =========================================================
+   HOME BANNER
+========================================================= */
+
+.home-banner-section {
+  padding: 25px 0 10px;
+  background: #f5f7fb;
+}
+
+.home-banner {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #172033;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+}
+
+.home-banner-image {
+  position: relative;
+  width: 100%;
+  height: 390px;
+  overflow: hidden;
+  background: #172033;
+}
+
+.home-banner-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  animation: bannerFadeIn 0.45s ease;
+}
+
+@keyframes bannerFadeIn {
+  from {
+    opacity: 0.4;
+    transform: scale(1.02);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* =========================================================
+   BANNER OVERLAY
+========================================================= */
+
+.home-banner-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: 40px 55px;
+
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.72) 0%,
+    rgba(0, 0, 0, 0.48) 38%,
+    rgba(0, 0, 0, 0.12) 75%,
+    rgba(0, 0, 0, 0.02) 100%
+  );
+}
+
+.home-banner-content {
+  width: 55%;
+  max-width: 620px;
+  color: #ffffff;
+}
+
+.home-banner-content h1 {
+  margin: 0 0 12px;
+  color: #ffffff;
+  font-size: 2.7rem;
+  font-weight: 800;
+  line-height: 1.15;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.home-banner-content p {
+  margin: 0 0 24px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.home-banner-button {
+  padding: 11px 22px;
+  border-radius: 9px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.18);
+}
+
+/* =========================================================
+   BANNER PREVIOUS / NEXT
+========================================================= */
+
+.home-banner-control {
+  position: absolute;
+  top: 50%;
+  z-index: 10;
+
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.92);
+  color: #0d6efd;
+
+  font-size: 1rem;
+
+  cursor: pointer;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18);
+
+  transform: translateY(-50%);
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.home-banner-control:hover {
+  background: #ffffff;
+  transform: translateY(-50%) scale(1.08);
+}
+
+.home-banner-control.previous {
+  left: 18px;
+}
+
+.home-banner-control.next {
+  right: 18px;
+}
+
+/* =========================================================
+   BANNER DOTS
+========================================================= */
+
+.home-banner-dots {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  z-index: 10;
+
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  transform: translateX(-50%);
+}
+
+.home-banner-dot {
+  width: 9px;
+  height: 9px;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.55);
+
+  cursor: pointer;
+
+  transition:
+    width 0.2s ease,
+    background 0.2s ease;
+}
+
+.home-banner-dot.active {
+  width: 25px;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+/* =========================================================
    LOADING
 ========================================================= */
 
 .home-loading {
   min-height: 70vh;
-
   display: flex;
   flex-direction: column;
-
   align-items: center;
   justify-content: center;
 }
@@ -101,12 +272,7 @@
   padding: 80px 0 75px;
 
   background:
-    radial-gradient(
-      circle at 85% 20%,
-      rgba(13, 110, 253, 0.08),
-      transparent 30%
-    ),
-    #ffffff;
+    radial-gradient(circle at 85% 20%, rgba(13, 110, 253, 0.08), transparent 30%), #ffffff;
 }
 
 .welcome-badge {
@@ -114,7 +280,6 @@
   align-items: center;
 
   padding: 7px 14px;
-
   margin-bottom: 18px;
 
   border-radius: 30px;
@@ -151,9 +316,7 @@
 .hero-actions {
   display: flex;
   align-items: center;
-
   gap: 12px;
-
   margin-top: 28px;
 }
 
@@ -177,8 +340,7 @@
 
   border-radius: 22px;
 
-  box-shadow:
-    0 12px 35px rgba(0, 0, 0, 0.07);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.07);
 
   transition:
     transform 0.25s ease,
@@ -187,9 +349,7 @@
 
 .welcome-card:hover {
   transform: translateY(-4px);
-
-  box-shadow:
-    0 18px 45px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.1);
 }
 
 .welcome-icon {
@@ -583,7 +743,6 @@
 
 .wishlist-button:hover {
   transform: scale(1.08);
-
   color: #dc3545;
 }
 
@@ -626,7 +785,7 @@
 }
 
 /* =========================================================
-   CAROUSEL
+   PRODUCT CAROUSEL
 ========================================================= */
 
 .home-carousel-button {
@@ -1343,6 +1502,25 @@
 ========================================================= */
 
 @media (max-width: 991.98px) {
+  .home-banner-image {
+    height: 330px;
+  }
+
+  .home-banner-overlay {
+    padding: 35px 40px;
+  }
+
+  .home-banner-content {
+    width: 65%;
+  }
+
+  .home-banner-content h1 {
+    font-size: 2.25rem;
+  }
+
+  .home-banner-content p {
+    font-size: 0.95rem;
+  }
 
   .hero-section {
     padding: 60px 0;
@@ -1371,7 +1549,6 @@
   .order-status {
     margin-left: 0;
   }
-
 }
 
 /* =========================================================
@@ -1379,6 +1556,75 @@
 ========================================================= */
 
 @media (max-width: 767.98px) {
+  .home-banner-section {
+    padding: 15px 0 5px;
+  }
+
+  .home-banner {
+    border-radius: 14px;
+  }
+
+  .home-banner-image {
+    height: 300px;
+  }
+
+  .home-banner-overlay {
+    align-items: flex-end;
+    padding: 25px 22px 42px;
+
+    background: linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.78) 0%,
+      rgba(0, 0, 0, 0.38) 55%,
+      rgba(0, 0, 0, 0.05) 100%
+    );
+  }
+
+  .home-banner-content {
+    width: 100%;
+  }
+
+  .home-banner-content h1 {
+    margin-bottom: 7px;
+    font-size: 1.65rem;
+  }
+
+  .home-banner-content p {
+    margin-bottom: 14px;
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+
+  .home-banner-button {
+    padding: 8px 15px;
+    font-size: 0.78rem;
+  }
+
+  .home-banner-control {
+    width: 34px;
+    height: 34px;
+  }
+
+  .home-banner-control.previous {
+    left: 10px;
+  }
+
+  .home-banner-control.next {
+    right: 10px;
+  }
+
+  .home-banner-dots {
+    bottom: 12px;
+  }
+
+  .home-banner-dot {
+    width: 7px;
+    height: 7px;
+  }
+
+  .home-banner-dot.active {
+    width: 20px;
+  }
 
   .home-navbar {
     min-height: 58px;
@@ -1484,7 +1730,6 @@
   .quick-card p {
     min-height: 55px;
   }
-
 }
 
 /* =========================================================
@@ -1492,6 +1737,26 @@
 ========================================================= */
 
 @media (max-width: 575.98px) {
+  .home-banner-image {
+    height: 270px;
+  }
+
+  .home-banner-overlay {
+    padding: 20px 18px 38px;
+  }
+
+  .home-banner-content h1 {
+    font-size: 1.4rem;
+  }
+
+  .home-banner-content p {
+    font-size: 0.76rem;
+  }
+
+  .home-banner-button {
+    padding: 7px 12px;
+    font-size: 0.72rem;
+  }
 
   .hero-title {
     font-size: 1.75rem;
@@ -1551,5 +1816,4 @@
   .home-footer {
     text-align: center;
   }
-
 }

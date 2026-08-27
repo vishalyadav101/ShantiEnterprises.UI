@@ -1,0 +1,286 @@
+<div class="banner-detail-page">
+  <!-- =====================================================
+       PAGE HEADER
+  ====================================================== -->
+
+  <section class="page-header">
+    <div>
+      <div class="page-label">Admin Panel</div>
+
+      <h1>Banner Details</h1>
+
+      <p>View complete information about this promotional banner.</p>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="btn btn-outline" (click)="goBack()">← Back to Banners</button>
+
+      @if (banner) {
+        <button type="button" class="btn btn-primary" (click)="editBanner()">✎ Edit Banner</button>
+      }
+    </div>
+  </section>
+
+  <!-- =====================================================
+       ERROR
+  ====================================================== -->
+
+  @if (errorMessage) {
+    <div class="alert alert-error">
+      <span>⚠</span>
+
+      {{ errorMessage }}
+
+      <button type="button" class="btn btn-sm btn-outline" (click)="goBack()">Back</button>
+    </div>
+  }
+
+  <!-- =====================================================
+       LOADING
+  ====================================================== -->
+
+  @if (isLoading) {
+    <section class="loading-card">
+      <div class="spinner"></div>
+
+      <h3>Loading banner...</h3>
+
+      <p>Please wait while banner details are loading.</p>
+    </section>
+  }
+
+  <!-- =====================================================
+       BANNER DETAILS
+  ====================================================== -->
+
+  @if (!isLoading && banner) {
+    <div class="detail-grid">
+      <!-- =================================================
+           LEFT SIDE
+      ================================================== -->
+
+      <div class="left-column">
+        <!-- BANNER PREVIEW -->
+
+        <section class="detail-card preview-card">
+          <div class="card-header">
+            <div>
+              <h2>Banner Preview</h2>
+
+              <p>Promotional banner image.</p>
+            </div>
+
+            <span
+              class="status-badge"
+              [class.active]="banner.isActive"
+              [class.inactive]="!banner.isActive"
+            >
+              <span class="status-dot"></span>
+
+              {{ banner.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </div>
+
+          <div class="banner-preview">
+            @if (banner.imageUrl) {
+              <img [src]="banner.imageUrl" [alt]="banner.title" (error)="onImageError()" />
+            } @else {
+              <div class="no-image">
+                <span>◇</span>
+
+                <p>No Image Available</p>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- BANNER CONTENT -->
+
+        <section class="detail-card">
+          <div class="card-header">
+            <div>
+              <h2>Banner Content</h2>
+
+              <p>Text and promotional information.</p>
+            </div>
+          </div>
+
+          <div class="content-details">
+            <!-- TITLE -->
+
+            <div class="detail-row">
+              <div class="detail-label">Title</div>
+
+              <div class="detail-value title-value">
+                {{ banner.title }}
+              </div>
+            </div>
+
+            <!-- SUBTITLE -->
+
+            <div class="detail-row">
+              <div class="detail-label">Subtitle</div>
+
+              <div class="detail-value">
+                {{ banner.subtitle || '—' }}
+              </div>
+            </div>
+
+            <!-- BUTTON TEXT -->
+
+            <div class="detail-row">
+              <div class="detail-label">Button Text</div>
+
+              <div class="detail-value">
+                @if (banner.buttonText) {
+                  <span class="button-preview">
+                    {{ banner.buttonText }}
+                  </span>
+                } @else {
+                  <span class="muted"> No button </span>
+                }
+              </div>
+            </div>
+
+            <!-- BUTTON URL -->
+
+            <div class="detail-row">
+              <div class="detail-label">Button URL</div>
+
+              <div class="detail-value">
+                @if (banner.buttonUrl) {
+                  <code>
+                    {{ banner.buttonUrl }}
+                  </code>
+                } @else {
+                  <span class="muted"> — </span>
+                }
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- =================================================
+           RIGHT SIDE
+      ================================================== -->
+
+      <div class="right-column">
+        <!-- BANNER INFORMATION -->
+
+        <section class="detail-card information-card">
+          <div class="card-header">
+            <div>
+              <h2>Banner Information</h2>
+
+              <p>Basic banner details.</p>
+            </div>
+          </div>
+
+          <div class="information-list">
+            <!-- ID -->
+
+            <div class="info-item">
+              <div class="info-icon blue">#</div>
+
+              <div class="info-content">
+                <span class="info-label"> Banner ID </span>
+
+                <strong> #{{ banner.bannerId }} </strong>
+              </div>
+            </div>
+
+            <!-- DISPLAY ORDER -->
+
+            <div class="info-item">
+              <div class="info-icon purple">↕</div>
+
+              <div class="info-content">
+                <span class="info-label"> Display Order </span>
+
+                <strong>
+                  {{ banner.displayOrder }}
+                </strong>
+              </div>
+            </div>
+
+            <!-- STATUS -->
+
+            <div class="info-item">
+              <div class="info-icon green">✓</div>
+
+              <div class="info-content">
+                <span class="info-label"> Status </span>
+
+                <strong
+                  [class.text-active]="banner.isActive"
+                  [class.text-inactive]="!banner.isActive"
+                >
+                  {{ banner.isActive ? 'Active' : 'Inactive' }}
+                </strong>
+              </div>
+            </div>
+
+            <!-- CREATED DATE -->
+
+            <div class="info-item">
+              <div class="info-icon orange">📅</div>
+
+              <div class="info-content">
+                <span class="info-label"> Created Date </span>
+
+                <strong>
+                  {{ banner.createdDate | date: 'dd MMM yyyy' }}
+                </strong>
+
+                <small>
+                  {{ banner.createdDate | date: 'hh:mm a' }}
+                </small>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- IMAGE URL -->
+
+        <section class="detail-card image-url-card">
+          <div class="card-header">
+            <div>
+              <h2>Image Information</h2>
+
+              <p>Uploaded banner image.</p>
+            </div>
+          </div>
+
+          <div class="image-url-box">
+            <span class="image-url-label"> Image URL </span>
+
+            <div class="image-url">
+              {{ banner.imageUrl }}
+            </div>
+          </div>
+        </section>
+
+        <!-- ACTIONS -->
+
+        <section class="detail-card actions-card">
+          <h2>Quick Actions</h2>
+
+          <p>Manage this banner.</p>
+
+          <button type="button" class="action-button edit-button" (click)="editBanner()">
+            <span>✎</span>
+
+            Edit Banner
+          </button>
+
+          <button type="button" class="action-button back-button" (click)="goBack()">
+            <span>←</span>
+
+            Back to Banner List
+          </button>
+        </section>
+      </div>
+    </div>
+  }
+</div>
