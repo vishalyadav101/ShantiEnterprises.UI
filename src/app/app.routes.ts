@@ -3,22 +3,37 @@ import { Routes } from '@angular/router';
 import { Login } from './features/auth/login/login';
 import { Register } from './features/auth/register/register';
 
-import { Home } from './features/home/home';
-
 import { authGuard } from './core/guards/auth-guard';
 import { adminGuard } from './core/guards/admin-guard';
 
 // =========================================================
-// CUSTOMER PRODUCT
+// CUSTOMER LAYOUT
 // =========================================================
+
+import { CustomerLayout } from './layout/customer-layout/customer-layout/customer-layout';
+// =========================================================
+// CUSTOMER
+// =========================================================
+
+import { Home } from './features/home/home';
 
 import { ProductList } from './features/products/product-list/product-list';
 
-// =========================================================
-// CART
-// =========================================================
+import { ProductDetail as CustomerProductDetail } from './features/products/product-detail/product-detail';
+
+import { Wishlist } from './features/wishlist/wishlist';
 
 import { CartComponent } from './features/cart/cart/cart';
+
+import { AddressList } from './features/address/address-list/address-list';
+
+import { AddressForm } from './features/address/address-form/address-form';
+
+import { CheckoutComponent } from './features/checkout/checkout/checkout';
+
+import { OrderDetailComponent } from './features/orders/order-detail/order-detail';
+
+import { OrderList } from './features/orders/order-list/order-list';
 
 // =========================================================
 // ADMIN DASHBOARD
@@ -27,30 +42,11 @@ import { CartComponent } from './features/cart/cart/cart';
 import { Dashboard } from './features/dashboard/dashboard/dashboard';
 
 // =========================================================
-// ADDRESS
-// =========================================================
-
-import { AddressList } from './features/address/address-list/address-list';
-import { AddressForm } from './features/address/address-form/address-form';
-
-// =========================================================
-// CHECKOUT
-// =========================================================
-
-import { CheckoutComponent } from './features/checkout/checkout/checkout';
-
-// =========================================================
-// CUSTOMER ORDERS
-// =========================================================
-
-import { OrderDetailComponent } from './features/orders/order-detail/order-detail';
-import { OrderList } from './features/orders/order-list/order-list';
-
-// =========================================================
 // ADMIN ORDERS
 // =========================================================
 
 import { AdminOrderListComponent } from './features/orders/admin-order-list/admin-order-list';
+
 import { AdminOrderDetailComponent } from './features/orders/admin-order-detail/admin-order-detail';
 
 // =========================================================
@@ -58,7 +54,9 @@ import { AdminOrderDetailComponent } from './features/orders/admin-order-detail/
 // =========================================================
 
 import { UserList } from './features/admin-users/user-list/user-list';
+
 import { UserDetail } from './features/admin-users/user-detail/user-detail';
+
 import { UserEdit } from './features/admin-users/user-edit/user-edit';
 
 // =========================================================
@@ -66,7 +64,9 @@ import { UserEdit } from './features/admin-users/user-edit/user-edit';
 // =========================================================
 
 import { CategoryList } from './features/categories/category-list/category-list';
+
 import { CategoryDetail } from './features/categories/category-detail/category-detail';
+
 import { CategoryForm } from './features/categories/category-form/category-form';
 
 // =========================================================
@@ -74,11 +74,16 @@ import { CategoryForm } from './features/categories/category-form/category-form'
 // =========================================================
 
 import { ProductList as AdminProductList } from './features/admin-products/product-list/product-list';
+
 import { ProductDetail } from './features/admin-products/product-detail/product-detail';
+
 import { ProductForm } from './features/admin-products/product-form/product-form';
+
 import { ProductEdit } from './features/admin-products/product-edit/product-edit';
-import { Wishlist } from './features/wishlist/wishlist';
-import { ProductDetail as CustomerProductDetail } from './features/products/product-detail/product-detail';
+
+// =========================================================
+// ROUTES
+// =========================================================
 
 export const routes: Routes = [
   // =========================================================
@@ -175,29 +180,24 @@ export const routes: Routes = [
   // ADMIN PRODUCTS
   // =========================================================
 
-  // Admin Product List
   {
     path: 'admin/products',
     component: AdminProductList,
     canActivate: [adminGuard],
   },
 
-  // Add Product
-  // IMPORTANT: "new" must come before ":id"
   {
     path: 'admin/products/new',
     component: ProductForm,
     canActivate: [adminGuard],
   },
 
-  // Edit Product
   {
     path: 'admin/products/:id/edit',
     component: ProductEdit,
     canActivate: [adminGuard],
   },
 
-  // Product Details
   {
     path: 'admin/products/:id',
     component: ProductDetail,
@@ -205,95 +205,98 @@ export const routes: Routes = [
   },
 
   // =========================================================
-  // HOME
+  // CUSTOMER LAYOUT
   // =========================================================
 
   {
-    path: 'home',
-    component: Home,
+    path: '',
+    component: CustomerLayout,
     canActivate: [authGuard],
-  },
 
-  // =========================================================
-  // CUSTOMER PRODUCTS
-  // =========================================================
+    children: [
+      // =======================================================
+      // HOME
+      // =======================================================
 
-  {
-    path: 'products',
-    component: ProductList,
-    canActivate: [authGuard],
-  },
-  {
-    path: 'products/:id',
-    component: CustomerProductDetail,
-    canActivate: [authGuard],
-  },
-  // =========================================================
-  // WISHLIST
-  // =========================================================
+      {
+        path: 'home',
+        component: Home,
+      },
 
-  {
-    path: 'wishlist',
-    component: Wishlist,
-    canActivate: [authGuard],
-  },
+      // =======================================================
+      // PRODUCTS
+      // =======================================================
 
-  // =========================================================
-  // CART
-  // =========================================================
+      {
+        path: 'products',
+        component: ProductList,
+      },
 
-  {
-    path: 'cart',
-    component: CartComponent,
-    canActivate: [authGuard],
-  },
+      {
+        path: 'products/:id',
+        component: CustomerProductDetail,
+      },
 
-  // =========================================================
-  // ADDRESSES
-  // =========================================================
+      // =======================================================
+      // WISHLIST
+      // =======================================================
 
-  {
-    path: 'addresses',
-    component: AddressList,
-    canActivate: [authGuard],
-  },
+      {
+        path: 'wishlist',
+        component: Wishlist,
+      },
 
-  {
-    path: 'addresses/new',
-    component: AddressForm,
-    canActivate: [authGuard],
-  },
+      // =======================================================
+      // CART
+      // =======================================================
 
-  {
-    path: 'addresses/edit/:id',
-    component: AddressForm,
-    canActivate: [authGuard],
-  },
+      {
+        path: 'cart',
+        component: CartComponent,
+      },
 
-  // =========================================================
-  // CHECKOUT
-  // =========================================================
+      // =======================================================
+      // ADDRESSES
+      // =======================================================
 
-  {
-    path: 'checkout',
-    component: CheckoutComponent,
-    canActivate: [authGuard],
-  },
+      {
+        path: 'addresses',
+        component: AddressList,
+      },
 
-  // =========================================================
-  // CUSTOMER ORDERS
-  // =========================================================
+      {
+        path: 'addresses/new',
+        component: AddressForm,
+      },
 
-  {
-    path: 'orders',
-    component: OrderList,
-    canActivate: [authGuard],
-  },
+      {
+        path: 'addresses/edit/:id',
+        component: AddressForm,
+      },
 
-  {
-    path: 'orders/:id',
-    component: OrderDetailComponent,
-    canActivate: [authGuard],
+      // =======================================================
+      // CHECKOUT
+      // =======================================================
+
+      {
+        path: 'checkout',
+        component: CheckoutComponent,
+      },
+
+      // =======================================================
+      // ORDERS
+      // =======================================================
+
+      {
+        path: 'orders',
+        component: OrderList,
+      },
+
+      {
+        path: 'orders/:id',
+        component: OrderDetailComponent,
+      },
+    ],
   },
 
   // =========================================================
