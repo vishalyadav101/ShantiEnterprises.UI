@@ -1,0 +1,235 @@
+<div class="customer-layout">
+  <!-- ===================================================== -->
+  <!-- CUSTOMER NAVBAR -->
+  <!-- ===================================================== -->
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary customer-navbar">
+    <div class="container">
+      <!-- BRAND -->
+
+      <a class="navbar-brand fw-bold" routerLink="/home"> Shanti Enterprises </a>
+
+      <!-- RIGHT SIDE -->
+
+      <div class="d-flex align-items-center gap-2 gap-md-3">
+        <!-- WISHLIST -->
+
+        <a routerLink="/wishlist" class="nav-action" title="Wishlist">
+          <i class="bi bi-heart"></i>
+
+          @if (wishlistCount > 0) {
+            <span class="nav-badge">
+              {{ wishlistCount }}
+            </span>
+          }
+        </a>
+
+        <!-- CART -->
+
+        <a routerLink="/cart" class="nav-action" title="Cart">
+          <i class="bi bi-cart3"></i>
+
+          @if (cartItemCount > 0) {
+            <span class="nav-badge">
+              {{ cartItemCount }}
+            </span>
+          }
+        </a>
+        <!-- USER -->
+
+        <span class="text-white user-name d-none d-md-inline">
+          <i class="bi bi-person-circle me-1"></i>
+
+          {{ user?.name }}
+        </span>
+
+        <!-- MY ORDERS -->
+
+        <a routerLink="/orders" class="btn btn-light btn-sm" title="My Orders">
+          <i class="bi bi-box-seam me-1"></i>
+
+          My Orders
+        </a>
+
+        <!-- LOGOUT -->
+
+        <button type="button" class="btn btn-light btn-sm" (click)="logout()">
+          <i class="bi bi-box-arrow-right me-1"></i>
+
+          Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===================================================== -->
+  <!-- CUSTOMER PAGE CONTENT -->
+  <!-- ===================================================== -->
+
+  <main class="customer-content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- ===================================================== -->
+  <!-- FOOTER -->
+  <!-- ===================================================== -->
+
+  <!-- ===================================================== -->
+  <!-- CUSTOMER FOOTER -->
+  <!-- ===================================================== -->
+
+  <footer class="customer-footer">
+    <div class="container">
+      <!-- TOP FOOTER -->
+      <div class="row g-4 py-5">
+        <!-- BRAND -->
+        <div class="col-lg-4 col-md-6">
+          <div class="footer-brand">
+            <h4>
+              <i class="bi bi-shop me-2"></i>
+              Shanti Enterprises
+            </h4>
+
+            <p>
+              Your trusted place for quality products, easy shopping and a smooth online shopping
+              experience.
+            </p>
+
+            <div class="footer-trust">
+              <span>
+                <i class="bi bi-shield-check"></i>
+                Secure Shopping
+              </span>
+
+              <span>
+                <i class="bi bi-truck"></i>
+                Fast Delivery
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- QUICK LINKS -->
+        <div class="col-6 col-lg-2 col-md-3">
+          <h6 class="footer-title">Quick Links</h6>
+
+          <ul class="footer-links">
+            <li>
+              <a routerLink="/home">
+                <i class="bi bi-chevron-right"></i>
+                Home
+              </a>
+            </li>
+
+            <li>
+              <a routerLink="/products">
+                <i class="bi bi-chevron-right"></i>
+                Products
+              </a>
+            </li>
+
+            <li>
+              <a routerLink="/wishlist">
+                <i class="bi bi-chevron-right"></i>
+                Wishlist
+              </a>
+            </li>
+
+            <li>
+              <a routerLink="/cart">
+                <i class="bi bi-chevron-right"></i>
+                Shopping Cart
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- MY ACCOUNT -->
+        <div class="col-6 col-lg-2 col-md-3">
+          <h6 class="footer-title">My Account</h6>
+
+          <ul class="footer-links">
+            <li>
+              <a routerLink="/orders">
+                <i class="bi bi-chevron-right"></i>
+                My Orders
+              </a>
+            </li>
+
+            <li>
+              <a routerLink="/addresses">
+                <i class="bi bi-chevron-right"></i>
+                My Addresses
+              </a>
+            </li>
+
+            <li>
+              <a routerLink="/wishlist">
+                <i class="bi bi-chevron-right"></i>
+                My Wishlist
+              </a>
+            </li>
+
+            <li>
+              <a routerLink="/cart">
+                <i class="bi bi-chevron-right"></i>
+                My Cart
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- CUSTOMER SUPPORT -->
+        <div class="col-lg-4 col-md-6">
+          <h6 class="footer-title">Customer Support</h6>
+
+          <p class="footer-support-text">
+            Need help with your order or shopping experience? We're here to help.
+          </p>
+
+          <div class="support-item">
+            <div class="support-icon">
+              <i class="bi bi-headset"></i>
+            </div>
+
+            <div>
+              <span>Customer Support</span>
+              <strong>Mon - Sat, 9:00 AM - 6:00 PM</strong>
+            </div>
+          </div>
+
+          <div class="support-item">
+            <div class="support-icon">
+              <i class="bi bi-shield-check"></i>
+            </div>
+
+            <div>
+              <span>Safe & Secure</span>
+              <strong>Trusted Shopping Experience</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DIVIDER -->
+      <div class="footer-divider"></div>
+
+      <!-- BOTTOM FOOTER -->
+      <div class="footer-bottom">
+        <p class="mb-0">© 2026 <strong>Shanti Enterprises</strong>. All rights reserved.</p>
+
+        <div class="footer-bottom-links">
+          <span>
+            <i class="bi bi-lock-fill"></i>
+            Secure Payments
+          </span>
+
+          <span>
+            <i class="bi bi-heart-fill"></i>
+            Made for Customers
+          </span>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>

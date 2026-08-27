@@ -1,172 +1,573 @@
 <div class="home-page">
-  <!-- Navbar -->
+  <!-- ===================================================== -->
+  <!-- NAVBAR -->
+  <!-- ===================================================== -->
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container">
-      <a class="navbar-brand fw-bold" routerLink="/home"> Shanti Enterprises </a>
+  <!-- ===================================================== -->
+  <!-- GLOBAL LOADING -->
+  <!-- ===================================================== -->
 
-      <div class="d-flex align-items-center gap-3">
-        <span class="text-white">
-          <i class="bi bi-person-circle me-1"></i>
-          {{ user?.fullName }}
-        </span>
+  @if (isLoading) {
+    <div class="home-loading">
+      <div class="spinner-border text-primary" role="status"></div>
 
-        <button type="button" class="btn btn-light btn-sm" (click)="logout()">
-          <i class="bi bi-box-arrow-right me-1"></i>
-          Logout
+      <p class="text-muted mt-3 mb-0">Loading your account...</p>
+    </div>
+  }
+
+  <!-- ===================================================== -->
+  <!-- ERROR -->
+  <!-- ===================================================== -->
+
+  @if (!isLoading && errorMessage) {
+    <div class="container pt-4">
+      <div
+        class="alert alert-danger d-flex align-items-center justify-content-between"
+        role="alert"
+      >
+        <div>
+          <i class="bi bi-exclamation-circle me-2"></i>
+
+          {{ errorMessage }}
+        </div>
+
+        <button type="button" class="btn btn-sm btn-outline-danger" (click)="loadHomeData()">
+          Retry
         </button>
       </div>
     </div>
-  </nav>
+  }
 
-  <!-- Hero -->
+  @if (!isLoading) {
+    <!-- =================================================== -->
+    <!-- HERO -->
+    <!-- =================================================== -->
 
-  <section class="hero-section">
-    <div class="container">
-      <div class="row align-items-center">
-        <!-- Hero Content -->
+    <!-- =================================================== -->
+    <!-- ACCOUNT OVERVIEW -->
+    <!-- =================================================== -->
 
-        <div class="col-lg-7">
-          <span class="badge bg-primary-subtle text-primary mb-3">
-            Welcome to Shanti Enterprises
-          </span>
+    <!-- =================================================== -->
+    <!-- CART MESSAGE -->
+    <!-- =================================================== -->
 
-          <h1 class="display-5 fw-bold">
-            Everything you need,
+    @if (cartMessage) {
+      <div class="container">
+        <div class="alert alert-success d-flex align-items-center" role="alert">
+          <i class="bi bi-check-circle me-2"></i>
 
-            <span class="text-primary"> in one place. </span>
-          </h1>
+          {{ cartMessage }}
 
-          <p class="lead text-muted mt-3">
-            Explore our products, manage your cart, place orders and track your purchases easily.
-          </p>
-
-          <!-- Action Buttons -->
-
-          <div class="d-flex gap-2 mt-4 flex-wrap">
-            <!-- Browse Products -->
-
-            <a routerLink="/products" class="btn btn-primary btn-lg">
-              <i class="bi bi-shop me-2"></i>
-              Browse Products
-            </a>
-
-            <!-- My Cart -->
-
-            <a routerLink="/cart" class="btn btn-outline-primary btn-lg">
-              <i class="bi bi-cart3 me-2"></i>
-              My Cart
-            </a>
-          </div>
-        </div>
-
-        <!-- Welcome Card -->
-
-        <div class="col-lg-5 mt-5 mt-lg-0">
-          <div class="welcome-card">
-            <div class="icon-circle">
-              <i class="bi bi-building"></i>
-            </div>
-
-            <h3 class="fw-bold mt-3">
-              Welcome,
-              {{ user?.fullName }}
-            </h3>
-
-            <p class="text-muted mb-0">Your customer account is ready.</p>
-          </div>
+          <a routerLink="/cart" class="btn btn-sm btn-success ms-auto"> View Cart </a>
         </div>
       </div>
-    </div>
-  </section>
+    }
 
-  <!-- Quick Access -->
+    <!-- =================================================== -->
+    <!-- WISHLIST MESSAGE -->
+    <!-- =================================================== -->
 
-  <section class="features-section">
-    <div class="container">
-      <div class="text-center mb-5">
-        <h2 class="fw-bold">Quick Access</h2>
+    @if (wishlistMessage) {
+      <div class="container">
+        <div class="alert alert-info d-flex align-items-center" role="alert">
+          <i class="bi bi-heart me-2"></i>
 
-        <p class="text-muted">Manage your shopping experience</p>
+          {{ wishlistMessage }}
+
+          <a routerLink="/wishlist" class="btn btn-sm btn-outline-primary ms-auto">
+            View Wishlist
+          </a>
+        </div>
       </div>
+    }
 
-      <div class="row g-4">
-        <!-- Products -->
+    <!-- =================================================== -->
+    <!-- FEATURED PRODUCTS -->
+    <!-- =================================================== -->
 
-        <div class="col-md-4">
-          <div class="feature-card" routerLink="/products">
-            <div class="feature-icon">
-              <i class="bi bi-grid"></i>
-            </div>
+    <section class="products-section">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <span class="section-label"> SHOP NOW </span>
 
-            <h5 class="fw-bold">Products</h5>
+            <h2>Featured Products</h2>
 
-            <p class="text-muted">Browse available products and find what you need.</p>
-
-            <span class="feature-link">
-              Browse Products
-
-              <i class="bi bi-arrow-right ms-1"></i>
-            </span>
+            <p>Discover some of our latest products.</p>
           </div>
+
+          <a routerLink="/products" class="view-all-link">
+            View All
+
+            <i class="bi bi-arrow-right ms-1"></i>
+          </a>
         </div>
 
-        <!-- Shopping Cart -->
+        @if (featuredProducts.length > 0) {
+          <div class="row g-4">
+            @for (product of featuredProducts; track product.productId) {
+              <div class="col-sm-6 col-lg-4 col-xl-3">
+                <div class="home-product-card">
+                  <!-- ===================================== -->
+                  <!-- IMAGE -->
+                  <!-- ===================================== -->
 
-        <div class="col-md-4">
-          <div class="feature-card" routerLink="/cart">
-            <div class="feature-icon">
-              <i class="bi bi-cart3"></i>
+                  <div class="home-product-image">
+                    @if (isImageLoading(product)) {
+                      <div class="image-loader">
+                        <div class="spinner-border spinner-border-sm text-primary"></div>
+                      </div>
+                    }
+
+                    @if (!isImageLoading(product) && getCurrentImageUrl(product)) {
+                      <img
+                        [src]="getCurrentImageUrl(product)"
+                        [alt]="product.productName"
+                        loading="lazy"
+                      />
+                    } @else if (!isImageLoading(product)) {
+                      <div class="home-no-image">
+                        <i class="bi bi-image"></i>
+
+                        <span> No Image </span>
+                      </div>
+                    }
+
+                    <!-- WISHLIST -->
+
+                    <button
+                      type="button"
+                      class="wishlist-button"
+                      [class.active]="isInWishlist(product.productId)"
+                      [disabled]="wishlistActionProductId === product.productId"
+                      (click)="toggleWishlist(product); $event.stopPropagation()"
+                      [title]="
+                        isInWishlist(product.productId) ? 'Remove from wishlist' : 'Add to wishlist'
+                      "
+                    >
+                      @if (wishlistActionProductId === product.productId) {
+                        <span class="spinner-border spinner-border-sm"></span>
+                      } @else {
+                        <i
+                          class="bi"
+                          [class.bi-heart-fill]="isInWishlist(product.productId)"
+                          [class.bi-heart]="!isInWishlist(product.productId)"
+                        ></i>
+                      }
+                    </button>
+
+                    <!-- STOCK -->
+
+                    @if (product.stock > 0) {
+                      <span class="home-stock-badge"> In Stock </span>
+                    } @else {
+                      <span class="home-stock-badge out-of-stock"> Out of Stock </span>
+                    }
+
+                    <!-- PREVIOUS -->
+
+                    @if (getImages(product).length > 1) {
+                      <button
+                        type="button"
+                        class="home-carousel-button previous"
+                        (click)="previousImage(product); $event.stopPropagation()"
+                      >
+                        <i class="bi bi-chevron-left"></i>
+                      </button>
+                    }
+
+                    <!-- NEXT -->
+
+                    @if (getImages(product).length > 1) {
+                      <button
+                        type="button"
+                        class="home-carousel-button next"
+                        (click)="nextImage(product); $event.stopPropagation()"
+                      >
+                        <i class="bi bi-chevron-right"></i>
+                      </button>
+                    }
+
+                    <!-- IMAGE COUNTER -->
+
+                    @if (getImages(product).length > 1) {
+                      <span class="home-image-counter">
+                        {{ (currentImageIndex[product.productId] ?? 0) + 1 }}
+
+                        /
+
+                        {{ getImages(product).length }}
+                      </span>
+                    }
+                  </div>
+
+                  <!-- ===================================== -->
+                  <!-- THUMBNAILS -->
+                  <!-- ===================================== -->
+
+                  @if (getImages(product).length > 1) {
+                    <div class="home-thumbnails">
+                      @for (
+                        image of getImages(product);
+                        track image.productImageId;
+                        let imageIndex = $index
+                      ) {
+                        <button
+                          type="button"
+                          class="home-thumbnail"
+                          [class.active]="
+                            (currentImageIndex[product.productId] ?? 0) === imageIndex
+                          "
+                          (click)="selectImage(product, imageIndex); $event.stopPropagation()"
+                        >
+                          <img [src]="getImageUrl(image.imageUrl)" [alt]="product.productName" />
+                        </button>
+                      }
+                    </div>
+                  }
+
+                  <!-- ===================================== -->
+                  <!-- CONTENT -->
+                  <!-- ===================================== -->
+
+                  <div class="home-product-content">
+                    <span class="home-product-category">
+                      {{ product.categoryName }}
+                    </span>
+
+                    <h5 class="home-product-name" [title]="product.productName">
+                      {{ product.productName }}
+                    </h5>
+
+                    <p class="home-product-description" [title]="product.description">
+                      {{ product.description }}
+                    </p>
+
+                    <!-- PRICE -->
+
+                    <div class="home-price-row">
+                      <div>
+                        <span class="home-price-label"> Price </span>
+
+                        <div class="home-product-price">₹{{ product.wholesalePrice }}</div>
+
+                        <div class="home-product-mrp">
+                          MRP:
+                          <del> ₹{{ product.mrp }} </del>
+                        </div>
+                      </div>
+
+                      <span class="home-stock-count" [class.low-stock]="product.stock <= 10">
+                        {{ product.stock }} left
+                      </span>
+                    </div>
+
+                    <!-- ADD CART -->
+
+                    <button
+                      type="button"
+                      class="btn btn-primary w-100 home-cart-button"
+                      [disabled]="product.stock <= 0 || isAddingToCart"
+                      (click)="addToCart(product)"
+                    >
+                      @if (isAddingToCart && addingProductId === product.productId) {
+                        <span class="spinner-border spinner-border-sm me-2"></span>
+
+                        Adding...
+                      } @else {
+                        <i class="bi bi-cart-plus me-2"></i>
+
+                        @if (product.stock > 0) {
+                          Add to Cart
+                        } @else {
+                          Out of Stock
+                        }
+                      }
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="home-empty">
+            <i class="bi bi-box-seam"></i>
+
+            <h4>No Products Available</h4>
+
+            <p>There are currently no active products.</p>
+
+            <a routerLink="/products" class="btn btn-primary"> Browse Products </a>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- =================================================== -->
+    <!-- WISHLIST PREVIEW -->
+    <!-- =================================================== -->
+
+    @if (wishlistItems.length > 0) {
+      <section class="wishlist-section">
+        <div class="container">
+          <div class="section-heading">
+            <div>
+              <span class="section-label"> SAVED FOR LATER </span>
+
+              <h2>My Wishlist</h2>
+
+              <p>Products you have saved for later.</p>
             </div>
 
-            <h5 class="fw-bold">Shopping Cart</h5>
-
-            <p class="text-muted">Manage your cart items and review your total.</p>
-
-            <span class="feature-link">
-              View Cart
+            <a routerLink="/wishlist" class="view-all-link">
+              View Wishlist
 
               <i class="bi bi-arrow-right ms-1"></i>
-            </span>
+            </a>
+          </div>
+
+          <div class="row g-4">
+            @for (item of wishlistItems.slice(0, 4); track item.wishlistItemId) {
+              <div class="col-6 col-lg-3">
+                <div class="wishlist-preview-card">
+                  <div class="wishlist-preview-image">
+                    @if (item.imageUrl) {
+                      <img
+                        [src]="getImageUrl(item.imageUrl)"
+                        [alt]="item.productName"
+                        loading="lazy"
+                      />
+                    } @else {
+                      <div class="home-no-image">
+                        <i class="bi bi-image"></i>
+                      </div>
+                    }
+                  </div>
+
+                  <div class="wishlist-preview-content">
+                    <span class="home-product-category">
+                      {{ item.sku }}
+                    </span>
+
+                    <h5>
+                      {{ item.productName }}
+                    </h5>
+
+                    <strong> ₹{{ item.unitPrice }} </strong>
+                  </div>
+                </div>
+              </div>
+            }
           </div>
         </div>
+      </section>
+    }
 
-        <!-- My Orders -->
+    <!-- =================================================== -->
+    <!-- RECENT ORDERS -->
+    <!-- =================================================== -->
 
-        <div class="col-md-4">
-          <div class="feature-card" routerLink="/orders">
-            <div class="feature-icon">
+    <section class="orders-section">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <span class="section-label"> YOUR ACTIVITY </span>
+
+            <h2>Recent Orders</h2>
+
+            <p>Check the latest status of your purchases.</p>
+          </div>
+
+          <a routerLink="/orders" class="view-all-link">
+            View All
+
+            <i class="bi bi-arrow-right ms-1"></i>
+          </a>
+        </div>
+
+        @if (recentOrders.length > 0) {
+          <div class="orders-list">
+            @for (order of recentOrders; track order.orderId) {
+              <div class="order-card">
+                <div class="order-main">
+                  <div class="order-icon">
+                    <i class="bi bi-box-seam"></i>
+                  </div>
+
+                  <div>
+                    <span class="order-number">
+                      {{ order.orderNumber }}
+                    </span>
+
+                    <span class="order-date">
+                      {{ formatDate(order.createdDate) }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="order-items">
+                  <strong>
+                    {{ order.items.length }}
+                  </strong>
+
+                  <span> Items </span>
+                </div>
+
+                <div class="order-total">
+                  <span> Total </span>
+
+                  <strong> ₹{{ order.grandTotal }} </strong>
+                </div>
+
+                <div class="order-status">
+                  <span class="status-badge" [ngClass]="getOrderStatusClass(order.orderStatus)">
+                    {{ order.orderStatus }}
+                  </span>
+
+                  <small>
+                    {{ order.paymentStatus }}
+                  </small>
+                </div>
+
+                <button type="button" class="order-view-button" (click)="viewOrder(order.orderId)">
+                  <i class="bi bi-eye me-1"></i>
+
+                  View
+                </button>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="no-orders">
+            <div class="no-orders-icon">
               <i class="bi bi-box-seam"></i>
             </div>
 
-            <h5 class="fw-bold">My Orders</h5>
+            <h4>No Orders Yet</h4>
 
-            <p class="text-muted">View your orders and track their current status.</p>
+            <p>Your recent orders will appear here.</p>
 
-            <span class="feature-link">
-              View Orders
+            <a routerLink="/products" class="btn btn-primary"> Start Shopping </a>
+          </div>
+        }
+      </div>
+    </section>
 
-              <i class="bi bi-arrow-right ms-1"></i>
-            </span>
+    <!-- =================================================== -->
+    <!-- QUICK ACCESS -->
+    <!-- =================================================== -->
+
+    <section class="quick-access-section">
+      <div class="container">
+        <div class="text-center section-title-center">
+          <span class="section-label"> QUICK ACCESS </span>
+
+          <h2>Manage Your Account</h2>
+
+          <p>Everything you need in one place.</p>
+        </div>
+
+        <div class="row g-4">
+          <!-- PRODUCTS -->
+
+          <div class="col-6 col-md-4 col-lg-3">
+            <div class="quick-card" routerLink="/products">
+              <div class="quick-icon">
+                <i class="bi bi-grid"></i>
+              </div>
+
+              <h5>Products</h5>
+
+              <p>Browse all available products.</p>
+
+              <span>
+                Browse
+                <i class="bi bi-arrow-right"></i>
+              </span>
+            </div>
+          </div>
+
+          <!-- WISHLIST -->
+
+          <div class="col-6 col-md-4 col-lg-3">
+            <div class="quick-card" routerLink="/wishlist">
+              <div class="quick-icon">
+                <i class="bi bi-heart"></i>
+              </div>
+
+              <h5>Wishlist</h5>
+
+              <p>View your saved products.</p>
+
+              <span>
+                View Wishlist
+                <i class="bi bi-arrow-right"></i>
+              </span>
+            </div>
+          </div>
+
+          <!-- CART -->
+
+          <div class="col-6 col-md-4 col-lg-3">
+            <div class="quick-card" routerLink="/cart">
+              <div class="quick-icon">
+                <i class="bi bi-cart3"></i>
+              </div>
+
+              <h5>Shopping Cart</h5>
+
+              <p>Review your cart and checkout.</p>
+
+              <span>
+                View Cart
+                <i class="bi bi-arrow-right"></i>
+              </span>
+            </div>
+          </div>
+
+          <!-- ORDERS -->
+
+          <div class="col-6 col-md-4 col-lg-3">
+            <div class="quick-card" routerLink="/orders">
+              <div class="quick-icon">
+                <i class="bi bi-box-seam"></i>
+              </div>
+
+              <h5>My Orders</h5>
+
+              <p>Track your purchases.</p>
+
+              <span>
+                View Orders
+                <i class="bi bi-arrow-right"></i>
+              </span>
+            </div>
+          </div>
+
+          <!-- ADDRESSES -->
+
+          <div class="col-6 col-md-4 col-lg-3">
+            <div class="quick-card" routerLink="/addresses">
+              <div class="quick-icon">
+                <i class="bi bi-geo-alt"></i>
+              </div>
+
+              <h5>Addresses</h5>
+
+              <p>Manage your delivery addresses.</p>
+
+              <span>
+                Manage
+                <i class="bi bi-arrow-right"></i>
+              </span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Footer -->
-
-  <footer class="home-footer">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-md-6">
-          <p class="mb-0">© 2026 Shanti Enterprises. All rights reserved.</p>
-        </div>
-
-        <div class="col-md-6 text-md-end mt-2 mt-md-0">
-          <span class="text-muted"> Trusted Shopping Experience </span>
-        </div>
-      </div>
-    </div>
-  </footer>
+    <!-- =================================================== -->
+    <!-- FOOTER -->
+    <!-- =================================================== -->
+  }
 </div>

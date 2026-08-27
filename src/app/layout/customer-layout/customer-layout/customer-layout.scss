@@ -1,0 +1,392 @@
+.customer-layout {
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #f5f7fb;
+}
+
+/* =========================================================
+   CUSTOMER NAVBAR
+========================================================= */
+
+.customer-navbar {
+  min-height: 64px;
+
+  padding: 10px 0;
+
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+
+  position: relative;
+  z-index: 1000;
+}
+
+.customer-navbar .navbar-brand {
+  font-size: 1.15rem;
+  letter-spacing: 0.2px;
+}
+
+/* =========================================================
+   NAV ICONS
+========================================================= */
+
+.nav-action {
+  position: relative;
+
+  width: 38px;
+  height: 38px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #ffffff;
+  text-decoration: none;
+
+  border-radius: 8px;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.nav-action:hover {
+  color: #ffffff;
+
+  background: rgba(255, 255, 255, 0.12);
+
+  transform: translateY(-1px);
+}
+
+.nav-action i {
+  font-size: 19px;
+}
+
+/* =========================================================
+   NAV BADGE
+========================================================= */
+
+.nav-badge {
+  position: absolute;
+
+  top: -2px;
+  right: -2px;
+
+  min-width: 17px;
+  height: 17px;
+
+  padding: 0 4px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #dc3545;
+  color: #ffffff;
+
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+
+  border: 2px solid #0d6efd;
+}
+
+/* =========================================================
+   USER NAME
+========================================================= */
+
+.user-name {
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   PAGE CONTENT
+========================================================= */
+
+.customer-content {
+  flex: 1;
+
+  min-width: 0;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.customer-footer {
+  padding: 22px 0;
+
+  background: #ffffff;
+
+  border-top: 1px solid #e5e9ef;
+
+  color: #6c757d;
+
+  font-size: 0.82rem;
+}
+
+.customer-footer p {
+  color: #6c757d;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 767.98px) {
+  .customer-navbar {
+    min-height: 58px;
+
+    padding: 8px 0;
+  }
+
+  .customer-navbar .navbar-brand {
+    font-size: 1rem;
+  }
+
+  .nav-action {
+    width: 34px;
+    height: 34px;
+  }
+
+  .nav-action i {
+    font-size: 17px;
+  }
+
+  .customer-navbar .btn {
+    font-size: 0.78rem;
+    padding: 6px 9px;
+  }
+
+  .customer-footer {
+    text-align: center;
+  }
+}
+/* =========================================================
+   CUSTOMER FOOTER
+   ========================================================= */
+
+.customer-footer {
+  background: #0b1f3a;
+  color: #cbd5e1;
+  margin-top: 0;
+}
+
+/* =========================================================
+   FOOTER BRAND
+   ========================================================= */
+
+.footer-brand h4 {
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.footer-brand h4 i {
+  color: #0d6efd;
+}
+
+.footer-brand p {
+  max-width: 390px;
+  margin-bottom: 20px;
+  color: #aebdd0;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   TRUST BADGES
+   ========================================================= */
+
+.footer-trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.footer-trust span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 7px;
+  color: #dbeafe;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.footer-trust i {
+  color: #60a5fa;
+}
+
+/* =========================================================
+   FOOTER TITLES
+   ========================================================= */
+
+.footer-title {
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+/* =========================================================
+   FOOTER LINKS
+   ========================================================= */
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 11px;
+}
+
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #aebdd0;
+  text-decoration: none;
+  font-size: 13px;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.footer-links a i {
+  font-size: 9px;
+  color: #60a5fa;
+}
+
+.footer-links a:hover {
+  color: #ffffff;
+  transform: translateX(3px);
+}
+
+/* =========================================================
+   CUSTOMER SUPPORT
+   ========================================================= */
+
+.footer-support-text {
+  color: #aebdd0;
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+
+.support-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.support-icon {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: rgba(13, 110, 253, 0.15);
+  color: #60a5fa;
+  font-size: 17px;
+}
+
+.support-item span {
+  display: block;
+  color: #94a3b8;
+  font-size: 11px;
+  margin-bottom: 3px;
+}
+
+.support-item strong {
+  display: block;
+  color: #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   DIVIDER
+   ========================================================= */
+
+.footer-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* =========================================================
+   FOOTER BOTTOM
+   ========================================================= */
+
+.footer-bottom {
+  min-height: 65px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.footer-bottom p {
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.footer-bottom p strong {
+  color: #dbeafe;
+}
+
+.footer-bottom-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.footer-bottom-links span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.footer-bottom-links i {
+  color: #60a5fa;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 767.98px) {
+  .customer-footer {
+    text-align: left;
+  }
+
+  .footer-bottom {
+    padding: 18px 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .footer-bottom-links {
+    flex-wrap: wrap;
+    gap: 10px 18px;
+  }
+
+  .footer-brand p {
+    max-width: 100%;
+  }
+}
