@@ -1,76 +1,166 @@
-<div class="dashboard-page">
+<div class="admin-layout" [class.sidebar-open]="isSidebarOpen">
   <!-- =====================================================
-       NAVBAR
+       MOBILE OVERLAY
   ====================================================== -->
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container">
-      <!-- BRAND -->
-
-      <a class="navbar-brand fw-bold" routerLink="/admin"> Shanti Enterprises </a>
-
-      <!-- NAV ACTIONS -->
-
-      <div class="d-flex align-items-center gap-2 flex-wrap">
-        <!-- PRODUCTS -->
-
-        <a routerLink="/products" class="btn btn-light btn-sm">
-          <i class="bi bi-shop me-1"></i>
-
-          Products
-        </a>
-
-        <!-- ADMIN ORDERS -->
-
-        <a routerLink="/admin/orders" class="btn btn-light btn-sm">
-          <i class="bi bi-cart-check me-1"></i>
-
-          Orders
-        </a>
-
-        <!-- LOGOUT -->
-
-        <button type="button" class="btn btn-outline-light btn-sm">
-          <i class="bi bi-box-arrow-right me-1"></i>
-
-          Logout
-        </button>
-      </div>
-    </div>
-  </nav>
+  @if (isSidebarOpen) {
+    <div class="sidebar-overlay" (click)="closeSidebar()"></div>
+  }
 
   <!-- =====================================================
-       DASHBOARD HEADER
+       ADMIN SIDEBAR
   ====================================================== -->
 
-  <section class="dashboard-header">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-md-8">
-          <span class="text-primary fw-semibold"> Admin Panel </span>
+  <aside class="admin-sidebar">
+    <!-- BRAND -->
 
-          <h1 class="fw-bold mt-1">Dashboard</h1>
-
-          <p class="text-muted mb-0">Manage your Shanti Enterprises application from one place.</p>
+    <div class="sidebar-brand">
+      <a routerLink="/admin" class="brand-link" (click)="closeSidebar()">
+        <div class="brand-logo">
+          <i class="bi bi-shop"></i>
         </div>
 
-        <div class="col-md-4 text-md-end mt-3 mt-md-0">
-          <span class="dashboard-badge">
-            <i class="bi bi-shield-check me-1"></i>
+        <div class="brand-text">
+          <strong>Shanti</strong>
+          <span>Enterprises</span>
+        </div>
+      </a>
 
-            Administrator
+      <!-- MOBILE CLOSE -->
+
+      <button
+        type="button"
+        class="sidebar-close"
+        (click)="closeSidebar()"
+        aria-label="Close sidebar"
+      >
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <!-- ===================================================
+         NAVIGATION
+    ==================================================== -->
+
+    <div class="sidebar-section-title">MAIN MENU</div>
+
+    <nav class="sidebar-nav">
+      @for (item of adminMenu; track item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{
+            exact: item.route === '/admin',
+          }"
+          class="sidebar-link"
+          (click)="closeSidebar()"
+        >
+          <span class="sidebar-icon">
+            <i class="bi" [ngClass]="item.icon"></i>
           </span>
+
+          <span class="sidebar-label">
+            {{ item.title }}
+          </span>
+
+          @if (item.route === '/admin') {
+            <span class="sidebar-arrow">
+              <i class="bi bi-chevron-right"></i>
+            </span>
+          }
+        </a>
+      }
+    </nav>
+
+    <!-- ===================================================
+         SIDEBAR BOTTOM
+    ==================================================== -->
+
+    <div class="sidebar-bottom">
+      <div class="admin-profile">
+        <div class="profile-avatar">
+          <i class="bi bi-person-fill"></i>
+        </div>
+
+        <div class="profile-info">
+          <strong>Administrator</strong>
+          <span>Admin Account</span>
         </div>
       </div>
+
+      <button type="button" class="logout-link" (click)="logout()">
+        <span class="sidebar-icon">
+          <i class="bi bi-box-arrow-right"></i>
+        </span>
+
+        <span> Logout </span>
+      </button>
     </div>
-  </section>
+  </aside>
 
   <!-- =====================================================
-       DASHBOARD CONTENT
+       MAIN AREA
   ====================================================== -->
 
-  <section class="dashboard-section">
-    <div class="container">
+  <main class="admin-main">
+    <!-- ===================================================
+         TOP HEADER
+    ==================================================== -->
+
+    <header class="admin-topbar">
+      <div class="topbar-left">
+        <!-- MOBILE MENU -->
+
+        <button
+          type="button"
+          class="menu-toggle"
+          (click)="toggleSidebar()"
+          aria-label="Open sidebar"
+        >
+          <i class="bi bi-list"></i>
+        </button>
+
+        <div>
+          <span class="topbar-label"> Admin Panel </span>
+
+          <h2>Dashboard</h2>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <div class="admin-status">
+          <span class="status-dot"></span>
+
+          <span> Administrator </span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===================================================
+         DASHBOARD CONTENT
+    ==================================================== -->
+
+    <section class="dashboard-content">
+      <!-- =================================================
+           DASHBOARD HEADER
+      ================================================== -->
+
+      <div class="dashboard-header">
+        <div>
+          <span class="dashboard-label"> Overview </span>
+
+          <h1>Dashboard</h1>
+
+          <p>Manage your Shanti Enterprises application from one place.</p>
+        </div>
+
+        <div class="dashboard-badge">
+          <i class="bi bi-shield-check"></i>
+
+          Administrator
+        </div>
+      </div>
+
       <!-- =================================================
            LOADING
       ================================================== -->
@@ -79,7 +169,7 @@
         <div class="dashboard-loading">
           <div class="spinner-border text-primary" role="status"></div>
 
-          <p class="text-muted mt-3 mb-0">Loading dashboard...</p>
+          <p>Loading dashboard...</p>
         </div>
       }
 
@@ -88,10 +178,7 @@
       ================================================== -->
 
       @if (!isLoading && errorMessage) {
-        <div
-          class="alert alert-danger d-flex align-items-center justify-content-between"
-          role="alert"
-        >
+        <div class="alert alert-danger dashboard-error" role="alert">
           <div>
             <i class="bi bi-exclamation-circle me-2"></i>
 
@@ -105,35 +192,39 @@
       }
 
       <!-- =================================================
-           DASHBOARD
+           DASHBOARD DATA
       ================================================== -->
 
       @if (!isLoading && !errorMessage && dashboard) {
         <!-- ===============================================
-             STATISTICS
+             MAIN STATISTICS
         ================================================ -->
 
-        <div class="row g-4">
+        <div class="stats-grid">
           @for (stat of stats; track stat.title) {
-            <div class="col-sm-6 col-xl-3">
-              <a class="stat-card" [routerLink]="stat.route">
-                <div class="stat-icon">
-                  <i class="bi" [ngClass]="stat.icon"></i>
-                </div>
+            <a class="stat-card" [routerLink]="stat.route">
+              <div
+                class="stat-icon"
+                [class.products]="stat.title === 'Products'"
+                [class.orders]="stat.title === 'Orders'"
+                [class.customers]="stat.title === 'Customers'"
+                [class.payments]="stat.title === 'Payments'"
+              >
+                <i class="bi" [ngClass]="stat.icon"></i>
+              </div>
 
-                <div class="stat-content">
-                  <span class="stat-title">
-                    {{ stat.title }}
-                  </span>
+              <div class="stat-content">
+                <span class="stat-title">
+                  {{ stat.title }}
+                </span>
 
-                  <h2>
-                    {{ stat.value }}
-                  </h2>
-                </div>
+                <h2>
+                  {{ stat.value }}
+                </h2>
+              </div>
 
-                <i class="bi bi-arrow-right stat-arrow"></i>
-              </a>
-            </div>
+              <i class="bi bi-arrow-right stat-arrow"></i>
+            </a>
           }
         </div>
 
@@ -141,58 +232,52 @@
              ADDITIONAL STATISTICS
         ================================================ -->
 
-        <div class="row g-4 mt-2">
+        <div class="secondary-grid">
           <!-- ACTIVE PRODUCTS -->
 
-          <div class="col-md-4">
-            <div class="mini-stat-card">
-              <div class="mini-stat-icon">
-                <i class="bi bi-box-seam"></i>
-              </div>
+          <div class="mini-stat-card">
+            <div class="mini-stat-icon">
+              <i class="bi bi-box-seam"></i>
+            </div>
 
-              <div>
-                <span> Active Products </span>
+            <div>
+              <span> Active Products </span>
 
-                <h4>
-                  {{ dashboard.activeProducts }}
-                </h4>
-              </div>
+              <h4>
+                {{ dashboard.activeProducts }}
+              </h4>
             </div>
           </div>
 
           <!-- PENDING ORDERS -->
 
-          <div class="col-md-4">
-            <div class="mini-stat-card">
-              <div class="mini-stat-icon">
-                <i class="bi bi-clock-history"></i>
-              </div>
+          <div class="mini-stat-card">
+            <div class="mini-stat-icon">
+              <i class="bi bi-clock-history"></i>
+            </div>
 
-              <div>
-                <span> Pending Orders </span>
+            <div>
+              <span> Pending Orders </span>
 
-                <h4>
-                  {{ dashboard.pendingOrders }}
-                </h4>
-              </div>
+              <h4>
+                {{ dashboard.pendingOrders }}
+              </h4>
             </div>
           </div>
 
           <!-- PENDING PAYMENTS -->
 
-          <div class="col-md-4">
-            <div class="mini-stat-card">
-              <div class="mini-stat-icon">
-                <i class="bi bi-hourglass-split"></i>
-              </div>
+          <div class="mini-stat-card">
+            <div class="mini-stat-icon">
+              <i class="bi bi-hourglass-split"></i>
+            </div>
 
-              <div>
-                <span> Pending Payments </span>
+            <div>
+              <span> Pending Payments </span>
 
-                <h4>
-                  {{ dashboard.pendingPayments }}
-                </h4>
-              </div>
+              <h4>
+                {{ dashboard.pendingPayments }}
+              </h4>
             </div>
           </div>
         </div>
@@ -201,36 +286,32 @@
              REVENUE
         ================================================ -->
 
-        <div class="row g-4 mt-2">
-          <!-- TODAY REVENUE -->
+        <div class="revenue-grid">
+          <!-- TODAY -->
 
-          <div class="col-md-6">
-            <div class="revenue-card">
-              <div class="revenue-icon">
-                <i class="bi bi-currency-rupee"></i>
-              </div>
+          <div class="revenue-card">
+            <div class="revenue-icon">
+              <i class="bi bi-currency-rupee"></i>
+            </div>
 
-              <div>
-                <span> Today's Revenue </span>
+            <div>
+              <span> Today's Revenue </span>
 
-                <h3>₹{{ dashboard.todayRevenue }}</h3>
-              </div>
+              <h3>₹{{ dashboard.todayRevenue }}</h3>
             </div>
           </div>
 
-          <!-- MONTHLY REVENUE -->
+          <!-- MONTHLY -->
 
-          <div class="col-md-6">
-            <div class="revenue-card">
-              <div class="revenue-icon">
-                <i class="bi bi-graph-up-arrow"></i>
-              </div>
+          <div class="revenue-card">
+            <div class="revenue-icon">
+              <i class="bi bi-graph-up-arrow"></i>
+            </div>
 
-              <div>
-                <span> Monthly Revenue </span>
+            <div>
+              <span> Monthly Revenue </span>
 
-                <h3>₹{{ dashboard.monthlyRevenue }}</h3>
-              </div>
+              <h3>₹{{ dashboard.monthlyRevenue }}</h3>
             </div>
           </div>
         </div>
@@ -239,70 +320,98 @@
              QUICK ACTIONS
         ================================================ -->
 
-        <div class="quick-section">
-          <div class="mb-4">
-            <h4 class="fw-bold mb-1">Quick Actions</h4>
+        <section class="quick-section">
+          <div class="section-heading">
+            <div>
+              <h3>Quick Actions</h3>
 
-            <p class="text-muted mb-0">Quickly access important sections.</p>
-          </div>
-
-          <div class="row g-4">
-            <!-- MANAGE PRODUCTS -->
-
-            <div class="col-md-4">
-              <a routerLink="/products" class="action-card">
-                <div class="action-icon">
-                  <i class="bi bi-box-seam"></i>
-                </div>
-
-                <div>
-                  <h5>Manage Products</h5>
-
-                  <p>View and manage products.</p>
-                </div>
-
-                <i class="bi bi-arrow-right ms-auto"></i>
-              </a>
-            </div>
-
-            <!-- MANAGE ORDERS -->
-
-            <div class="col-md-4">
-              <a routerLink="/admin/orders" class="action-card">
-                <div class="action-icon">
-                  <i class="bi bi-cart-check"></i>
-                </div>
-
-                <div>
-                  <h5>Manage Orders</h5>
-
-                  <p>View and manage customer orders.</p>
-                </div>
-
-                <i class="bi bi-arrow-right ms-auto"></i>
-              </a>
-            </div>
-
-            <!-- PAYMENTS -->
-
-            <div class="col-md-4">
-              <a routerLink="/payments" class="action-card">
-                <div class="action-icon">
-                  <i class="bi bi-credit-card"></i>
-                </div>
-
-                <div>
-                  <h5>Payments</h5>
-
-                  <p>View payment transactions.</p>
-                </div>
-
-                <i class="bi bi-arrow-right ms-auto"></i>
-              </a>
+              <p>Quickly access important sections.</p>
             </div>
           </div>
-        </div>
+
+          <div class="quick-grid">
+            <!-- PRODUCTS -->
+
+            <a routerLink="/admin/products" class="action-card">
+              <div class="action-icon">
+                <i class="bi bi-box-seam"></i>
+              </div>
+
+              <div class="action-content">
+                <h5>Manage Products</h5>
+
+                <p>View and manage products.</p>
+              </div>
+
+              <i class="bi bi-arrow-right action-arrow"></i>
+            </a>
+
+            <!-- ORDERS -->
+
+            <a routerLink="/admin/orders" class="action-card">
+              <div class="action-icon">
+                <i class="bi bi-cart-check"></i>
+              </div>
+
+              <div class="action-content">
+                <h5>Manage Orders</h5>
+
+                <p>View and manage customer orders.</p>
+              </div>
+
+              <i class="bi bi-arrow-right action-arrow"></i>
+            </a>
+
+            <!-- USERS -->
+
+            <a routerLink="/admin/users" class="action-card">
+              <div class="action-icon">
+                <i class="bi bi-people"></i>
+              </div>
+
+              <div class="action-content">
+                <h5>Manage Users</h5>
+
+                <p>View and manage customers.</p>
+              </div>
+
+              <i class="bi bi-arrow-right action-arrow"></i>
+            </a>
+
+            <!-- CATEGORIES -->
+
+            <a routerLink="/admin/categories" class="action-card">
+              <div class="action-icon">
+                <i class="bi bi-folder"></i>
+              </div>
+
+              <div class="action-content">
+                <h5>Manage Categories</h5>
+
+                <p>Organize product categories.</p>
+              </div>
+
+              <i class="bi bi-arrow-right action-arrow"></i>
+            </a>
+
+            <!-- BANNERS -->
+
+            <a routerLink="/admin/banners" class="action-card">
+              <div class="action-icon">
+                <i class="bi bi-images"></i>
+              </div>
+
+              <div class="action-content">
+                <h5>Manage Banners</h5>
+
+                <p>Manage promotional banners.</p>
+              </div>
+
+              <i class="bi bi-arrow-right action-arrow"></i>
+            </a>
+          </div>
+        </section>
       }
-    </div>
-  </section>
+    </section>
+  </main>
 </div>
