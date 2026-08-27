@@ -2,19 +2,30 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 import { ProductService } from '../../../core/services/product';
 import { ProductImageService, ProductImage } from '../../../core/services/product-image';
 
 import { WishlistService } from '../../../core/services/wishlist';
 import { CartService } from '../../../core/services/cart';
+import { AuthService } from '../../../core/services/auth';
+
+import { ReviewService } from '../../../core/services/review';
+
+import {
+  Review,
+  ReviewSummary,
+  CreateReview,
+  UpdateReview,
+} from '../../../core/models/review.model';
 
 import { Product } from '../../../core/models/product.model';
 
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.scss',
 })
@@ -30,6 +41,10 @@ export class ProductDetail implements OnInit {
   private readonly wishlistService = inject(WishlistService);
 
   private readonly cartService = inject(CartService);
+
+  private readonly authService = inject(AuthService);
+
+  private readonly reviewService = inject(ReviewService);
 
   private readonly route = inject(ActivatedRoute);
 
@@ -52,6 +67,34 @@ export class ProductDetail implements OnInit {
   currentImageIndex = 0;
 
   // =========================================================
+  // REVIEWS
+  // =========================================================
+
+  reviews: Review[] = [];
+
+  reviewSummary: ReviewSummary | null = null;
+
+  isLoadingReviews = false;
+
+  isLoadingReviewSummary = false;
+
+  isSubmittingReview = false;
+
+  isEditingReview = false;
+
+  editingReviewId: number | null = null;
+
+  // =========================================================
+  // REVIEW FORM
+  // =========================================================
+
+  reviewRating = 5;
+
+  reviewTitle = '';
+
+  reviewComment = '';
+
+  // =========================================================
   // STATES
   // =========================================================
 
@@ -68,6 +111,10 @@ export class ProductDetail implements OnInit {
   errorMessage = '';
 
   successMessage = '';
+
+  reviewErrorMessage = '';
+
+  reviewSuccessMessage = '';
 
   // =========================================================
   // INIT
@@ -88,6 +135,10 @@ export class ProductDetail implements OnInit {
     this.loadProductImages();
 
     this.checkWishlist();
+
+    this.loadReviews();
+
+    this.loadReviewSummary();
   }
 
   // =========================================================
@@ -153,9 +204,7 @@ export class ProductDetail implements OnInit {
 
           this.currentImageIndex = 0;
 
-          // -----------------------------------------------
           // FALLBACK TO PRODUCT IMAGE
-          // -----------------------------------------------
 
           if (this.images.length === 0 && this.product?.imageUrl) {
             this.images = [
@@ -172,9 +221,7 @@ export class ProductDetail implements OnInit {
         error: (error) => {
           console.error('Product Images Error:', error);
 
-          // -----------------------------------------------
           // FALLBACK
-          // -----------------------------------------------
 
           if (this.product?.imageUrl) {
             this.images = [
@@ -361,6 +408,357 @@ export class ProductDetail implements OnInit {
           this.errorMessage = error?.error?.message || 'Unable to add product to cart.';
         },
       });
+  }
+
+  // =========================================================
+  // LOAD REVIEWS
+  // GET /api/Review/product/{productId}
+  // =========================================================
+
+  loadReviews(): void {
+    this.isLoadingReviews = true;
+
+    this.reviewErrorMessage = '';
+
+    this.reviewService
+      .getByProductId(this.productId)
+      .pipe(
+        finalize(() => {
+          this.isLoadingReviews = false;
+        }),
+      )
+      .subscribe({
+        next: (reviews) => {
+          console.log('Product Reviews:', reviews);
+
+          this.reviews = reviews;
+        },
+
+        error: (error) => {
+          console.error('Reviews Error:', error);
+
+          this.reviews = [];
+
+          this.reviewErrorMessage = error?.error?.message || 'Unable to load reviews.';
+        },
+      });
+  }
+
+  // =========================================================
+  // LOAD REVIEW SUMMARY
+  // GET /api/Review/product/{productId}/summary
+  // =========================================================
+
+  loadReviewSummary(): void {
+    this.isLoadingReviewSummary = true;
+
+    this.reviewService
+      .getSummary(this.productId)
+      .pipe(
+        finalize(() => {
+          this.isLoadingReviewSummary = false;
+        }),
+      )
+      .subscribe({
+        next: (summary) => {
+          console.log('Review Summary:', summary);
+
+          this.reviewSummary = summary;
+        },
+
+        error: (error) => {
+          console.error('Review Summary Error:', error);
+
+          this.reviewSummary = {
+            productId: this.productId,
+            averageRating: 0,
+            reviewCount: 0,
+          };
+        },
+      });
+  }
+
+  // =========================================================
+  // SELECT RATING
+  // =========================================================
+
+  setReviewRating(rating: number): void {
+    if (rating < 1 || rating > 5) {
+      return;
+    }
+
+    this.reviewRating = rating;
+  }
+
+  // =========================================================
+  // STAR ARRAY
+  // =========================================================
+
+  get ratingStars(): number[] {
+    return [1, 2, 3, 4, 5];
+  }
+
+  // =========================================================
+  // CHECK FORM STAR
+  // =========================================================
+
+  isRatingStarFilled(star: number): boolean {
+    return star <= this.reviewRating;
+  }
+
+  // =========================================================
+  // CHECK SUMMARY STAR
+  // =========================================================
+
+  isSummaryStarFilled(star: number): boolean {
+    if (!this.reviewSummary) {
+      return false;
+    }
+
+    return star <= Math.round(this.reviewSummary.averageRating);
+  }
+
+  // =========================================================
+  // CURRENT USER REVIEW CHECK
+  // =========================================================
+
+  isMyReview(review: Review): boolean {
+    const currentUser = this.authService.getCurrentUser();
+
+    if (!currentUser) {
+      return false;
+    }
+
+    return Number(currentUser.id) === Number(review.userId);
+  }
+
+  // =========================================================
+  // CREATE REVIEW
+  // POST /api/Review
+  // =========================================================
+
+  submitReview(): void {
+    if (this.isSubmittingReview) {
+      return;
+    }
+
+    this.reviewErrorMessage = '';
+
+    this.reviewSuccessMessage = '';
+
+    if (this.reviewRating < 1 || this.reviewRating > 5) {
+      this.reviewErrorMessage = 'Please select a rating between 1 and 5.';
+
+      return;
+    }
+
+    const data: CreateReview = {
+      productId: this.productId,
+      rating: this.reviewRating,
+      reviewTitle: this.reviewTitle.trim() || null,
+      reviewComment: this.reviewComment.trim() || null,
+    };
+
+    this.isSubmittingReview = true;
+
+    this.reviewService
+      .create(data)
+      .pipe(
+        finalize(() => {
+          this.isSubmittingReview = false;
+        }),
+      )
+      .subscribe({
+        next: (review) => {
+          console.log('Review Created:', review);
+
+          this.reviewSuccessMessage = 'Review submitted successfully.';
+
+          this.resetReviewForm();
+
+          this.loadReviews();
+
+          this.loadReviewSummary();
+
+          setTimeout(() => {
+            this.reviewSuccessMessage = '';
+          }, 3000);
+        },
+
+        error: (error) => {
+          console.error('Create Review Error:', error);
+
+          this.reviewErrorMessage = error?.error?.message || 'Unable to submit review.';
+        },
+      });
+  }
+
+  // =========================================================
+  // START EDIT REVIEW
+  // =========================================================
+
+  editReview(review: Review): void {
+    if (!this.isMyReview(review)) {
+      return;
+    }
+
+    this.isEditingReview = true;
+
+    this.editingReviewId = review.reviewId;
+
+    this.reviewRating = review.rating;
+
+    this.reviewTitle = review.reviewTitle || '';
+
+    this.reviewComment = review.reviewComment || '';
+
+    this.reviewErrorMessage = '';
+
+    this.reviewSuccessMessage = '';
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  }
+
+  // =========================================================
+  // UPDATE REVIEW
+  // PUT /api/Review/{id}
+  // =========================================================
+
+  updateReview(): void {
+    if (!this.isEditingReview || !this.editingReviewId) {
+      return;
+    }
+
+    if (this.isSubmittingReview) {
+      return;
+    }
+
+    this.reviewErrorMessage = '';
+
+    this.reviewSuccessMessage = '';
+
+    if (this.reviewRating < 1 || this.reviewRating > 5) {
+      this.reviewErrorMessage = 'Please select a rating between 1 and 5.';
+
+      return;
+    }
+
+    const data: UpdateReview = {
+      rating: this.reviewRating,
+      reviewTitle: this.reviewTitle.trim() || null,
+      reviewComment: this.reviewComment.trim() || null,
+    };
+
+    this.isSubmittingReview = true;
+
+    this.reviewService
+      .update(this.editingReviewId, data)
+      .pipe(
+        finalize(() => {
+          this.isSubmittingReview = false;
+        }),
+      )
+      .subscribe({
+        next: (review) => {
+          console.log('Review Updated:', review);
+
+          this.reviewSuccessMessage = 'Review updated successfully.';
+
+          this.resetReviewForm();
+
+          this.loadReviews();
+
+          this.loadReviewSummary();
+
+          setTimeout(() => {
+            this.reviewSuccessMessage = '';
+          }, 3000);
+        },
+
+        error: (error) => {
+          console.error('Update Review Error:', error);
+
+          this.reviewErrorMessage = error?.error?.message || 'Unable to update review.';
+        },
+      });
+  }
+
+  // =========================================================
+  // DELETE REVIEW
+  // DELETE /api/Review/{id}
+  // =========================================================
+
+  deleteReview(review: Review): void {
+    if (!this.isMyReview(review)) {
+      return;
+    }
+
+    const confirmed = confirm('Are you sure you want to delete your review?');
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.reviewErrorMessage = '';
+
+    this.reviewSuccessMessage = '';
+
+    this.reviewService.delete(review.reviewId).subscribe({
+      next: () => {
+        console.log('Review Deleted:', review.reviewId);
+
+        this.reviewSuccessMessage = 'Review deleted successfully.';
+
+        if (this.editingReviewId === review.reviewId) {
+          this.resetReviewForm();
+        }
+
+        this.loadReviews();
+
+        this.loadReviewSummary();
+
+        setTimeout(() => {
+          this.reviewSuccessMessage = '';
+        }, 3000);
+      },
+
+      error: (error) => {
+        console.error('Delete Review Error:', error);
+
+        this.reviewErrorMessage = error?.error?.message || 'Unable to delete review.';
+      },
+    });
+  }
+
+  // =========================================================
+  // CANCEL EDIT
+  // =========================================================
+
+  cancelEditReview(): void {
+    this.resetReviewForm();
+
+    this.reviewErrorMessage = '';
+
+    this.reviewSuccessMessage = '';
+  }
+
+  // =========================================================
+  // RESET REVIEW FORM
+  // =========================================================
+
+  resetReviewForm(): void {
+    this.reviewRating = 5;
+
+    this.reviewTitle = '';
+
+    this.reviewComment = '';
+
+    this.isEditingReview = false;
+
+    this.editingReviewId = null;
   }
 
   // =========================================================

@@ -40,7 +40,9 @@
 
   <section class="detail-section">
     <div class="container">
-      <!-- ERROR -->
+      <!-- =================================================
+           GENERAL ERROR
+      ================================================== -->
 
       @if (errorMessage) {
         <div class="alert alert-danger">
@@ -49,7 +51,9 @@
         </div>
       }
 
-      <!-- LOADING -->
+      <!-- =================================================
+           LOADING
+      ================================================== -->
 
       @if (isLoading) {
         <div class="loading-container">
@@ -59,7 +63,9 @@
         </div>
       }
 
-      <!-- PRODUCT -->
+      <!-- =================================================
+           PRODUCT
+      ================================================== -->
 
       @if (!isLoading && product) {
         <div class="product-detail-card">
@@ -82,16 +88,24 @@
                 </div>
               }
 
-              <!-- PREVIOUS -->
+              <!-- PREVIOUS / NEXT -->
 
               @if (images.length > 1) {
-                <button type="button" class="image-nav prev" (click)="previousImage()">
+                <button
+                  type="button"
+                  class="image-nav prev"
+                  (click)="previousImage()"
+                  aria-label="Previous image"
+                >
                   <i class="bi bi-chevron-left"></i>
                 </button>
 
-                <!-- NEXT -->
-
-                <button type="button" class="image-nav next" (click)="nextImage()">
+                <button
+                  type="button"
+                  class="image-nav next"
+                  (click)="nextImage()"
+                  aria-label="Next image"
+                >
                   <i class="bi bi-chevron-right"></i>
                 </button>
 
@@ -128,6 +142,8 @@
           ================================================== -->
 
           <div class="product-info">
+            <!-- STATUS -->
+
             <div class="status-row">
               @if (product.isActive) {
                 <span class="status active">
@@ -167,7 +183,7 @@
             <!-- SKU -->
 
             <div class="sku-row">
-              <span> SKU </span>
+              <span>SKU</span>
 
               <strong>
                 {{ product.sku }}
@@ -178,19 +194,19 @@
 
             <div class="price-box">
               <div class="price-item">
-                <span> Wholesale Price </span>
+                <span>Wholesale Price</span>
 
                 <strong> ₹{{ product.wholesalePrice | number: '1.2-2' }} </strong>
               </div>
 
               <div class="price-item">
-                <span> MRP </span>
+                <span>MRP</span>
 
                 <strong class="mrp"> ₹{{ product.mrp | number: '1.2-2' }} </strong>
               </div>
 
               <div class="price-item">
-                <span> GST </span>
+                <span>GST</span>
 
                 <strong> {{ product.gstPercentage }}% </strong>
               </div>
@@ -199,7 +215,7 @@
             <!-- STOCK -->
 
             <div class="stock-box">
-              <span> Available Stock </span>
+              <span>Available Stock</span>
 
               @if (product.stock > 0) {
                 <strong class="in-stock"> {{ product.stock }} available </strong>
@@ -211,6 +227,8 @@
             <!-- ACTIONS -->
 
             <div class="action-buttons">
+              <!-- WISHLIST -->
+
               <button
                 type="button"
                 class="wishlist-button"
@@ -235,6 +253,8 @@
                 }
               </button>
 
+              <!-- CART -->
+
               <button
                 type="button"
                 class="cart-button"
@@ -257,16 +277,410 @@
               </button>
             </div>
 
-            <!-- MESSAGES -->
+            <!-- SUCCESS MESSAGE -->
 
             @if (successMessage) {
               <div class="success-message">
                 <i class="bi bi-check-circle me-2"></i>
+
                 {{ successMessage }}
               </div>
             }
           </div>
         </div>
+
+        <!-- =====================================================
+             REVIEW SECTION
+        ====================================================== -->
+
+        <section class="reviews-section">
+          <!-- =================================================
+               REVIEW HEADER
+          ================================================== -->
+
+          <div class="reviews-header">
+            <div>
+              <span class="section-label"> Customer Reviews </span>
+
+              <h2>Ratings & Reviews</h2>
+
+              <p>See what customers think about this product.</p>
+            </div>
+          </div>
+
+          <!-- =================================================
+               REVIEW SUMMARY
+          ================================================== -->
+
+          <div class="review-summary-card">
+            @if (isLoadingReviewSummary) {
+              <div class="review-summary-loading">
+                <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+
+                <span> Loading rating... </span>
+              </div>
+            } @else {
+              <div class="rating-overview">
+                <!-- AVERAGE RATING -->
+
+                <div class="average-rating">
+                  <strong>
+                    {{ reviewSummary?.averageRating ?? 0 }}
+                  </strong>
+
+                  <div class="summary-stars">
+                    @for (star of ratingStars; track star) {
+                      <i
+                        class="bi"
+                        [class.bi-star-fill]="isSummaryStarFilled(star)"
+                        [class.bi-star]="!isSummaryStarFilled(star)"
+                      ></i>
+                    }
+                  </div>
+
+                  <span>
+                    {{ reviewSummary?.reviewCount ?? 0 }}
+                    Reviews
+                  </span>
+                </div>
+
+                <!-- DESCRIPTION -->
+
+                <div class="rating-description">
+                  @if ((reviewSummary?.reviewCount ?? 0) > 0) {
+                    <strong> Customer Rating </strong>
+
+                    <span>
+                      Based on
+                      {{ reviewSummary?.reviewCount ?? 0 }}
+                      customer reviews.
+                    </span>
+                  } @else {
+                    <strong> No Reviews Yet </strong>
+
+                    <span> Be the first customer to review this product. </span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- =================================================
+               REVIEW FORM
+          ================================================== -->
+
+          <div class="review-form-card">
+            <div class="review-form-header">
+              <div>
+                <h3>
+                  @if (isEditingReview) {
+                    Edit Your Review
+                  } @else {
+                    Write a Review
+                  }
+                </h3>
+
+                <p>Share your experience with this product.</p>
+              </div>
+
+              @if (isEditingReview) {
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary btn-sm"
+                  (click)="cancelEditReview()"
+                >
+                  <i class="bi bi-x-lg me-1"></i>
+
+                  Cancel
+                </button>
+              }
+            </div>
+
+            <!-- REVIEW ERROR -->
+
+            @if (reviewErrorMessage) {
+              <div class="alert alert-danger">
+                <i class="bi bi-exclamation-circle me-2"></i>
+
+                {{ reviewErrorMessage }}
+              </div>
+            }
+
+            <!-- REVIEW SUCCESS -->
+
+            @if (reviewSuccessMessage) {
+              <div class="alert alert-success">
+                <i class="bi bi-check-circle me-2"></i>
+
+                {{ reviewSuccessMessage }}
+              </div>
+            }
+
+            <!-- RATING -->
+
+            <div class="review-field">
+              <label> Your Rating </label>
+
+              <div class="rating-selector">
+                @for (star of ratingStars; track star) {
+                  <button
+                    type="button"
+                    class="rating-star-button"
+                    [class.selected]="isRatingStarFilled(star)"
+                    [attr.aria-label]="'Rate ' + star + ' stars'"
+                    (click)="setReviewRating(star)"
+                  >
+                    <i
+                      class="bi"
+                      [class.bi-star-fill]="isRatingStarFilled(star)"
+                      [class.bi-star]="!isRatingStarFilled(star)"
+                    ></i>
+                  </button>
+                }
+
+                <span class="rating-value"> {{ reviewRating }}/5 </span>
+              </div>
+            </div>
+
+            <!-- REVIEW TITLE -->
+
+            <div class="review-field">
+              <label for="reviewTitle"> Review Title </label>
+
+              <input
+                id="reviewTitle"
+                type="text"
+                class="form-control"
+                placeholder="Enter review title"
+                maxlength="200"
+                [(ngModel)]="reviewTitle"
+              />
+            </div>
+
+            <!-- REVIEW COMMENT -->
+
+            <div class="review-field">
+              <label for="reviewComment"> Your Review </label>
+
+              <textarea
+                id="reviewComment"
+                class="form-control"
+                rows="5"
+                placeholder="Write your experience about this product..."
+                maxlength="2000"
+                [(ngModel)]="reviewComment"
+              ></textarea>
+            </div>
+
+            <!-- SUBMIT -->
+
+            <div class="review-form-actions">
+              @if (isEditingReview) {
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  [disabled]="isSubmittingReview"
+                  (click)="updateReview()"
+                >
+                  @if (isSubmittingReview) {
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+
+                    Updating...
+                  } @else {
+                    <i class="bi bi-check2 me-1"></i>
+
+                    Update Review
+                  }
+                </button>
+              } @else {
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  [disabled]="isSubmittingReview"
+                  (click)="submitReview()"
+                >
+                  @if (isSubmittingReview) {
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+
+                    Submitting...
+                  } @else {
+                    <i class="bi bi-send me-1"></i>
+
+                    Submit Review
+                  }
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- =================================================
+               REVIEWS LIST
+          ================================================== -->
+
+          <div class="reviews-list-card">
+            <div class="reviews-list-header">
+              <div>
+                <h3>Customer Reviews</h3>
+
+                <p>
+                  {{ reviews.length }}
+                  review{{ reviews.length === 1 ? '' : 's' }}
+                </p>
+              </div>
+            </div>
+
+            <!-- =================================================
+                 LOADING REVIEWS
+            ================================================== -->
+
+            @if (isLoadingReviews) {
+              <div class="reviews-loading">
+                <div class="spinner-border text-primary" role="status"></div>
+
+                <p>Loading reviews...</p>
+              </div>
+            }
+
+            <!-- =================================================
+                 REVIEW ERROR
+            ================================================== -->
+
+            @if (!isLoadingReviews && reviewErrorMessage && reviews.length === 0) {
+              <div class="reviews-empty error">
+                <i class="bi bi-exclamation-circle"></i>
+
+                <h4>Unable to load reviews</h4>
+
+                <p>
+                  {{ reviewErrorMessage }}
+                </p>
+
+                <button
+                  type="button"
+                  class="btn btn-outline-primary btn-sm"
+                  (click)="loadReviews()"
+                >
+                  <i class="bi bi-arrow-clockwise me-1"></i>
+
+                  Try Again
+                </button>
+              </div>
+            }
+
+            <!-- =================================================
+                 NO REVIEWS
+            ================================================== -->
+
+            @if (!isLoadingReviews && !reviewErrorMessage && reviews.length === 0) {
+              <div class="reviews-empty">
+                <div class="empty-review-icon">
+                  <i class="bi bi-chat-square-text"></i>
+                </div>
+
+                <h4>No Reviews Yet</h4>
+
+                <p>Be the first customer to share your experience.</p>
+              </div>
+            }
+
+            <!-- =================================================
+                 REVIEWS
+            ================================================== -->
+
+            @if (!isLoadingReviews && reviews.length > 0) {
+              <div class="review-items">
+                @for (review of reviews; track review.reviewId) {
+                  <article class="review-item">
+                    <!-- =================================================
+                         REVIEW USER
+                    ================================================== -->
+
+                    <div class="review-user">
+                      <div class="review-avatar">
+                        <i class="bi bi-person"></i>
+                      </div>
+
+                      <div>
+                        <strong>
+                          {{ review.userName }}
+                        </strong>
+
+                        <span>
+                          {{ review.createdDate | date: 'dd MMM yyyy' }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- =================================================
+                         REVIEW CONTENT
+                    ================================================== -->
+
+                    <div class="review-content">
+                      <!-- STARS -->
+
+                      <div class="review-rating">
+                        @for (star of ratingStars; track star) {
+                          <i
+                            class="bi"
+                            [class.bi-star-fill]="star <= review.rating"
+                            [class.bi-star]="star > review.rating"
+                          ></i>
+                        }
+
+                        <span> {{ review.rating }}/5 </span>
+                      </div>
+
+                      <!-- TITLE -->
+
+                      @if (review.reviewTitle) {
+                        <h4>
+                          {{ review.reviewTitle }}
+                        </h4>
+                      }
+
+                      <!-- COMMENT -->
+
+                      @if (review.reviewComment) {
+                        <p>
+                          {{ review.reviewComment }}
+                        </p>
+                      }
+
+                      <!-- =================================================
+                           ACTIONS
+                           ONLY CURRENT USER'S REVIEW
+                      ================================================== -->
+
+                      @if (isMyReview(review)) {
+                        <div class="review-actions">
+                          <button
+                            type="button"
+                            class="btn btn-sm btn-outline-primary"
+                            (click)="editReview(review)"
+                          >
+                            <i class="bi bi-pencil me-1"></i>
+
+                            Edit
+                          </button>
+
+                          <button
+                            type="button"
+                            class="btn btn-sm btn-outline-danger"
+                            (click)="deleteReview(review)"
+                          >
+                            <i class="bi bi-trash me-1"></i>
+
+                            Delete
+                          </button>
+                        </div>
+                      }
+                    </div>
+                  </article>
+                }
+              </div>
+            }
+          </div>
+        </section>
       }
     </div>
   </section>

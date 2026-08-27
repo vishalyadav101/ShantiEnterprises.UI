@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+
 import { DashboardService, DashboardResponse } from '../../../core/services/dashboard';
 
 @Component({
@@ -39,30 +40,45 @@ export class Dashboard implements OnInit {
       icon: 'bi-grid-1x2-fill',
       route: '/admin',
     },
+
     {
       title: 'Orders',
       icon: 'bi-cart-check',
       route: '/admin/orders',
     },
+
     {
       title: 'Users',
       icon: 'bi-people',
       route: '/admin/users',
     },
+
     {
       title: 'Categories',
       icon: 'bi-folder',
       route: '/admin/categories',
     },
+
     {
       title: 'Products',
       icon: 'bi-box-seam',
       route: '/admin/products',
     },
+
     {
       title: 'Banners',
       icon: 'bi-images',
       route: '/admin/banners',
+    },
+
+    // =======================================================
+    // REVIEWS
+    // =======================================================
+
+    {
+      title: 'Reviews',
+      icon: 'bi-star',
+      route: '/admin/reviews',
     },
   ];
 

@@ -1,0 +1,171 @@
+<div class="admin-reviews-page">
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
+
+  <section class="page-header">
+    <div class="header-left">
+      <span class="brand-name"> Shanti Enterprises </span>
+
+      <h1>Reviews</h1>
+
+      <p>Manage and view all customer reviews.</p>
+    </div>
+
+    <div class="header-actions">
+      <a routerLink="/admin" class="btn btn-outline-primary">
+        <i class="bi bi-arrow-left me-1"></i>
+        Dashboard
+      </a>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       CONTENT
+  ========================================================== -->
+
+  <section class="reviews-section">
+    <!-- ERROR -->
+
+    @if (errorMessage) {
+      <div class="alert alert-danger">
+        <span>
+          <i class="bi bi-exclamation-circle me-2"></i>
+          {{ errorMessage }}
+        </span>
+
+        <button type="button" class="btn btn-sm btn-outline-danger" (click)="retry()">Retry</button>
+      </div>
+    }
+
+    <!-- LOADING -->
+
+    @if (isLoading) {
+      <div class="loading-container">
+        <div class="spinner-border text-primary" role="status"></div>
+
+        <p>Loading reviews...</p>
+      </div>
+    }
+
+    <!-- EMPTY -->
+
+    @if (!isLoading && !errorMessage && reviews.length === 0) {
+      <div class="empty-container">
+        <i class="bi bi-chat-square-text"></i>
+
+        <h4>No Reviews Found</h4>
+
+        <p>No customer reviews are available.</p>
+      </div>
+    }
+
+    <!-- =======================================================
+         REVIEW LIST
+    ======================================================== -->
+
+    @if (!isLoading && !errorMessage && reviews.length > 0) {
+      <div class="reviews-card">
+        <!-- CARD HEADER -->
+
+        <div class="reviews-card-header">
+          <div>
+            <h3>Reviews</h3>
+
+            <span> {{ reviews.length }} total reviews </span>
+          </div>
+        </div>
+
+        <!-- TABLE -->
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Customer</th>
+
+                <th>Product</th>
+
+                <th>Rating</th>
+
+                <th>Status</th>
+
+                <th>Date</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (review of reviews; track review.reviewId) {
+                <tr>
+                  <!-- CUSTOMER -->
+
+                  <td>
+                    <div class="customer-cell">
+                      <div class="customer-avatar">
+                        <i class="bi bi-person-fill"></i>
+                      </div>
+
+                      <div>
+                        <strong>
+                          {{ review.userName }}
+                        </strong>
+
+                        <small> User #{{ review.userId }} </small>
+                      </div>
+                    </div>
+                  </td>
+
+                  <!-- PRODUCT -->
+
+                  <td>
+                    <span class="product-name"> Product {{ review.productId }} </span>
+                  </td>
+
+                  <!-- RATING -->
+
+                  <td>
+                    <div class="rating">
+                      @for (star of getStars(); track star) {
+                        @if (star <= review.rating) {
+                          <i class="bi bi-star-fill"></i>
+                        } @else {
+                          <i class="bi bi-star"></i>
+                        }
+                      }
+
+                      <span class="rating-number"> {{ review.rating }}/5 </span>
+                    </div>
+                  </td>
+
+                  <!-- STATUS -->
+
+                  <td>
+                    <span class="status-badge" [ngClass]="getStatusClass(review)">
+                      @if (review.isApproved && review.isActive) {
+                        <i class="bi bi-check-circle-fill"></i>
+                      } @else if (!review.isActive) {
+                        <i class="bi bi-x-circle-fill"></i>
+                      } @else {
+                        <i class="bi bi-clock-fill"></i>
+                      }
+
+                      {{ getStatus(review) }}
+                    </span>
+                  </td>
+
+                  <!-- DATE -->
+
+                  <td>
+                    <span class="date">
+                      {{ formatDate(review.createdDate) }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  </section>
+</div>

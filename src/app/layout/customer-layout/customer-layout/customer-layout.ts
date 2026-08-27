@@ -41,11 +41,18 @@ export class CustomerLayout implements OnInit {
   wishlistCount = 0;
 
   // =========================================================
+  // PROFILE MENU
+  // =========================================================
+
+  isProfileMenuOpen = false;
+
+  // =========================================================
   // INIT
   // =========================================================
 
   ngOnInit(): void {
     this.loadCartCount();
+
     this.loadWishlistCount();
   }
 
@@ -61,6 +68,7 @@ export class CustomerLayout implements OnInit {
 
       error: (error) => {
         console.error('Cart Count Error:', error);
+
         this.cartItemCount = 0;
       },
     });
@@ -78,9 +86,36 @@ export class CustomerLayout implements OnInit {
 
       error: (error) => {
         console.error('Wishlist Count Error:', error);
+
         this.wishlistCount = 0;
       },
     });
+  }
+
+  // =========================================================
+  // PROFILE MENU
+  // =========================================================
+
+  toggleProfileMenu(): void {
+    this.isProfileMenuOpen = !this.isProfileMenuOpen;
+  }
+
+  // =========================================================
+  // CLOSE PROFILE MENU
+  // =========================================================
+
+  closeProfileMenu(): void {
+    this.isProfileMenuOpen = false;
+  }
+
+  // =========================================================
+  // LOGOUT FROM PROFILE MENU
+  // =========================================================
+
+  logoutFromProfile(): void {
+    this.closeProfileMenu();
+
+    this.logout();
   }
 
   // =========================================================
@@ -88,6 +123,8 @@ export class CustomerLayout implements OnInit {
   // =========================================================
 
   logout(): void {
+    this.closeProfileMenu();
+
     this.authService.logout();
 
     this.router.navigate(['/login']);

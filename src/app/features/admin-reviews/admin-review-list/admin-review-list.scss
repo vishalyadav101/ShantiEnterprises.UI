@@ -1,0 +1,430 @@
+.admin-reviews-page {
+  min-height: 100vh;
+  background: #f5f7fb;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 25px;
+
+  padding: 30px 40px;
+
+  background: #ffffff;
+
+  border-bottom: 1px solid #e5e9ef;
+}
+
+.brand-name {
+  color: #0d6efd;
+
+  font-size: 0.78rem;
+
+  font-weight: 700;
+}
+
+.page-header h1 {
+  margin: 5px 0;
+
+  color: #172033;
+
+  font-size: 2rem;
+
+  font-weight: 800;
+}
+
+.page-header p {
+  margin: 0;
+
+  color: #6c757d;
+
+  font-size: 0.9rem;
+}
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+.reviews-section {
+  padding: 35px 40px 60px;
+}
+
+/* =========================================================
+   REVIEWS CARD
+========================================================= */
+
+.reviews-card {
+  width: 100%;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e9ef;
+
+  border-radius: 14px;
+
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+
+  overflow: hidden;
+}
+
+/* =========================================================
+   CARD HEADER
+========================================================= */
+
+.reviews-card-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  padding: 20px 24px;
+
+  border-bottom: 1px solid #edf0f4;
+}
+
+.reviews-card-header h3 {
+  margin: 0 0 4px;
+
+  color: #172033;
+
+  font-size: 1.15rem;
+
+  font-weight: 800;
+}
+
+.reviews-card-header span {
+  color: #7a8494;
+
+  font-size: 0.8rem;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrapper {
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+
+  min-width: 800px;
+
+  border-collapse: collapse;
+}
+
+/* =========================================================
+   TABLE HEADER
+========================================================= */
+
+thead {
+  background: #f8faff;
+}
+
+th {
+  padding: 14px 20px;
+
+  color: #667085;
+
+  font-size: 0.75rem;
+
+  font-weight: 700;
+
+  text-align: left;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.3px;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   TABLE BODY
+========================================================= */
+
+td {
+  padding: 16px 20px;
+
+  color: #172033;
+
+  font-size: 0.85rem;
+
+  border-top: 1px solid #edf0f4;
+
+  vertical-align: middle;
+}
+
+tbody tr {
+  transition: background 0.15s ease;
+}
+
+tbody tr:hover {
+  background: #f8faff;
+}
+
+/* =========================================================
+   CUSTOMER
+========================================================= */
+
+.customer-cell {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.customer-avatar {
+  width: 34px;
+  height: 34px;
+
+  flex: 0 0 34px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #eaf2ff;
+
+  color: #0d6efd;
+
+  font-size: 0.85rem;
+}
+
+.customer-cell strong {
+  display: block;
+
+  color: #172033;
+
+  font-size: 0.85rem;
+}
+
+.customer-cell small {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #8a94a3;
+
+  font-size: 0.7rem;
+}
+
+/* =========================================================
+   PRODUCT
+========================================================= */
+
+.product-name {
+  color: #172033;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   RATING
+========================================================= */
+
+.rating {
+  display: flex;
+
+  align-items: center;
+
+  gap: 2px;
+
+  white-space: nowrap;
+}
+
+.rating i {
+  color: #f5a400;
+
+  font-size: 0.85rem;
+}
+
+.rating i.bi-star {
+  color: #cbd2dc;
+}
+
+.rating-number {
+  margin-left: 6px;
+
+  color: #667085;
+
+  font-size: 0.75rem;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status-badge {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  padding: 5px 10px;
+
+  border-radius: 20px;
+
+  font-size: 0.72rem;
+
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.status-badge.approved {
+  background: #d1fae5;
+
+  color: #087443;
+}
+
+.status-badge.pending {
+  background: #fff3cd;
+
+  color: #946200;
+}
+
+.status-badge.inactive {
+  background: #ffe2e2;
+
+  color: #c62828;
+}
+
+/* =========================================================
+   DATE
+========================================================= */
+
+.date {
+  color: #667085;
+
+  font-size: 0.8rem;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading-container {
+  min-height: 300px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+}
+
+.loading-container .spinner-border {
+  width: 2.5rem;
+
+  height: 2.5rem;
+}
+
+.loading-container p {
+  margin-top: 12px;
+
+  color: #6c757d;
+}
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.empty-container {
+  min-height: 300px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  text-align: center;
+
+  background: #ffffff;
+
+  border-radius: 14px;
+}
+
+.empty-container > i {
+  margin-bottom: 15px;
+
+  color: #adb5bd;
+
+  font-size: 3rem;
+}
+
+.empty-container h4 {
+  margin-bottom: 5px;
+
+  color: #172033;
+}
+
+.empty-container p {
+  margin: 0;
+
+  color: #7a8494;
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.alert {
+  margin-bottom: 20px;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 767.98px) {
+  .page-header {
+    padding: 25px 20px;
+
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .reviews-section {
+    padding: 25px 20px 45px;
+  }
+
+  .reviews-card-header {
+    padding: 16px 18px;
+  }
+
+  th,
+  td {
+    padding: 13px 15px;
+  }
+}
