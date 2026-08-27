@@ -1,0 +1,378 @@
+<div class="banner-list-page">
+  <!-- ===================================================== -->
+  <!-- PAGE HEADER -->
+  <!-- ===================================================== -->
+
+  <section class="page-header">
+    <div>
+      <span class="page-label">Admin Panel</span>
+
+      <h1>Banners</h1>
+
+      <p>Manage promotional banners displayed on your home page.</p>
+    </div>
+
+    <button type="button" class="btn btn-primary" (click)="addBanner()">
+      <span class="btn-icon">+</span>
+      Add Banner
+    </button>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- ERROR -->
+  <!-- ===================================================== -->
+
+  @if (errorMessage) {
+    <div class="alert alert-error">
+      <span>⚠</span>
+
+      <span>{{ errorMessage }}</span>
+
+      <button type="button" class="retry-button" (click)="loadBanners()">Retry</button>
+    </div>
+  }
+
+  <!-- ===================================================== -->
+  <!-- SUMMARY -->
+  <!-- ===================================================== -->
+
+  <section class="summary-grid">
+    <!-- TOTAL -->
+
+    <div class="summary-card">
+      <div class="summary-icon blue">▣</div>
+
+      <div>
+        <span class="summary-label"> Total Banners </span>
+
+        <strong class="summary-value">
+          {{ totalBanners }}
+        </strong>
+      </div>
+    </div>
+
+    <!-- ACTIVE -->
+
+    <div class="summary-card">
+      <div class="summary-icon green">✓</div>
+
+      <div>
+        <span class="summary-label"> Active Banners </span>
+
+        <strong class="summary-value">
+          {{ activeBanners }}
+        </strong>
+      </div>
+    </div>
+
+    <!-- INACTIVE -->
+
+    <div class="summary-card">
+      <div class="summary-icon orange">⏸</div>
+
+      <div>
+        <span class="summary-label"> Inactive Banners </span>
+
+        <strong class="summary-value">
+          {{ inactiveBanners }}
+        </strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- SEARCH & FILTER -->
+  <!-- ===================================================== -->
+
+  <section class="filter-card">
+    <div class="filter-header">
+      <div>
+        <h2>Search &amp; Filter</h2>
+
+        <p>Find banners by title, subtitle or button text.</p>
+      </div>
+
+      <button type="button" class="btn btn-outline" (click)="clearFilters()">
+        ↻ Clear Filters
+      </button>
+    </div>
+
+    <div class="filter-grid">
+      <!-- SEARCH -->
+
+      <div class="form-group search-group">
+        <label for="bannerSearch"> Search Banners </label>
+
+        <div class="search-box">
+          <span class="search-icon"> ⌕ </span>
+
+          <input
+            id="bannerSearch"
+            type="text"
+            [(ngModel)]="searchText"
+            (input)="onSearch()"
+            placeholder="Search by title, subtitle..."
+          />
+        </div>
+      </div>
+
+      <!-- STATUS -->
+
+      <div class="form-group">
+        <label for="bannerStatus"> Status </label>
+
+        <select id="bannerStatus" [(ngModel)]="statusFilter" (change)="onStatusChange()">
+          <option value="all">All Status</option>
+
+          <option value="active">Active</option>
+
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+
+      <!-- RESULT -->
+
+      <div class="result-box">
+        <span> Results </span>
+
+        <strong>
+          {{ filteredBanners.length }}
+        </strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- BANNER LIST -->
+  <!-- ===================================================== -->
+
+  <section class="list-card">
+    <!-- LIST HEADER -->
+
+    <div class="list-header">
+      <div>
+        <h2>Banner List</h2>
+
+        <p>
+          Showing
+          {{ filteredBanners.length }}
+          of
+          {{ totalBanners }}
+          banners
+        </p>
+      </div>
+
+      <button type="button" class="btn btn-primary" (click)="addBanner()">
+        <span class="btn-icon">+</span>
+        Add Banner
+      </button>
+    </div>
+
+    <!-- =================================================== -->
+    <!-- LOADING -->
+    <!-- =================================================== -->
+
+    @if (isLoading) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+
+        <p>Loading banners...</p>
+      </div>
+    }
+
+    <!-- =================================================== -->
+    <!-- EMPTY -->
+    <!-- =================================================== -->
+
+    @if (!isLoading && filteredBanners.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">▣</div>
+
+        <h3>No banners found</h3>
+
+        <p>
+          {{
+            banners.length === 0
+              ? 'Create your first promotional banner.'
+              : 'Try changing your search or filter.'
+          }}
+        </p>
+
+        @if (banners.length === 0) {
+          <button type="button" class="btn btn-primary" (click)="addBanner()">+ Add Banner</button>
+        } @else {
+          <button type="button" class="btn btn-outline" (click)="clearFilters()">
+            Clear Filters
+          </button>
+        }
+      </div>
+    }
+
+    <!-- =================================================== -->
+    <!-- TABLE -->
+    <!-- =================================================== -->
+
+    @if (!isLoading && filteredBanners.length > 0) {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>BANNER</th>
+
+              <th>CONTENT</th>
+
+              <th>BUTTON</th>
+
+              <th>ORDER</th>
+
+              <th>STATUS</th>
+
+              <th>CREATED DATE</th>
+
+              <th>ACTIONS</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (banner of filteredBanners; track banner.bannerId) {
+              <tr>
+                <!-- ======================================= -->
+                <!-- BANNER IMAGE -->
+                <!-- ======================================= -->
+
+                <td>
+                  <div class="banner-info">
+                    <div class="banner-image">
+                      @if (banner.imageUrl) {
+                        <img [src]="banner.imageUrl" [alt]="banner.title" />
+                      } @else {
+                        <div class="no-image">▣</div>
+                      }
+                    </div>
+
+                    <div class="banner-id">#{{ banner.bannerId }}</div>
+                  </div>
+                </td>
+
+                <!-- ======================================= -->
+                <!-- CONTENT -->
+                <!-- ======================================= -->
+
+                <td>
+                  <div class="content-info">
+                    <strong [title]="banner.title">
+                      {{ banner.title }}
+                    </strong>
+
+                    <span [title]="banner.subtitle">
+                      {{ banner.subtitle }}
+                    </span>
+                  </div>
+                </td>
+
+                <!-- ======================================= -->
+                <!-- BUTTON -->
+                <!-- ======================================= -->
+
+                <td>
+                  @if (banner.buttonText) {
+                    <div class="button-info">
+                      <span class="button-text">
+                        {{ banner.buttonText }}
+                      </span>
+
+                      @if (banner.buttonUrl) {
+                        <small>
+                          {{ banner.buttonUrl }}
+                        </small>
+                      }
+                    </div>
+                  } @else {
+                    <span class="no-button"> No Button </span>
+                  }
+                </td>
+
+                <!-- ======================================= -->
+                <!-- DISPLAY ORDER -->
+                <!-- ======================================= -->
+
+                <td>
+                  <span class="order-number">
+                    {{ banner.displayOrder }}
+                  </span>
+                </td>
+
+                <!-- ======================================= -->
+                <!-- STATUS -->
+                <!-- ======================================= -->
+
+                <td>
+                  <span
+                    class="status-badge"
+                    [class.active]="banner.isActive"
+                    [class.inactive]="!banner.isActive"
+                  >
+                    <span class="status-dot"></span>
+
+                    {{ banner.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+
+                <!-- ======================================= -->
+                <!-- CREATED DATE -->
+                <!-- ======================================= -->
+
+                <td>
+                  <span class="created-date">
+                    {{ banner.createdDate | date: 'dd MMM yyyy' }}
+                  </span>
+                </td>
+
+                <!-- ======================================= -->
+                <!-- ACTIONS -->
+                <!-- ======================================= -->
+
+                <td>
+                  <div class="actions">
+                    <!-- VIEW -->
+
+                    <button
+                      type="button"
+                      class="action-btn view"
+                      title="View Banner"
+                      (click)="viewBanner(banner.bannerId)"
+                    >
+                      👁
+                    </button>
+
+                    <!-- EDIT -->
+
+                    <button
+                      type="button"
+                      class="action-btn edit"
+                      title="Edit Banner"
+                      (click)="editBanner(banner.bannerId)"
+                    >
+                      ✎
+                    </button>
+
+                    <!-- DELETE -->
+
+                    <button
+                      type="button"
+                      class="action-btn delete"
+                      title="Delete Banner"
+                      (click)="deleteBanner(banner)"
+                    >
+                      🗑
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>

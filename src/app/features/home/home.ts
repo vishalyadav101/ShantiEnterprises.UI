@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { forkJoin, finalize } from 'rxjs';
+import { forkJoin, finalize, Subscription } from 'rxjs';
 
 import { AuthService } from '../../core/services/auth';
 import { ProductService } from '../../core/services/product';
@@ -9,6 +9,7 @@ import { WishlistService, WishlistItem } from '../../core/services/wishlist';
 import { CartService } from '../../core/services/cart';
 import { ProductImageService, ProductImage } from '../../core/services/product-image';
 import { OrderService } from '../../core/services/order';
+import { BannerService, Banner } from '../../core/services/banner';
 
 import { Product } from '../../core/models/product.model';
 import { Cart } from '../../core/models/cart.model';
@@ -21,7 +22,7 @@ import { Order } from '../../core/models/order.model';
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
-export class Home implements OnInit {
+export class Home implements OnInit, OnDestroy {
   // =========================================================
   // SERVICES
   // =========================================================
@@ -38,6 +39,8 @@ export class Home implements OnInit {
 
   private readonly orderService = inject(OrderService);
 
+  private readonly bannerService = inject(BannerService);
+
   private readonly router = inject(Router);
 
   // =========================================================
@@ -45,6 +48,16 @@ export class Home implements OnInit {
   // =========================================================
 
   user = this.authService.getCurrentUser();
+
+  // =========================================================
+  // BANNERS
+  // =========================================================
+
+  banners: Banner[] = [];
+
+  currentBannerIndex = 0;
+
+  private bannerIntervalId: ReturnType<typeof setInterval> | null = null;
 
   // =========================================================
   // PRODUCTS
@@ -127,6 +140,14 @@ export class Home implements OnInit {
   }
 
   // =========================================================
+  // DESTROY
+  // =========================================================
+
+  ngOnDestroy(): void {
+    this.stopBannerAutoSlide();
+  }
+
+  // =========================================================
   // LOAD HOME DATA
   // =========================================================
 
@@ -134,6 +155,9 @@ export class Home implements OnInit {
     this.isLoading = true;
 
     this.errorMessage = '';
+
+    // Stop previous banner timer
+    this.stopBannerAutoSlide();
 
     forkJoin({
       products: this.productService.getAll(),
@@ -143,6 +167,8 @@ export class Home implements OnInit {
       cart: this.cartService.getCart(),
 
       orders: this.orderService.getMyOrders(),
+
+      banners: this.bannerService.getAll(),
     })
       .pipe(
         finalize(() => {
@@ -152,6 +178,20 @@ export class Home implements OnInit {
       .subscribe({
         next: (response) => {
           // =================================================
+          // BANNERS
+          // =================================================
+
+          this.banners = (response.banners || [])
+            .filter((banner) => banner.isActive)
+            .sort((a, b) => a.displayOrder - b.displayOrder);
+
+          this.currentBannerIndex = 0;
+
+          if (this.banners.length > 1) {
+            this.startBannerAutoSlide();
+          }
+
+          // =================================================
           // PRODUCTS
           // =================================================
 
@@ -160,11 +200,13 @@ export class Home implements OnInit {
           /*
            * Show maximum 8 products on Home page.
            */
+
           this.featuredProducts = this.products.slice(0, 8);
 
           /*
            * Load images for featured products.
            */
+
           this.featuredProducts.forEach((product) => {
             this.loadProductImages(product);
           });
@@ -202,6 +244,7 @@ export class Home implements OnInit {
           /*
            * Latest 3 orders.
            */
+
           this.recentOrders = [...this.orders]
             .sort((a, b) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime())
             .slice(0, 3);
@@ -215,6 +258,104 @@ export class Home implements OnInit {
           this.errorMessage = error?.error?.message || 'Unable to load home page data.';
         },
       });
+  }
+
+  // =========================================================
+  // LOAD BANNER AUTO SLIDE
+  // =========================================================
+
+  private startBannerAutoSlide(): void {
+    this.stopBannerAutoSlide();
+
+    this.bannerIntervalId = setInterval(() => {
+      if (this.banners.length <= 1) {
+        return;
+      }
+
+      this.currentBannerIndex = (this.currentBannerIndex + 1) % this.banners.length;
+    }, 5000);
+  }
+
+  // =========================================================
+  // STOP BANNER AUTO SLIDE
+  // =========================================================
+
+  private stopBannerAutoSlide(): void {
+    if (this.bannerIntervalId !== null) {
+      clearInterval(this.bannerIntervalId);
+
+      this.bannerIntervalId = null;
+    }
+  }
+
+  // =========================================================
+  // NEXT BANNER
+  // =========================================================
+
+  nextBanner(): void {
+    if (this.banners.length <= 1) {
+      return;
+    }
+
+    this.currentBannerIndex = (this.currentBannerIndex + 1) % this.banners.length;
+  }
+
+  // =========================================================
+  // PREVIOUS BANNER
+  // =========================================================
+
+  previousBanner(): void {
+    if (this.banners.length <= 1) {
+      return;
+    }
+
+    this.currentBannerIndex =
+      this.currentBannerIndex === 0 ? this.banners.length - 1 : this.currentBannerIndex - 1;
+  }
+
+  // =========================================================
+  // SELECT BANNER
+  // =========================================================
+
+  selectBanner(index: number): void {
+    if (index < 0 || index >= this.banners.length) {
+      return;
+    }
+
+    this.currentBannerIndex = index;
+  }
+
+  // =========================================================
+  // BANNER IMAGE URL
+  // =========================================================
+
+  getBannerImageUrl(imageUrl: string): string {
+    if (!imageUrl) {
+      return '';
+    }
+
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
+    }
+
+    return `https://localhost:7266${imageUrl}`;
+  }
+
+  // =========================================================
+  // BANNER BUTTON
+  // =========================================================
+
+  openBannerUrl(buttonUrl: string | null | undefined): void {
+    if (!buttonUrl) {
+      return;
+    }
+
+    if (buttonUrl.startsWith('http://') || buttonUrl.startsWith('https://')) {
+      window.location.href = buttonUrl;
+      return;
+    }
+
+    this.router.navigateByUrl(buttonUrl);
   }
 
   // =========================================================
@@ -236,6 +377,7 @@ export class Home implements OnInit {
           /*
            * Primary image always comes first.
            */
+
           const sortedImages = [...images].sort((a, b) => {
             if (a.isPrimary && !b.isPrimary) {
               return -1;
@@ -251,6 +393,7 @@ export class Home implements OnInit {
           /*
            * If ProductImage API returns images.
            */
+
           if (sortedImages.length > 0) {
             this.productImages[product.productId] = sortedImages;
           }
@@ -262,8 +405,11 @@ export class Home implements OnInit {
             this.productImages[product.productId] = [
               {
                 productImageId: 0,
+
                 productId: product.productId,
+
                 imageUrl: product.imageUrl,
+
                 isPrimary: true,
               },
             ];
@@ -281,8 +427,11 @@ export class Home implements OnInit {
             this.productImages[product.productId] = [
               {
                 productImageId: 0,
+
                 productId: product.productId,
+
                 imageUrl: product.imageUrl,
+
                 isPrimary: true,
               },
             ];
@@ -532,11 +681,13 @@ export class Home implements OnInit {
     this.cartService
       .addItem({
         productId: product.productId,
+
         quantity: 1,
       })
       .pipe(
         finalize(() => {
           this.isAddingToCart = false;
+
           this.addingProductId = null;
         }),
       )

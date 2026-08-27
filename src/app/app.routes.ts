@@ -80,7 +80,9 @@ import { ProductDetail } from './features/admin-products/product-detail/product-
 import { ProductForm } from './features/admin-products/product-form/product-form';
 
 import { ProductEdit } from './features/admin-products/product-edit/product-edit';
-
+import { BannerList } from './features/banners/banner-list/banner-list';
+import { BannerForm } from './features/banners/banner-form/banner-form';
+import { BannerDetail } from './features/banners/banner-detail/banner-detail';
 // =========================================================
 // ROUTES
 // =========================================================
@@ -203,7 +205,33 @@ export const routes: Routes = [
     component: ProductDetail,
     canActivate: [adminGuard],
   },
+  // =========================================================
+  // ADMIN BANNERS
+  // =========================================================
 
+  {
+    path: 'admin/banners',
+    component: BannerList,
+    canActivate: [adminGuard],
+  },
+
+  {
+    path: 'admin/banners/new',
+    component: BannerForm,
+    canActivate: [adminGuard],
+  },
+
+  {
+    path: 'admin/banners/:id/edit',
+    component: BannerForm,
+    canActivate: [adminGuard],
+  },
+
+  {
+    path: 'admin/banners/:id',
+    component: BannerDetail,
+    canActivate: [adminGuard],
+  },
   // =========================================================
   // CUSTOMER LAYOUT
   // =========================================================
