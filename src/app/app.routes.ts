@@ -83,6 +83,8 @@ import { ProductEdit } from './features/admin-products/product-edit/product-edit
 import { BannerList } from './features/banners/banner-list/banner-list';
 import { BannerForm } from './features/banners/banner-form/banner-form';
 import { BannerDetail } from './features/banners/banner-detail/banner-detail';
+import { AdminReviewList } from './features/admin-reviews/admin-review-list/admin-review-list';
+
 // =========================================================
 // ROUTES
 // =========================================================
@@ -203,6 +205,15 @@ export const routes: Routes = [
   {
     path: 'admin/products/:id',
     component: ProductDetail,
+    canActivate: [adminGuard],
+  },
+  // =========================================================
+  // ADMIN REVIEWS
+  // =========================================================
+
+  {
+    path: 'admin/reviews',
+    component: AdminReviewList,
     canActivate: [adminGuard],
   },
   // =========================================================

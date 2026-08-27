@@ -95,6 +95,301 @@
 }
 
 /* =========================================================
+   USER PROFILE
+========================================================= */
+
+.user-profile-wrapper {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+}
+
+/* =========================================================
+   PROFILE BUTTON
+========================================================= */
+
+.user-profile-btn {
+  width: 38px;
+  height: 38px;
+
+  padding: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 50%;
+
+  background: transparent;
+  color: #ffffff;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.user-profile-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+
+  transform: translateY(-1px);
+}
+
+.user-profile-btn:focus {
+  outline: none;
+
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.user-profile-btn i {
+  font-size: 21px;
+}
+
+/* =========================================================
+   PROFILE DROPDOWN
+========================================================= */
+
+.profile-dropdown {
+  position: absolute;
+
+  top: calc(100% + 12px);
+  right: 0;
+
+  width: 285px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e9ef;
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 12px 30px rgba(15, 23, 42, 0.14),
+    0 3px 8px rgba(15, 23, 42, 0.06);
+
+  overflow: hidden;
+
+  z-index: 1100;
+
+  animation: profileDropdownIn 0.18s ease;
+}
+
+/* Small arrow */
+
+.profile-dropdown::before {
+  content: '';
+
+  position: absolute;
+
+  top: -6px;
+  right: 13px;
+
+  width: 12px;
+  height: 12px;
+
+  background: #ffffff;
+
+  border-left: 1px solid #e5e9ef;
+  border-top: 1px solid #e5e9ef;
+
+  transform: rotate(45deg);
+}
+
+/* =========================================================
+   DROPDOWN ANIMATION
+========================================================= */
+
+@keyframes profileDropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================================
+   PROFILE HEADER
+========================================================= */
+
+.profile-header {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 18px 16px;
+
+  background: #f8fafc;
+}
+
+/* =========================================================
+   PROFILE AVATAR
+========================================================= */
+
+.profile-avatar {
+  width: 46px;
+  height: 46px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #e8f1ff;
+
+  color: #0d6efd;
+
+  border: 1px solid #d5e5ff;
+}
+
+.profile-avatar i {
+  font-size: 22px;
+}
+
+/* =========================================================
+   PROFILE USER INFO
+========================================================= */
+
+.profile-user-info {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.profile-user-info strong {
+  color: #172033;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-user-info span {
+  color: #718096;
+
+  font-size: 11px;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* =========================================================
+   PROFILE DIVIDER
+========================================================= */
+
+.profile-divider {
+  height: 1px;
+
+  background: #edf0f4;
+
+  margin: 0;
+}
+
+/* =========================================================
+   PROFILE MENU ITEM
+========================================================= */
+
+.profile-menu-item {
+  width: 100%;
+
+  min-height: 44px;
+
+  padding: 10px 16px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  border: none;
+
+  background: #ffffff;
+
+  color: #334155;
+
+  text-decoration: none;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    padding-left 0.2s ease;
+}
+
+.profile-menu-item i {
+  width: 20px;
+
+  flex-shrink: 0;
+
+  color: #64748b;
+
+  font-size: 16px;
+
+  text-align: center;
+
+  transition: color 0.2s ease;
+}
+
+.profile-menu-item:hover {
+  background: #f5f8fc;
+
+  color: #0d6efd;
+
+  padding-left: 19px;
+}
+
+.profile-menu-item:hover i {
+  color: #0d6efd;
+}
+
+/* =========================================================
+   LOGOUT ITEM
+========================================================= */
+
+.profile-menu-item.logout-item {
+  color: #dc3545;
+}
+
+.profile-menu-item.logout-item i {
+  color: #dc3545;
+}
+
+.profile-menu-item.logout-item:hover {
+  background: #fff5f5;
+
+  color: #dc3545;
+}
+
+.profile-menu-item.logout-item:hover i {
+  color: #dc3545;
+}
+
+/* =========================================================
    USER NAME
 ========================================================= */
 
@@ -134,6 +429,255 @@
 }
 
 /* =========================================================
+   CUSTOMER FOOTER
+========================================================= */
+
+.customer-footer {
+  background: #0b1f3a;
+  color: #cbd5e1;
+
+  margin-top: 0;
+}
+
+/* =========================================================
+   FOOTER BRAND
+========================================================= */
+
+.footer-brand h4 {
+  color: #ffffff;
+
+  font-size: 22px;
+  font-weight: 700;
+
+  margin-bottom: 15px;
+}
+
+.footer-brand h4 i {
+  color: #0d6efd;
+}
+
+.footer-brand p {
+  max-width: 390px;
+
+  margin-bottom: 20px;
+
+  color: #aebdd0;
+
+  font-size: 14px;
+
+  line-height: 1.7;
+}
+
+/* =========================================================
+   TRUST BADGES
+========================================================= */
+
+.footer-trust {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 10px;
+}
+
+.footer-trust span {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 7px 12px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  border-radius: 7px;
+
+  color: #dbeafe;
+
+  font-size: 12px;
+
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.footer-trust i {
+  color: #60a5fa;
+}
+
+/* =========================================================
+   FOOTER TITLES
+========================================================= */
+
+.footer-title {
+  color: #ffffff;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  margin-bottom: 18px;
+}
+
+/* =========================================================
+   FOOTER LINKS
+========================================================= */
+
+.footer-links {
+  list-style: none;
+
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 11px;
+}
+
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 7px;
+
+  color: #aebdd0;
+
+  text-decoration: none;
+
+  font-size: 13px;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.footer-links a i {
+  font-size: 9px;
+
+  color: #60a5fa;
+}
+
+.footer-links a:hover {
+  color: #ffffff;
+
+  transform: translateX(3px);
+}
+
+/* =========================================================
+   CUSTOMER SUPPORT
+========================================================= */
+
+.footer-support-text {
+  color: #aebdd0;
+
+  font-size: 13px;
+
+  line-height: 1.6;
+
+  margin-bottom: 18px;
+}
+
+.support-item {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  margin-bottom: 15px;
+}
+
+.support-icon {
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background: rgba(13, 110, 253, 0.15);
+
+  color: #60a5fa;
+
+  font-size: 17px;
+}
+
+.support-item span {
+  display: block;
+
+  color: #94a3b8;
+
+  font-size: 11px;
+
+  margin-bottom: 3px;
+}
+
+.support-item strong {
+  display: block;
+
+  color: #e2e8f0;
+
+  font-size: 12px;
+
+  font-weight: 600;
+}
+
+/* =========================================================
+   DIVIDER
+========================================================= */
+
+.footer-divider {
+  height: 1px;
+
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* =========================================================
+   FOOTER BOTTOM
+========================================================= */
+
+.footer-bottom {
+  min-height: 65px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+.footer-bottom p {
+  color: #94a3b8;
+
+  font-size: 12px;
+}
+
+.footer-bottom p strong {
+  color: #dbeafe;
+}
+
+.footer-bottom-links {
+  display: flex;
+  align-items: center;
+
+  gap: 20px;
+}
+
+.footer-bottom-links span {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  color: #94a3b8;
+
+  font-size: 11px;
+}
+
+.footer-bottom-links i {
+  color: #60a5fa;
+}
+
+/* =========================================================
    RESPONSIVE
 ========================================================= */
 
@@ -157,232 +701,55 @@
     font-size: 17px;
   }
 
+  .user-profile-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .user-profile-btn i {
+    font-size: 19px;
+  }
+
   .customer-navbar .btn {
     font-size: 0.78rem;
+
     padding: 6px 9px;
   }
 
-  .customer-footer {
-    text-align: center;
+  /* PROFILE DROPDOWN */
+
+  .profile-dropdown {
+    position: fixed;
+
+    top: 63px;
+    right: 12px;
+
+    width: min(285px, calc(100vw - 24px));
   }
-}
-/* =========================================================
-   CUSTOMER FOOTER
-   ========================================================= */
 
-.customer-footer {
-  background: #0b1f3a;
-  color: #cbd5e1;
-  margin-top: 0;
-}
+  .profile-dropdown::before {
+    right: 12px;
+  }
 
-/* =========================================================
-   FOOTER BRAND
-   ========================================================= */
+  /* FOOTER */
 
-.footer-brand h4 {
-  color: #ffffff;
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 15px;
-}
-
-.footer-brand h4 i {
-  color: #0d6efd;
-}
-
-.footer-brand p {
-  max-width: 390px;
-  margin-bottom: 20px;
-  color: #aebdd0;
-  font-size: 14px;
-  line-height: 1.7;
-}
-
-/* =========================================================
-   TRUST BADGES
-   ========================================================= */
-
-.footer-trust {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.footer-trust span {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 7px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 7px;
-  color: #dbeafe;
-  font-size: 12px;
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.footer-trust i {
-  color: #60a5fa;
-}
-
-/* =========================================================
-   FOOTER TITLES
-   ========================================================= */
-
-.footer-title {
-  color: #ffffff;
-  font-size: 15px;
-  font-weight: 700;
-  margin-bottom: 18px;
-}
-
-/* =========================================================
-   FOOTER LINKS
-   ========================================================= */
-
-.footer-links {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.footer-links li {
-  margin-bottom: 11px;
-}
-
-.footer-links a {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  color: #aebdd0;
-  text-decoration: none;
-  font-size: 13px;
-  transition:
-    color 0.2s ease,
-    transform 0.2s ease;
-}
-
-.footer-links a i {
-  font-size: 9px;
-  color: #60a5fa;
-}
-
-.footer-links a:hover {
-  color: #ffffff;
-  transform: translateX(3px);
-}
-
-/* =========================================================
-   CUSTOMER SUPPORT
-   ========================================================= */
-
-.footer-support-text {
-  color: #aebdd0;
-  font-size: 13px;
-  line-height: 1.6;
-  margin-bottom: 18px;
-}
-
-.support-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 15px;
-}
-
-.support-icon {
-  width: 38px;
-  height: 38px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9px;
-  background: rgba(13, 110, 253, 0.15);
-  color: #60a5fa;
-  font-size: 17px;
-}
-
-.support-item span {
-  display: block;
-  color: #94a3b8;
-  font-size: 11px;
-  margin-bottom: 3px;
-}
-
-.support-item strong {
-  display: block;
-  color: #e2e8f0;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-/* =========================================================
-   DIVIDER
-   ========================================================= */
-
-.footer-divider {
-  height: 1px;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-/* =========================================================
-   FOOTER BOTTOM
-   ========================================================= */
-
-.footer-bottom {
-  min-height: 65px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.footer-bottom p {
-  color: #94a3b8;
-  font-size: 12px;
-}
-
-.footer-bottom p strong {
-  color: #dbeafe;
-}
-
-.footer-bottom-links {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.footer-bottom-links span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #94a3b8;
-  font-size: 11px;
-}
-
-.footer-bottom-links i {
-  color: #60a5fa;
-}
-
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
-
-@media (max-width: 767.98px) {
   .customer-footer {
     text-align: left;
   }
 
   .footer-bottom {
     padding: 18px 0;
+
     flex-direction: column;
+
     align-items: flex-start;
+
     gap: 12px;
   }
 
   .footer-bottom-links {
     flex-wrap: wrap;
+
     gap: 10px 18px;
   }
 

@@ -7,8 +7,10 @@ import { ProductService } from '../../../core/services/product';
 import { CartService } from '../../../core/services/cart';
 import { ProductImageService, ProductImage } from '../../../core/services/product-image';
 import { WishlistService } from '../../../core/services/wishlist';
+import { ReviewService } from '../../../core/services/review';
 
 import { Product } from '../../../core/models/product.model';
+import { ReviewSummary } from '../../../core/models/review.model';
 
 @Component({
   selector: 'app-product-list',
@@ -30,6 +32,8 @@ export class ProductList implements OnInit {
 
   private readonly wishlistService = inject(WishlistService);
 
+  private readonly reviewService = inject(ReviewService);
+
   private readonly router = inject(Router);
 
   // =========================================================
@@ -44,13 +48,6 @@ export class ProductList implements OnInit {
 
   /**
    * Stores uploaded images for every product.
-   *
-   * Example:
-   *
-   * {
-   *   1: [image1, image2, image3],
-   *   2: [image4, image5]
-   * }
    */
   productImages: Record<number, ProductImage[]> = {};
 
@@ -58,6 +55,30 @@ export class ProductList implements OnInit {
    * Current image index for every product.
    */
   currentImageIndex: Record<number, number> = {};
+
+  // =========================================================
+  // REVIEWS
+  // =========================================================
+
+  /**
+   * Stores review summary for every product.
+   *
+   * Example:
+   *
+   * {
+   *   1: {
+   *     productId: 1,
+   *     averageRating: 4.5,
+   *     reviewCount: 2
+   *   }
+   * }
+   */
+  reviewSummaries: Record<number, ReviewSummary> = {};
+
+  /**
+   * Review summary loading state for every product.
+   */
+  isLoadingReviews: Record<number, boolean> = {};
 
   // =========================================================
   // WISHLIST
@@ -144,16 +165,28 @@ export class ProductList implements OnInit {
           this.isLoadingImages = {};
 
           // ---------------------------------------------------
-          // LOAD IMAGES FOR EVERY PRODUCT
+          // RESET REVIEW STATE
+          // ---------------------------------------------------
+
+          this.reviewSummaries = {};
+
+          this.isLoadingReviews = {};
+
+          // ---------------------------------------------------
+          // LOAD IMAGES + REVIEWS
           // ---------------------------------------------------
 
           this.products.forEach((product) => {
             this.loadProductImages(product);
+
+            this.loadReviewSummary(product);
           });
         },
 
         error: (error) => {
           console.error('Product API Error:', error);
+
+          this.products = [];
 
           this.errorMessage = error?.error?.message || 'Unable to load products.';
         },
@@ -232,8 +265,6 @@ export class ProductList implements OnInit {
 
             this.wishlistProductIds.delete(product.productId);
 
-            // Create a new Set so Angular
-            // change detection updates correctly.
             this.wishlistProductIds = new Set(this.wishlistProductIds);
 
             this.wishlistMessage = `${product.productName} removed from wishlist.`;
@@ -270,8 +301,6 @@ export class ProductList implements OnInit {
 
           this.wishlistProductIds.add(product.productId);
 
-          // Create a new Set so Angular
-          // change detection updates correctly.
           this.wishlistProductIds = new Set(this.wishlistProductIds);
 
           this.wishlistMessage = `${product.productName} added to wishlist.`;
@@ -369,7 +398,77 @@ export class ProductList implements OnInit {
   }
 
   // =========================================================
-  // GET PRODUCT IMAGES
+  // LOAD REVIEW SUMMARY
+  // =========================================================
+
+  private loadReviewSummary(product: Product): void {
+    this.isLoadingReviews[product.productId] = true;
+
+    this.reviewService
+      .getSummary(product.productId)
+      .pipe(
+        finalize(() => {
+          this.isLoadingReviews[product.productId] = false;
+        }),
+      )
+      .subscribe({
+        next: (summary) => {
+          console.log(`Review Summary for Product ${product.productId}:`, summary);
+
+          this.reviewSummaries[product.productId] = summary;
+        },
+
+        error: (error) => {
+          console.error(`Review Summary Error (${product.productId}):`, error);
+
+          // Review API fail hone par
+          // product listing ko break nahi karenge.
+
+          this.reviewSummaries[product.productId] = {
+            productId: product.productId,
+
+            averageRating: 0,
+
+            reviewCount: 0,
+          };
+        },
+      });
+  }
+
+  // =========================================================
+  // GET REVIEW SUMMARY
+  // =========================================================
+
+  getReviewSummary(productId: number): ReviewSummary | null {
+    return this.reviewSummaries[productId] ?? null;
+  }
+
+  // =========================================================
+  // GET AVERAGE RATING
+  // =========================================================
+
+  getAverageRating(productId: number): number {
+    return this.reviewSummaries[productId]?.averageRating ?? 0;
+  }
+
+  // =========================================================
+  // GET REVIEW COUNT
+  // =========================================================
+
+  getReviewCount(productId: number): number {
+    return this.reviewSummaries[productId]?.reviewCount ?? 0;
+  }
+
+  // =========================================================
+  // GET ROUNDED RATING
+  // =========================================================
+
+  getRoundedRating(productId: number): number {
+    return Math.round(this.getAverageRating(productId));
+  }
+
+  // =========================================================
+  // GET IMAGES
   // =========================================================
 
   getImages(product: Product): ProductImage[] {
@@ -475,6 +574,14 @@ export class ProductList implements OnInit {
 
   isImageLoading(product: Product): boolean {
     return !!this.isLoadingImages[product.productId];
+  }
+
+  // =========================================================
+  // REVIEW LOADING
+  // =========================================================
+
+  isReviewLoading(product: Product): boolean {
+    return !!this.isLoadingReviews[product.productId];
   }
 
   // =========================================================
