@@ -1928,3 +1928,61 @@
     height: 42px;
   }
 }
+/* =========================================================
+   PRODUCT RATING
+========================================================= */
+
+.home-product-rating {
+  min-height: 20px;
+
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  margin: 6px 0 8px;
+
+  font-size: 0.72rem;
+}
+
+.rating-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+
+  color: #f59e0b;
+}
+
+.rating-stars i {
+  font-size: 0.72rem;
+}
+
+.rating-value {
+  color: #555;
+  font-weight: 600;
+}
+
+.rating-count {
+  color: #8a94a6;
+}
+
+.no-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  color: #9aa3b2;
+}
+
+.no-rating i {
+  color: #f59e0b;
+}
+
+.rating-loading {
+  color: #0d6efd;
+}
+
+.rating-loading .spinner-border {
+  width: 11px;
+  height: 11px;
+  border-width: 1.5px;
+}

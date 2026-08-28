@@ -17,6 +17,108 @@
           <i class="bi bi-house-door me-1"></i>
           Home
         </a>
+        <!-- NOTIFICATIONS -->
+
+        <div class="notification-wrapper">
+          <button
+            type="button"
+            class="nav-action notification-button"
+            title="Notifications"
+            aria-label="Notifications"
+            [attr.aria-expanded]="isNotificationMenuOpen"
+            (click)="toggleNotificationMenu()"
+          >
+            <i class="bi bi-bell"></i>
+
+            @if (notificationCount > 0) {
+              <span class="nav-badge">
+                {{ notificationCount }}
+              </span>
+            }
+          </button>
+
+          @if (isNotificationMenuOpen) {
+            <div class="notification-dropdown">
+              <div class="notification-header">
+                <div>
+                  <strong>Notifications</strong>
+
+                  <span> {{ notificationCount }} unread </span>
+                </div>
+
+                @if (notificationCount > 0) {
+                  <button
+                    type="button"
+                    class="mark-all-button"
+                    [disabled]="isMarkingAllAsRead"
+                    (click)="markAllNotificationsAsRead()"
+                  >
+                    @if (isMarkingAllAsRead) {
+                      <span class="spinner-border spinner-border-sm"></span>
+                    } @else {
+                      Mark all as read
+                    }
+                  </button>
+                }
+              </div>
+
+              <div class="notification-divider"></div>
+
+              @if (isNotificationLoading) {
+                <div class="notification-loading">
+                  <span class="spinner-border spinner-border-sm"></span>
+                  Loading notifications...
+                </div>
+              } @else if (notifications.length === 0) {
+                <div class="notification-empty">
+                  <i class="bi bi-bell-slash"></i>
+
+                  <strong>No Notifications</strong>
+
+                  <span>You are all caught up.</span>
+                </div>
+              } @else {
+                <div class="notification-list">
+                  @for (
+                    notification of notifications.slice(0, 8);
+                    track notification.notificationId
+                  ) {
+                    <button
+                      type="button"
+                      class="notification-item"
+                      [class.unread]="!notification.isRead"
+                      (click)="markNotificationAsRead(notification)"
+                    >
+                      <div class="notification-icon">
+                        <i class="bi" [class]="getNotificationIcon(notification.type)"></i>
+                      </div>
+
+                      <div class="notification-content">
+                        <div class="notification-title-row">
+                          <strong>
+                            {{ notification.title }}
+                          </strong>
+
+                          @if (!notification.isRead) {
+                            <span class="unread-dot"></span>
+                          }
+                        </div>
+
+                        <p>
+                          {{ notification.message }}
+                        </p>
+
+                        <small>
+                          {{ formatNotificationDate(notification.createdDate) }}
+                        </small>
+                      </div>
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
         <a routerLink="/wishlist" class="nav-action" title="Wishlist">
           <i class="bi bi-heart"></i>
 

@@ -14,6 +14,9 @@ import { BannerService, Banner } from '../../core/services/banner';
 import { Product } from '../../core/models/product.model';
 import { Cart } from '../../core/models/cart.model';
 import { Order } from '../../core/models/order.model';
+import { ReviewService } from '../../core/services/review';
+
+import { ReviewSummary } from '../../core/models/review.model';
 
 @Component({
   selector: 'app-home',
@@ -40,7 +43,7 @@ export class Home implements OnInit, OnDestroy {
   private readonly orderService = inject(OrderService);
 
   private readonly bannerService = inject(BannerService);
-
+  private readonly reviewService = inject(ReviewService);
   private readonly router = inject(Router);
 
   // =========================================================
@@ -76,6 +79,13 @@ export class Home implements OnInit, OnDestroy {
   currentImageIndex: Record<number, number> = {};
 
   isLoadingImages: Record<number, boolean> = {};
+  // =========================================================
+  // REVIEWS
+  // =========================================================
+
+  reviewSummaries: Record<number, ReviewSummary> = {};
+
+  isLoadingReviews: Record<number, boolean> = {};
 
   // =========================================================
   // WISHLIST
@@ -209,6 +219,7 @@ export class Home implements OnInit, OnDestroy {
 
           this.featuredProducts.forEach((product) => {
             this.loadProductImages(product);
+            this.loadReviewSummary(product);
           });
 
           // =================================================
@@ -443,7 +454,76 @@ export class Home implements OnInit, OnDestroy {
         },
       });
   }
+  // =========================================================
+  // LOAD REVIEW SUMMARY
+  // =========================================================
 
+  private loadReviewSummary(product: Product): void {
+    this.isLoadingReviews[product.productId] = true;
+
+    this.reviewService
+      .getSummary(product.productId)
+      .pipe(
+        finalize(() => {
+          this.isLoadingReviews[product.productId] = false;
+        }),
+      )
+      .subscribe({
+        next: (summary) => {
+          this.reviewSummaries[product.productId] = summary;
+        },
+
+        error: (error) => {
+          console.error(`Review Summary Error (${product.productId}):`, error);
+
+          this.reviewSummaries[product.productId] = {
+            productId: product.productId,
+            averageRating: 0,
+            reviewCount: 0,
+          };
+        },
+      });
+  }
+
+  // =========================================================
+  // GET REVIEW SUMMARY
+  // =========================================================
+
+  getReviewSummary(productId: number): ReviewSummary | null {
+    return this.reviewSummaries[productId] ?? null;
+  }
+
+  // =========================================================
+  // GET AVERAGE RATING
+  // =========================================================
+
+  getAverageRating(productId: number): number {
+    return this.reviewSummaries[productId]?.averageRating ?? 0;
+  }
+
+  // =========================================================
+  // GET REVIEW COUNT
+  // =========================================================
+
+  getReviewCount(productId: number): number {
+    return this.reviewSummaries[productId]?.reviewCount ?? 0;
+  }
+
+  // =========================================================
+  // REVIEW LOADING
+  // =========================================================
+
+  isReviewLoading(product: Product): boolean {
+    return !!this.isLoadingReviews[product.productId];
+  }
+
+  // =========================================================
+  // ROUNDED RATING
+  // =========================================================
+
+  getRoundedRating(productId: number): number {
+    return Math.round(this.getAverageRating(productId));
+  }
   // =========================================================
   // GET PRODUCT IMAGES
   // =========================================================
