@@ -1,0 +1,288 @@
+<div class="contact-enquiries-page">
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
+
+  <section class="page-header">
+    <div class="header-left">
+      <span class="brand-name"> Shanti Enterprises </span>
+
+      <h1>Contact Enquiries</h1>
+
+      <p>Manage customer contact enquiries and responses.</p>
+    </div>
+
+    <div class="header-actions">
+      <a routerLink="/admin" class="btn btn-outline-primary">
+        <i class="bi bi-arrow-left me-1"></i>
+        Dashboard
+      </a>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       CONTENT
+  ========================================================== -->
+
+  <section class="enquiries-section">
+    <!-- =======================================================
+         ERROR
+    ======================================================== -->
+
+    @if (errorMessage) {
+      <div
+        class="alert alert-danger d-flex align-items-center justify-content-between"
+        role="alert"
+      >
+        <div>
+          <i class="bi bi-exclamation-circle me-2"></i>
+
+          {{ errorMessage }}
+        </div>
+
+        <button type="button" class="btn btn-sm btn-outline-danger" (click)="retry()">Retry</button>
+      </div>
+    }
+
+    <!-- =======================================================
+         LOADING
+    ======================================================== -->
+
+    @if (isLoading) {
+      <div class="loading-container">
+        <div class="spinner-border text-primary" role="status"></div>
+
+        <p>Loading contact enquiries...</p>
+      </div>
+    }
+
+    <!-- =======================================================
+         EMPTY
+    ======================================================== -->
+
+    @if (!isLoading && !errorMessage && enquiries.length === 0) {
+      <div class="empty-container">
+        <div class="empty-icon">
+          <i class="bi bi-envelope-open"></i>
+        </div>
+
+        <h4>No Contact Enquiries Found</h4>
+
+        <p>There are no customer enquiries available.</p>
+      </div>
+    }
+
+    <!-- =======================================================
+         ENQUIRY TABLE
+    ======================================================== -->
+
+    @if (!isLoading && !errorMessage && enquiries.length > 0) {
+      <div class="enquiries-card">
+        <!-- =====================================================
+             CARD HEADER
+        ====================================================== -->
+
+        <div class="enquiries-card-header">
+          <div>
+            <h3>Contact Enquiries</h3>
+
+            <span> {{ enquiries.length }} total enquiries </span>
+          </div>
+        </div>
+
+        <!-- =====================================================
+             TABLE
+        ====================================================== -->
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <!-- CUSTOMER -->
+
+                <th>Customer</th>
+
+                <!-- EMAIL -->
+
+                <th>Email</th>
+
+                <!-- MOBILE -->
+
+                <th>Mobile</th>
+
+                <!-- SUBJECT -->
+
+                <th>Subject</th>
+
+                <!-- MESSAGE -->
+
+                <th>Message</th>
+
+                <!-- STATUS -->
+
+                <th>Status</th>
+
+                <!-- CREATED DATE -->
+
+                <th>Created Date</th>
+
+                <!-- REPLIED DATE -->
+
+                <th>Replied Date</th>
+
+                <!-- ACTION -->
+
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (enquiry of enquiries; track enquiry.contactEnquiryId) {
+                <tr>
+                  <!-- =================================================
+                       CUSTOMER
+                  ================================================== -->
+
+                  <td>
+                    <div class="customer-cell">
+                      <div class="customer-avatar">
+                        <i class="bi bi-person-fill"></i>
+                      </div>
+
+                      <div>
+                        <strong>
+                          {{ enquiry.fullName }}
+                        </strong>
+
+                        <small> #{{ enquiry.contactEnquiryId }} </small>
+                      </div>
+                    </div>
+                  </td>
+
+                  <!-- =================================================
+                       EMAIL
+                  ================================================== -->
+
+                  <td>
+                    <a class="email-link" [href]="'mailto:' + enquiry.email">
+                      <i class="bi bi-envelope me-1"></i>
+
+                      {{ enquiry.email }}
+                    </a>
+                  </td>
+
+                  <!-- =================================================
+                       MOBILE
+                  ================================================== -->
+
+                  <td>
+                    <a class="mobile-link" [href]="'tel:' + enquiry.mobile">
+                      <i class="bi bi-telephone me-1"></i>
+
+                      {{ enquiry.mobile }}
+                    </a>
+                  </td>
+
+                  <!-- =================================================
+                       SUBJECT
+                  ================================================== -->
+
+                  <td>
+                    <span class="subject-text" [title]="enquiry.subject">
+                      {{ getSubjectPreview(enquiry.subject) }}
+                    </span>
+                  </td>
+
+                  <!-- =================================================
+                       MESSAGE
+                  ================================================== -->
+
+                  <td>
+                    <span class="message-text" [title]="enquiry.message">
+                      {{ getMessagePreview(enquiry.message) }}
+                    </span>
+                  </td>
+
+                  <!-- =================================================
+                       STATUS
+                  ================================================== -->
+
+                  <td>
+                    <span class="status-badge" [ngClass]="getStatusClass(enquiry.status)">
+                      @switch (enquiry.status.toLowerCase()) {
+                        @case ('pending') {
+                          <i class="bi bi-clock-fill"></i>
+                        }
+
+                        @case ('inprogress') {
+                          <i class="bi bi-arrow-repeat"></i>
+                        }
+
+                        @case ('replied') {
+                          <i class="bi bi-check-circle-fill"></i>
+                        }
+
+                        @case ('closed') {
+                          <i class="bi bi-check2-all"></i>
+                        }
+
+                        @default {
+                          <i class="bi bi-info-circle-fill"></i>
+                        }
+                      }
+
+                      {{ enquiry.status }}
+                    </span>
+                  </td>
+
+                  <!-- =================================================
+                       CREATED DATE
+                  ================================================== -->
+
+                  <td>
+                    <span class="date-text">
+                      <i class="bi bi-calendar3 me-1"></i>
+
+                      {{ formatDate(enquiry.createdDate) }}
+                    </span>
+                  </td>
+
+                  <!-- =================================================
+                       REPLIED DATE
+                  ================================================== -->
+
+                  <td>
+                    <span class="date-text">
+                      @if (enquiry.repliedDate) {
+                        <i class="bi bi-reply-fill me-1"></i>
+
+                        {{ formatDate(enquiry.repliedDate) }}
+                      } @else {
+                        <span class="not-replied"> Not Replied </span>
+                      }
+                    </span>
+                  </td>
+
+                  <!-- =================================================
+                       ACTION
+                  ================================================== -->
+
+                  <td>
+                    <a
+                      [routerLink]="['/admin/contact-enquiries', enquiry.contactEnquiryId]"
+                      class="view-button"
+                    >
+                      <i class="bi bi-eye me-1"></i>
+
+                      View
+                    </a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  </section>
+</div>

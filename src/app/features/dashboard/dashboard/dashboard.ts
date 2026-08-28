@@ -70,6 +70,11 @@ export class Dashboard implements OnInit {
       icon: 'bi-images',
       route: '/admin/banners',
     },
+    {
+      title: 'Contact Enquiries',
+      icon: 'bi-envelope',
+      route: '/admin/contact-enquiries',
+    },
 
     // =======================================================
     // REVIEWS

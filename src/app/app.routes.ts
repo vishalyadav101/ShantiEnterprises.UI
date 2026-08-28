@@ -84,6 +84,10 @@ import { BannerList } from './features/banners/banner-list/banner-list';
 import { BannerForm } from './features/banners/banner-form/banner-form';
 import { BannerDetail } from './features/banners/banner-detail/banner-detail';
 import { AdminReviewList } from './features/admin-reviews/admin-review-list/admin-review-list';
+import { ContactEnquiryList } from './features/contact-enquiries/contact-enquiry-list/contact-enquiry-list';
+
+import { ContactEnquiryDetail } from './features/contact-enquiries/contact-enquiry-detail/contact-enquiry-detail';
+import { ContactEnquiryForm } from './features/contact-enquiry/contact-enquiry-form/contact-enquiry-form';
 
 // =========================================================
 // ROUTES
@@ -217,6 +221,21 @@ export const routes: Routes = [
     canActivate: [adminGuard],
   },
   // =========================================================
+  // ADMIN CONTACT ENQUIRIES
+  // =========================================================
+
+  {
+    path: 'admin/contact-enquiries',
+    component: ContactEnquiryList,
+    canActivate: [adminGuard],
+  },
+
+  {
+    path: 'admin/contact-enquiries/:id',
+    component: ContactEnquiryDetail,
+    canActivate: [adminGuard],
+  },
+  // =========================================================
   // ADMIN BANNERS
   // =========================================================
 
@@ -321,7 +340,14 @@ export const routes: Routes = [
         path: 'checkout',
         component: CheckoutComponent,
       },
+      // =======================================================
+      // CONTACT US
+      // =======================================================
 
+      {
+        path: 'contact',
+        component: ContactEnquiryForm,
+      },
       // =======================================================
       // ORDERS
       // =======================================================
