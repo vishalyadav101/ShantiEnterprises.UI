@@ -494,6 +494,38 @@
                       {{ product.productName }}
                     </h5>
 
+                    <!-- RATING -->
+                    <div class="home-product-rating">
+                      @if (isReviewLoading(product)) {
+                        <span class="rating-loading">
+                          <span class="spinner-border spinner-border-sm"></span>
+                        </span>
+                      } @else if (getReviewCount(product.productId) > 0) {
+                        <span class="rating-stars">
+                          @for (star of [1, 2, 3, 4, 5]; track star) {
+                            <i
+                              class="bi"
+                              [class.bi-star-fill]="star <= getRoundedRating(product.productId)"
+                              [class.bi-star]="star > getRoundedRating(product.productId)"
+                            ></i>
+                          }
+                        </span>
+
+                        <span class="rating-value">
+                          {{ getAverageRating(product.productId) | number: '1.1-1' }}
+                        </span>
+
+                        <span class="rating-count">
+                          ({{ getReviewCount(product.productId) }} Reviews)
+                        </span>
+                      } @else {
+                        <span class="no-rating">
+                          <i class="bi bi-star"></i>
+                          No Reviews
+                        </span>
+                      }
+                    </div>
+
                     <p class="home-product-description" [title]="product.description">
                       {{ product.description }}
                     </p>
