@@ -1,0 +1,573 @@
+/* =========================================================
+   PAGE
+========================================================= */
+
+.contact-enquiries-page {
+  min-height: 100vh;
+  background: #f5f7fb;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+
+  padding: 35px;
+
+  background: #ffffff;
+
+  border-bottom: 1px solid #e8ebf0;
+}
+
+.header-left {
+  min-width: 0;
+}
+
+.brand-name {
+  display: inline-block;
+
+  margin-bottom: 5px;
+
+  color: #0d6efd;
+
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.page-header h1 {
+  margin: 0 0 6px;
+
+  color: #172033;
+
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.page-header p {
+  margin: 0;
+
+  color: #6c757d;
+
+  font-size: 0.9rem;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+.enquiries-section {
+  padding: 40px 35px 60px;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading-container {
+  min-height: 400px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-container .spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+.loading-container p {
+  margin-top: 15px;
+
+  color: #6c757d;
+
+  font-size: 0.9rem;
+}
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.empty-container {
+  min-height: 400px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 40px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e9ef;
+  border-radius: 16px;
+
+  text-align: center;
+
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04);
+}
+
+.empty-icon {
+  width: 70px;
+  height: 70px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 18px;
+
+  border-radius: 50%;
+
+  background: #eef5ff;
+
+  color: #0d6efd;
+}
+
+.empty-icon i {
+  font-size: 2rem;
+}
+
+.empty-container h4 {
+  margin-bottom: 7px;
+
+  color: #172033;
+
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.empty-container p {
+  margin: 0;
+
+  color: #7a8494;
+
+  font-size: 0.9rem;
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.enquiries-card {
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e9ef;
+  border-radius: 16px;
+
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.05);
+}
+
+/* =========================================================
+   CARD HEADER
+========================================================= */
+
+.enquiries-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 22px 25px;
+
+  border-bottom: 1px solid #edf0f4;
+}
+
+.enquiries-card-header h3 {
+  margin: 0 0 4px;
+
+  color: #172033;
+
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.enquiries-card-header span {
+  color: #7a8494;
+
+  font-size: 0.82rem;
+}
+
+/* =========================================================
+   TABLE WRAPPER
+========================================================= */
+
+.table-wrapper {
+  width: 100%;
+
+  overflow-x: auto;
+
+  scrollbar-width: thin;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+table {
+  width: 100%;
+
+  min-width: 1450px;
+
+  border-collapse: collapse;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   TABLE HEADER
+========================================================= */
+
+thead {
+  background: #f8faff;
+}
+
+thead th {
+  padding: 15px 18px;
+
+  color: #667085;
+
+  border-bottom: 1px solid #e5e9ef;
+
+  font-size: 0.76rem;
+  font-weight: 800;
+
+  text-align: left;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.35px;
+}
+
+/* =========================================================
+   TABLE BODY
+========================================================= */
+
+tbody tr {
+  transition: background 0.2s ease;
+}
+
+tbody tr:hover {
+  background: #f8faff;
+}
+
+tbody td {
+  padding: 16px 18px;
+
+  color: #4f5b6b;
+
+  border-bottom: 1px solid #edf0f4;
+
+  font-size: 0.84rem;
+
+  vertical-align: middle;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* =========================================================
+   CUSTOMER
+========================================================= */
+
+.customer-cell {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+}
+
+.customer-avatar {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #eef5ff;
+
+  color: #0d6efd;
+}
+
+.customer-avatar i {
+  font-size: 1rem;
+}
+
+.customer-cell strong {
+  display: block;
+
+  color: #172033;
+
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.customer-cell small {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #98a2b3;
+
+  font-size: 0.7rem;
+}
+
+/* =========================================================
+   EMAIL
+========================================================= */
+
+.email-link {
+  color: #0d6efd;
+
+  font-size: 0.82rem;
+
+  text-decoration: none;
+}
+
+.email-link:hover {
+  text-decoration: underline;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+.mobile-link {
+  color: #344054;
+
+  font-size: 0.82rem;
+
+  text-decoration: none;
+}
+
+.mobile-link:hover {
+  color: #0d6efd;
+}
+
+/* =========================================================
+   SUBJECT
+========================================================= */
+
+.subject-text {
+  display: inline-block;
+
+  max-width: 220px;
+
+  overflow: hidden;
+
+  color: #172033;
+
+  font-weight: 600;
+
+  text-overflow: ellipsis;
+
+  vertical-align: middle;
+}
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+.message-text {
+  display: inline-block;
+
+  max-width: 280px;
+
+  overflow: hidden;
+
+  color: #667085;
+
+  text-overflow: ellipsis;
+
+  vertical-align: middle;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  padding: 6px 11px;
+
+  border-radius: 20px;
+
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.status-badge.pending {
+  background: #fff4d6;
+  color: #9a6700;
+}
+
+.status-badge.in-progress {
+  background: #e8f1ff;
+  color: #0d6efd;
+}
+
+.status-badge.replied {
+  background: #d1fae5;
+  color: #087443;
+}
+
+.status-badge.closed {
+  background: #e9ecef;
+  color: #495057;
+}
+
+.status-badge.default {
+  background: #f1f3f5;
+  color: #667085;
+}
+
+.status-badge i {
+  font-size: 0.68rem;
+}
+
+/* =========================================================
+   DATE
+========================================================= */
+
+.date-text {
+  color: #667085;
+
+  font-size: 0.8rem;
+}
+
+.date-text i {
+  color: #0d6efd;
+}
+
+.not-replied {
+  color: #98a2b3;
+
+  font-size: 0.78rem;
+
+  font-style: italic;
+}
+
+/* =========================================================
+   VIEW BUTTON
+========================================================= */
+
+.view-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 70px;
+
+  padding: 7px 12px;
+
+  border: 1px solid #cfe0ff;
+  border-radius: 7px;
+
+  background: #f4f8ff;
+
+  color: #0d6efd;
+
+  font-size: 0.78rem;
+  font-weight: 700;
+
+  text-decoration: none;
+
+  transition: 0.2s ease;
+}
+
+.view-button:hover {
+  background: #0d6efd;
+
+  border-color: #0d6efd;
+
+  color: #ffffff;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 991.98px) {
+  .page-header {
+    padding: 30px 25px;
+  }
+
+  .enquiries-section {
+    padding: 30px 25px 50px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .page-header {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    padding: 25px 20px;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .header-actions .btn {
+    width: 100%;
+  }
+
+  .page-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .enquiries-section {
+    padding: 25px 15px 40px;
+  }
+
+  .enquiries-card-header {
+    padding: 18px;
+  }
+
+  thead th,
+  tbody td {
+    padding: 13px 14px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .enquiries-section {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .enquiries-card {
+    border-radius: 12px;
+  }
+
+  .enquiries-card-header h3 {
+    font-size: 1.05rem;
+  }
+}

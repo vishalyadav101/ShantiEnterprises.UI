@@ -1,0 +1,284 @@
+<div class="contact-enquiry-page">
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
+
+  <section class="contact-header">
+    <div class="container">
+      <div class="header-content">
+        <span class="brand-name"> Shanti Enterprises </span>
+
+        <h1>Contact Us</h1>
+
+        <p>
+          Have a question or enquiry? Send us a message and our team will get back to you shortly.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       FORM SECTION
+  ========================================================== -->
+
+  <section class="contact-section">
+    <div class="container">
+      <div class="contact-card">
+        <!-- ===================================================
+             CARD HEADER
+        ==================================================== -->
+
+        <div class="card-header">
+          <div class="header-icon">
+            <i class="bi bi-envelope-paper"></i>
+          </div>
+
+          <div>
+            <h2>Send an Enquiry</h2>
+
+            <p>Fill in the details below and we'll contact you.</p>
+          </div>
+        </div>
+
+        <!-- ===================================================
+             SUCCESS MESSAGE
+        ==================================================== -->
+
+        @if (successMessage) {
+          <div class="success-message" role="alert">
+            <i class="bi bi-check-circle-fill"></i>
+
+            <div>
+              <strong> Enquiry Submitted </strong>
+
+              <p>
+                {{ successMessage }}
+              </p>
+            </div>
+          </div>
+        }
+
+        <!-- ===================================================
+             ERROR MESSAGE
+        ==================================================== -->
+
+        @if (errorMessage) {
+          <div class="error-message" role="alert">
+            <i class="bi bi-exclamation-circle-fill"></i>
+
+            <span>
+              {{ errorMessage }}
+            </span>
+          </div>
+        }
+
+        <!-- ===================================================
+             FORM
+        ==================================================== -->
+
+        <form [formGroup]="contactForm" (ngSubmit)="submit()" novalidate>
+          <!-- =================================================
+               NAME + EMAIL
+          ================================================== -->
+
+          <div class="form-row">
+            <!-- NAME -->
+
+            <div class="form-group">
+              <label for="fullName">
+                Full Name
+                <span>*</span>
+              </label>
+
+              <div class="input-wrapper" [class.input-error]="fullName.invalid && fullName.touched">
+                <i class="bi bi-person"></i>
+
+                <input
+                  id="fullName"
+                  type="text"
+                  formControlName="fullName"
+                  placeholder="Enter your full name"
+                  autocomplete="name"
+                />
+              </div>
+
+              @if (fullName.invalid && fullName.touched) {
+                <div class="field-error">
+                  @if (fullName.errors?.['required']) {
+                    Full name is required.
+                  } @else if (fullName.errors?.['minlength']) {
+                    Full name must be at least 2 characters.
+                  } @else if (fullName.errors?.['maxlength']) {
+                    Full name cannot exceed 100 characters.
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- EMAIL -->
+
+            <div class="form-group">
+              <label for="email">
+                Email Address
+                <span>*</span>
+              </label>
+
+              <div class="input-wrapper" [class.input-error]="email.invalid && email.touched">
+                <i class="bi bi-envelope"></i>
+
+                <input
+                  id="email"
+                  type="email"
+                  formControlName="email"
+                  placeholder="Enter your email address"
+                  autocomplete="email"
+                />
+              </div>
+
+              @if (email.invalid && email.touched) {
+                <div class="field-error">
+                  @if (email.errors?.['required']) {
+                    Email address is required.
+                  } @else if (email.errors?.['email']) {
+                    Please enter a valid email address.
+                  } @else if (email.errors?.['maxlength']) {
+                    Email cannot exceed 150 characters.
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- =================================================
+               MOBILE + SUBJECT
+          ================================================== -->
+
+          <div class="form-row">
+            <!-- MOBILE -->
+
+            <div class="form-group">
+              <label for="mobile">
+                Mobile Number
+                <span>*</span>
+              </label>
+
+              <div class="input-wrapper" [class.input-error]="mobile.invalid && mobile.touched">
+                <i class="bi bi-telephone"></i>
+
+                <input
+                  id="mobile"
+                  type="tel"
+                  formControlName="mobile"
+                  placeholder="Enter 10-digit mobile number"
+                  maxlength="10"
+                  inputmode="numeric"
+                  autocomplete="tel"
+                />
+              </div>
+
+              @if (mobile.invalid && mobile.touched) {
+                <div class="field-error">
+                  @if (mobile.errors?.['required']) {
+                    Mobile number is required.
+                  } @else if (mobile.errors?.['pattern']) {
+                    Please enter a valid 10-digit mobile number.
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- SUBJECT -->
+
+            <div class="form-group">
+              <label for="subject">
+                Subject
+                <span>*</span>
+              </label>
+
+              <div class="input-wrapper" [class.input-error]="subject.invalid && subject.touched">
+                <i class="bi bi-chat-square-text"></i>
+
+                <input
+                  id="subject"
+                  type="text"
+                  formControlName="subject"
+                  placeholder="What is your enquiry about?"
+                />
+              </div>
+
+              @if (subject.invalid && subject.touched) {
+                <div class="field-error">
+                  @if (subject.errors?.['required']) {
+                    Subject is required.
+                  } @else if (subject.errors?.['minlength']) {
+                    Subject must be at least 3 characters.
+                  } @else if (subject.errors?.['maxlength']) {
+                    Subject cannot exceed 200 characters.
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- =================================================
+               MESSAGE
+          ================================================== -->
+
+          <div class="form-group">
+            <label for="message">
+              Message
+              <span>*</span>
+            </label>
+
+            <div class="textarea-wrapper" [class.input-error]="message.invalid && message.touched">
+              <i class="bi bi-pencil-square"></i>
+
+              <textarea
+                id="message"
+                rows="7"
+                formControlName="message"
+                placeholder="Write your enquiry or message here..."
+              ></textarea>
+            </div>
+
+            <div class="message-footer">
+              @if (message.invalid && message.touched) {
+                <div class="field-error">
+                  @if (message.errors?.['required']) {
+                    Message is required.
+                  } @else if (message.errors?.['minlength']) {
+                    Message must be at least 10 characters.
+                  } @else if (message.errors?.['maxlength']) {
+                    Message cannot exceed 2000 characters.
+                  }
+                </div>
+              } @else {
+                <span> Please provide enough details about your enquiry. </span>
+              }
+
+              <span class="character-limit"> Maximum 2000 characters </span>
+            </div>
+          </div>
+
+          <!-- =================================================
+               SUBMIT
+          ================================================== -->
+
+          <div class="form-actions">
+            <button type="submit" class="submit-button" [disabled]="isSubmitting">
+              @if (isSubmitting) {
+                <span class="spinner-border spinner-border-sm me-2"></span>
+
+                Sending...
+              } @else {
+                <i class="bi bi-send me-2"></i>
+
+                Submit Enquiry
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</div>

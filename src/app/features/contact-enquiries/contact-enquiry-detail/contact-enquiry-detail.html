@@ -1,0 +1,356 @@
+<div class="contact-enquiry-detail-page">
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
+
+  <section class="page-header">
+    <div class="header-left">
+      <span class="brand-name"> Shanti Enterprises </span>
+
+      <h1>Contact Enquiry Details</h1>
+
+      <p>View and manage customer enquiry information.</p>
+    </div>
+
+    <div class="header-actions">
+      <a routerLink="/admin/contact-enquiries" class="btn btn-outline-primary">
+        <i class="bi bi-arrow-left me-1"></i>
+        Back to Enquiries
+      </a>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       CONTENT
+  ========================================================== -->
+
+  <section class="detail-section">
+    <!-- =======================================================
+         ERROR
+    ======================================================== -->
+
+    @if (errorMessage) {
+      <div
+        class="alert alert-danger d-flex align-items-center justify-content-between"
+        role="alert"
+      >
+        <div>
+          <i class="bi bi-exclamation-circle me-2"></i>
+
+          {{ errorMessage }}
+        </div>
+
+        <button type="button" class="btn btn-sm btn-outline-danger" (click)="retry()">Retry</button>
+      </div>
+    }
+
+    <!-- =======================================================
+         LOADING
+    ======================================================== -->
+
+    @if (isLoading) {
+      <div class="loading-container">
+        <div class="spinner-border text-primary" role="status"></div>
+
+        <p>Loading enquiry details...</p>
+      </div>
+    }
+
+    <!-- =======================================================
+         DETAIL
+    ======================================================== -->
+
+    @if (!isLoading && enquiry) {
+      <div class="detail-card">
+        <!-- =====================================================
+             CARD HEADER
+        ====================================================== -->
+
+        <div class="detail-card-header">
+          <div>
+            <h3>Enquiry #{{ enquiry.contactEnquiryId }}</h3>
+
+            <p>
+              Submitted on
+              {{ formatDateTime(enquiry.createdDate) }}
+            </p>
+          </div>
+
+          <span class="status-badge" [ngClass]="getStatusClass(enquiry.status)">
+            @switch (enquiry.status.toLowerCase()) {
+              @case ('pending') {
+                <i class="bi bi-clock-fill"></i>
+              }
+
+              @case ('inprogress') {
+                <i class="bi bi-arrow-repeat"></i>
+              }
+
+              @case ('replied') {
+                <i class="bi bi-check-circle-fill"></i>
+              }
+
+              @case ('closed') {
+                <i class="bi bi-check2-all"></i>
+              }
+
+              @default {
+                <i class="bi bi-info-circle-fill"></i>
+              }
+            }
+
+            {{ enquiry.status }}
+          </span>
+        </div>
+
+        <!-- =====================================================
+             CUSTOMER INFORMATION
+        ====================================================== -->
+
+        <div class="section-block">
+          <div class="section-title">
+            <i class="bi bi-person-vcard"></i>
+
+            <h4>Customer Information</h4>
+          </div>
+
+          <div class="info-grid">
+            <!-- NAME -->
+
+            <div class="info-item">
+              <span class="info-label"> Full Name </span>
+
+              <strong>
+                {{ enquiry.fullName }}
+              </strong>
+            </div>
+
+            <!-- EMAIL -->
+
+            <div class="info-item">
+              <span class="info-label"> Email </span>
+
+              <a [href]="'mailto:' + enquiry.email" class="info-link">
+                <i class="bi bi-envelope me-1"></i>
+
+                {{ enquiry.email }}
+              </a>
+            </div>
+
+            <!-- MOBILE -->
+
+            <div class="info-item">
+              <span class="info-label"> Mobile </span>
+
+              <a [href]="'tel:' + enquiry.mobile" class="info-link">
+                <i class="bi bi-telephone me-1"></i>
+
+                {{ enquiry.mobile }}
+              </a>
+            </div>
+
+            <!-- SUBJECT -->
+
+            <div class="info-item">
+              <span class="info-label"> Subject </span>
+
+              <strong>
+                {{ enquiry.subject }}
+              </strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================================
+             CUSTOMER MESSAGE
+        ====================================================== -->
+
+        <div class="section-block">
+          <div class="section-title">
+            <i class="bi bi-chat-left-text"></i>
+
+            <h4>Customer Message</h4>
+          </div>
+
+          <div class="message-box">
+            {{ enquiry.message }}
+          </div>
+        </div>
+
+        <!-- =====================================================
+             DATES
+        ====================================================== -->
+
+        <div class="section-block">
+          <div class="section-title">
+            <i class="bi bi-calendar-event"></i>
+
+            <h4>Enquiry Timeline</h4>
+          </div>
+
+          <div class="timeline-grid">
+            <!-- CREATED -->
+
+            <div class="timeline-item">
+              <span> Created Date </span>
+
+              <strong>
+                {{ formatDateTime(enquiry.createdDate) }}
+              </strong>
+            </div>
+
+            <!-- REPLIED -->
+
+            <div class="timeline-item">
+              <span> Replied Date </span>
+
+              <strong>
+                @if (enquiry.repliedDate) {
+                  {{ formatDateTime(enquiry.repliedDate) }}
+                } @else {
+                  <span class="not-available"> Not Replied </span>
+                }
+              </strong>
+            </div>
+
+            <!-- UPDATED -->
+
+            <div class="timeline-item">
+              <span> Updated Date </span>
+
+              <strong>
+                @if (enquiry.updatedDate) {
+                  {{ formatDateTime(enquiry.updatedDate) }}
+                } @else {
+                  <span class="not-available"> Not Updated </span>
+                }
+              </strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================================
+             ADMIN RESPONSE
+        ====================================================== -->
+
+        <div class="section-block admin-response-section">
+          <div class="section-title">
+            <i class="bi bi-reply"></i>
+
+            <h4>Admin Response</h4>
+          </div>
+
+          <!-- STATUS -->
+
+          <div class="form-group">
+            <label for="status"> Status </label>
+
+            <select id="status" class="form-select" [(ngModel)]="selectedStatus">
+              @for (status of statusOptions; track status) {
+                <option [value]="status">
+                  {{ status }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <!-- ADMIN REPLY -->
+
+          <div class="form-group">
+            <label for="adminReply"> Admin Reply </label>
+
+            <textarea
+              id="adminReply"
+              class="form-control"
+              rows="6"
+              [(ngModel)]="adminReply"
+              placeholder="Write your reply to the customer..."
+            ></textarea>
+
+            <small> You can update the status and add a reply for this enquiry. </small>
+          </div>
+
+          <!-- UPDATE -->
+
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="isUpdating || isDeleting"
+              (click)="updateEnquiry()"
+            >
+              @if (isUpdating) {
+                <span class="spinner-border spinner-border-sm me-2"></span>
+
+                Updating...
+              } @else {
+                <i class="bi bi-save me-1"></i>
+
+                Update Enquiry
+              }
+            </button>
+          </div>
+        </div>
+
+        <!-- =====================================================
+             EXISTING ADMIN REPLY
+        ====================================================== -->
+
+        @if (enquiry.adminReply) {
+          <div class="section-block existing-reply-section">
+            <div class="section-title">
+              <i class="bi bi-check2-circle"></i>
+
+              <h4>Current Admin Reply</h4>
+            </div>
+
+            <div class="existing-reply">
+              {{ enquiry.adminReply }}
+            </div>
+          </div>
+        }
+
+        <!-- =====================================================
+             SUCCESS
+        ====================================================== -->
+
+        @if (successMessage) {
+          <div class="success-message">
+            <i class="bi bi-check-circle-fill me-2"></i>
+
+            {{ successMessage }}
+          </div>
+        }
+
+        <!-- =====================================================
+             DANGER ZONE
+        ====================================================== -->
+
+        <div class="danger-zone">
+          <div>
+            <h4>Delete Enquiry</h4>
+
+            <p>Permanently delete this customer contact enquiry. This action cannot be undone.</p>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-outline-danger"
+            [disabled]="isDeleting || isUpdating"
+            (click)="deleteEnquiry()"
+          >
+            @if (isDeleting) {
+              <span class="spinner-border spinner-border-sm me-2"></span>
+
+              Deleting...
+            } @else {
+              <i class="bi bi-trash me-1"></i>
+
+              Delete Enquiry
+            }
+          </button>
+        </div>
+      </div>
+    }
+  </section>
+</div>
