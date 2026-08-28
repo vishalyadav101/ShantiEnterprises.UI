@@ -636,6 +636,17 @@ export class ProductList implements OnInit {
         },
       });
   }
+  // =========================================================
+  // VIEW PRODUCT
+  // =========================================================
+
+  viewProduct(productId: number): void {
+    if (!productId || productId <= 0) {
+      return;
+    }
+
+    this.router.navigate(['/products', productId]);
+  }
 
   // =========================================================
   // GO TO CART

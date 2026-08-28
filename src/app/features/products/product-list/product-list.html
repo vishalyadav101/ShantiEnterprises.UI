@@ -377,27 +377,42 @@
                   <!-- =================================================
                        ADD TO CART
                   ================================================== -->
+                  <div class="product-card-actions">
+                    <!-- ADD TO CART -->
 
-                  <button
-                    type="button"
-                    class="btn btn-primary w-100"
-                    [disabled]="product.stock <= 0 || isAddingToCart"
-                    (click)="addToCart(product)"
-                  >
-                    @if (isAddingToCart && addingProductId === product.productId) {
-                      <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                    <button
+                      type="button"
+                      class="btn btn-primary add-cart-button"
+                      [disabled]="product.stock <= 0 || isAddingToCart"
+                      (click)="addToCart(product)"
+                    >
+                      @if (isAddingToCart && addingProductId === product.productId) {
+                        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
 
-                      Adding...
-                    } @else {
-                      <i class="bi bi-cart-plus me-2"></i>
-
-                      @if (product.stock > 0) {
-                        Add to Cart
+                        Adding...
                       } @else {
-                        Out of Stock
+                        <i class="bi bi-cart-plus me-2"></i>
+
+                        @if (product.stock > 0) {
+                          Add to Cart
+                        } @else {
+                          Out of Stock
+                        }
                       }
-                    }
-                  </button>
+                    </button>
+
+                    <!-- VIEW PRODUCT -->
+
+                    <button
+                      type="button"
+                      class="view-product-button"
+                      (click)="viewProduct(product.productId)"
+                      title="View Product"
+                      aria-label="View Product"
+                    >
+                      <i class="bi bi-eye"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

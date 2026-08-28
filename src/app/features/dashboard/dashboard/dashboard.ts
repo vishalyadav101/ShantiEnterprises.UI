@@ -75,6 +75,11 @@ export class Dashboard implements OnInit {
       icon: 'bi-envelope',
       route: '/admin/contact-enquiries',
     },
+    // {
+    //   title: 'Bulk Enquiries',
+    //   icon: 'bi-chat-left-text',
+    //   route: '/admin/bulk-enquiries',  
+    // },
 
     // =======================================================
     // REVIEWS
