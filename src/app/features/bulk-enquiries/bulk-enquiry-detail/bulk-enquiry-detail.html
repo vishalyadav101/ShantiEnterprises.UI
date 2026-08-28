@@ -1,0 +1,542 @@
+<div class="bulk-enquiry-detail-page">
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
+
+  <section class="page-header">
+    <div class="container-fluid">
+      <div class="header-content">
+        <div>
+          <span class="brand-name"> Shanti Enterprises </span>
+
+          <h1>Bulk Enquiry Details</h1>
+
+          <p>View and manage customer bulk product enquiry.</p>
+        </div>
+
+        <div class="header-actions">
+          <button type="button" class="btn btn-outline-secondary me-2" (click)="goBack()">
+            <i class="bi bi-arrow-left me-1"></i>
+            Back
+          </button>
+
+          @if (enquiry) {
+            <button
+              type="button"
+              class="btn btn-outline-danger"
+              (click)="deleteEnquiry()"
+              [disabled]="isDeleting"
+            >
+              @if (isDeleting) {
+                <span class="spinner-border spinner-border-sm me-1"></span>
+
+                Deleting...
+              } @else {
+                <i class="bi bi-trash me-1"></i>
+
+                Delete
+              }
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       CONTENT
+  ========================================================== -->
+
+  <section class="page-content">
+    <div class="container-fluid">
+      <!-- =====================================================
+           ERROR
+      ====================================================== -->
+
+      @if (errorMessage) {
+        <div
+          class="alert alert-danger d-flex align-items-center justify-content-between"
+          role="alert"
+        >
+          <div>
+            <i class="bi bi-exclamation-circle me-2"></i>
+
+            {{ errorMessage }}
+          </div>
+
+          <button type="button" class="btn btn-sm btn-outline-danger" (click)="retry()">
+            Retry
+          </button>
+        </div>
+      }
+
+      <!-- =====================================================
+           SUCCESS
+      ====================================================== -->
+
+      @if (successMessage) {
+        <div class="alert alert-success" role="alert">
+          <i class="bi bi-check-circle-fill me-2"></i>
+
+          {{ successMessage }}
+        </div>
+      }
+
+      <!-- =====================================================
+           LOADING
+      ====================================================== -->
+
+      @if (isLoading) {
+        <div class="loading-card">
+          <div class="spinner-border text-primary" role="status"></div>
+
+          <p>Loading bulk enquiry...</p>
+        </div>
+      }
+
+      <!-- =====================================================
+           DETAIL
+      ====================================================== -->
+
+      @if (!isLoading && enquiry) {
+        <div class="row g-4">
+          <!-- =================================================
+               LEFT COLUMN
+          ================================================== -->
+
+          <div class="col-xl-8 col-lg-7">
+            <!-- ===============================================
+                 CUSTOMER INFORMATION
+            ================================================ -->
+
+            <div class="detail-card">
+              <div class="detail-card-header">
+                <div class="header-icon">
+                  <i class="bi bi-person"></i>
+                </div>
+
+                <div>
+                  <h4>Customer Information</h4>
+
+                  <p>Contact details provided by customer.</p>
+                </div>
+              </div>
+
+              <div class="detail-card-body">
+                <div class="info-grid">
+                  <!-- CUSTOMER -->
+
+                  <div class="info-item">
+                    <span class="info-label"> Customer Name </span>
+
+                    <strong>
+                      {{ enquiry.customerName }}
+                    </strong>
+                  </div>
+
+                  <!-- MOBILE -->
+
+                  <div class="info-item">
+                    <span class="info-label"> Mobile Number </span>
+
+                    <a [href]="'tel:' + enquiry.mobile" class="info-link">
+                      <i class="bi bi-telephone me-1"></i>
+
+                      {{ enquiry.mobile }}
+                    </a>
+                  </div>
+
+                  <!-- EMAIL -->
+
+                  <div class="info-item">
+                    <span class="info-label"> Email Address </span>
+
+                    <a [href]="'mailto:' + enquiry.email" class="info-link">
+                      <i class="bi bi-envelope me-1"></i>
+
+                      {{ enquiry.email }}
+                    </a>
+                  </div>
+
+                  <!-- USER -->
+
+                  <div class="info-item">
+                    <span class="info-label"> User ID </span>
+
+                    <strong>
+                      @if (enquiry.userId) {
+                        #{{ enquiry.userId }}
+                      } @else {
+                        Guest Customer
+                      }
+                    </strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===============================================
+                 PRODUCT INFORMATION
+            ================================================ -->
+
+            <div class="detail-card">
+              <div class="detail-card-header">
+                <div class="header-icon product-header-icon">
+                  <i class="bi bi-box-seam"></i>
+                </div>
+
+                <div>
+                  <h4>Product Information</h4>
+
+                  <p>Product and requested quantity details.</p>
+                </div>
+              </div>
+
+              <div class="detail-card-body">
+                <div class="product-detail">
+                  <div class="product-large-icon">
+                    <i class="bi bi-box-seam"></i>
+                  </div>
+
+                  <div class="product-info">
+                    <span class="info-label"> Product </span>
+
+                    <strong>
+                      @if (enquiry.productName) {
+                        {{ enquiry.productName }}
+                      } @else {
+                        Product Not Specified
+                      }
+                    </strong>
+
+                    @if (enquiry.productId) {
+                      <span class="product-id"> Product #{{ enquiry.productId }} </span>
+                    }
+                  </div>
+
+                  <div class="quantity-box">
+                    <span> Quantity </span>
+
+                    <strong>
+                      {{ enquiry.quantity }}
+                    </strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===============================================
+                 MESSAGE
+            ================================================ -->
+
+            <div class="detail-card">
+              <div class="detail-card-header">
+                <div class="header-icon message-header-icon">
+                  <i class="bi bi-chat-left-text"></i>
+                </div>
+
+                <div>
+                  <h4>Customer Message</h4>
+
+                  <p>Enquiry message submitted by customer.</p>
+                </div>
+              </div>
+
+              <div class="detail-card-body">
+                <div class="message-box">
+                  <i class="bi bi-chat-quote"></i>
+
+                  <p>
+                    {{ enquiry.message }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===============================================
+                 UPDATE FORM
+            ================================================ -->
+
+            <div class="detail-card">
+              <div class="detail-card-header">
+                <div class="header-icon status-header-icon">
+                  <i class="bi bi-pencil-square"></i>
+                </div>
+
+                <div>
+                  <h4>Update Enquiry</h4>
+
+                  <p>Update customer details and enquiry status.</p>
+                </div>
+              </div>
+
+              <div class="detail-card-body">
+                <div class="row g-3">
+                  <!-- CUSTOMER NAME -->
+
+                  <div class="col-md-6">
+                    <label for="customerName" class="form-label"> Customer Name </label>
+
+                    <input
+                      id="customerName"
+                      type="text"
+                      class="form-control"
+                      [(ngModel)]="customerName"
+                    />
+                  </div>
+
+                  <!-- MOBILE -->
+
+                  <div class="col-md-6">
+                    <label for="mobile" class="form-label"> Mobile </label>
+
+                    <input id="mobile" type="text" class="form-control" [(ngModel)]="mobile" />
+                  </div>
+
+                  <!-- EMAIL -->
+
+                  <div class="col-md-6">
+                    <label for="email" class="form-label"> Email </label>
+
+                    <input id="email" type="email" class="form-control" [(ngModel)]="email" />
+                  </div>
+
+                  <!-- PRODUCT ID -->
+
+                  <div class="col-md-3">
+                    <label for="productId" class="form-label"> Product ID </label>
+
+                    <input
+                      id="productId"
+                      type="number"
+                      class="form-control"
+                      [(ngModel)]="productId"
+                    />
+                  </div>
+
+                  <!-- QUANTITY -->
+
+                  <div class="col-md-3">
+                    <label for="quantity" class="form-label"> Quantity </label>
+
+                    <input
+                      id="quantity"
+                      type="number"
+                      min="1"
+                      class="form-control"
+                      [(ngModel)]="quantity"
+                    />
+                  </div>
+
+                  <!-- STATUS -->
+
+                  <div class="col-md-6">
+                    <label for="status" class="form-label"> Status </label>
+
+                    <select id="status" class="form-select" [(ngModel)]="status">
+                      @for (statusOption of statusOptions; track statusOption) {
+                        <option [value]="statusOption">
+                          {{ statusOption }}
+                        </option>
+                      }
+                    </select>
+                  </div>
+
+                  <!-- MESSAGE -->
+
+                  <div class="col-12">
+                    <label for="message" class="form-label"> Message </label>
+
+                    <textarea
+                      id="message"
+                      class="form-control"
+                      rows="5"
+                      [(ngModel)]="message"
+                    ></textarea>
+                  </div>
+
+                  <!-- SAVE -->
+
+                  <div class="col-12">
+                    <div class="form-actions">
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        (click)="updateEnquiry()"
+                        [disabled]="isSaving"
+                      >
+                        @if (isSaving) {
+                          <span class="spinner-border spinner-border-sm me-1"></span>
+
+                          Saving...
+                        } @else {
+                          <i class="bi bi-check-lg me-1"></i>
+
+                          Save Changes
+                        }
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- =================================================
+               RIGHT COLUMN
+          ================================================== -->
+
+          <div class="col-xl-4 col-lg-5">
+            <!-- ===============================================
+                 STATUS CARD
+            ================================================ -->
+
+            <div class="detail-card status-card">
+              <div class="detail-card-header">
+                <div class="header-icon">
+                  <i class="bi bi-activity"></i>
+                </div>
+
+                <div>
+                  <h4>Enquiry Status</h4>
+
+                  <p>Current enquiry progress.</p>
+                </div>
+              </div>
+
+              <div class="detail-card-body">
+                <div class="current-status" [ngClass]="getStatusClass(enquiry.status)">
+                  <i class="bi" [ngClass]="getStatusIcon(enquiry.status)"></i>
+
+                  <span>
+                    {{ enquiry.status }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===============================================
+                 ENQUIRY INFORMATION
+            ================================================ -->
+
+            <div class="detail-card">
+              <div class="detail-card-header">
+                <div class="header-icon">
+                  <i class="bi bi-info-circle"></i>
+                </div>
+
+                <div>
+                  <h4>Enquiry Information</h4>
+
+                  <p>Basic enquiry information.</p>
+                </div>
+              </div>
+
+              <div class="detail-card-body">
+                <div class="side-info-list">
+                  <!-- ID -->
+
+                  <div class="side-info-item">
+                    <span> Enquiry ID </span>
+
+                    <strong> #{{ enquiry.bulkEnquiryId }} </strong>
+                  </div>
+
+                  <!-- PRODUCT ID -->
+
+                  <div class="side-info-item">
+                    <span> Product ID </span>
+
+                    <strong>
+                      @if (enquiry.productId) {
+                        #{{ enquiry.productId }}
+                      } @else {
+                        -
+                      }
+                    </strong>
+                  </div>
+
+                  <!-- CREATED -->
+
+                  <div class="side-info-item">
+                    <span> Created Date </span>
+
+                    <strong>
+                      {{ formatDate(enquiry.createdDate) }}
+                    </strong>
+                  </div>
+
+                  <!-- CREATED TIME -->
+
+                  <div class="side-info-item">
+                    <span> Created At </span>
+
+                    <strong>
+                      {{ formatDateTime(enquiry.createdDate) }}
+                    </strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===============================================
+                 QUICK CONTACT
+            ================================================ -->
+
+            <div class="detail-card">
+              <div class="detail-card-header">
+                <div class="header-icon contact-header-icon">
+                  <i class="bi bi-headset"></i>
+                </div>
+
+                <div>
+                  <h4>Quick Contact</h4>
+
+                  <p>Contact the customer directly.</p>
+                </div>
+              </div>
+
+              <div class="detail-card-body">
+                <div class="quick-contact">
+                  <a [href]="'tel:' + enquiry.mobile" class="quick-contact-btn">
+                    <i class="bi bi-telephone-fill"></i>
+
+                    <span> Call Customer </span>
+                  </a>
+
+                  <a [href]="'mailto:' + enquiry.email" class="quick-contact-btn">
+                    <i class="bi bi-envelope-fill"></i>
+
+                    <span> Send Email </span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- =====================================================
+           NOT FOUND
+      ====================================================== -->
+
+      @if (!isLoading && !enquiry && !errorMessage) {
+        <div class="empty-card">
+          <div class="empty-icon">
+            <i class="bi bi-inbox"></i>
+          </div>
+
+          <h4>Bulk Enquiry Not Found</h4>
+
+          <p>The requested bulk enquiry could not be found.</p>
+
+          <button type="button" class="btn btn-primary" (click)="goBack()">
+            <i class="bi bi-arrow-left me-1"></i>
+
+            Back to Bulk Enquiries
+          </button>
+        </div>
+      }
+    </div>
+  </section>
+</div>

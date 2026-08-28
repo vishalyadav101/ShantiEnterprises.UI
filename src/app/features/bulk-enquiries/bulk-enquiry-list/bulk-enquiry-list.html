@@ -1,0 +1,367 @@
+<div class="bulk-enquiry-page">
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
+
+  <section class="page-header">
+    <div class="container-fluid">
+      <div class="header-content">
+        <div>
+          <span class="brand-name"> Shanti Enterprises </span>
+
+          <h1>Bulk Enquiries</h1>
+
+          <p>Manage and track customer bulk product enquiries.</p>
+        </div>
+
+        <div class="header-actions">
+          <a routerLink="/admin" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i>
+            Dashboard
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       CONTENT
+  ========================================================== -->
+
+  <section class="page-content">
+    <div class="container-fluid">
+      <!-- =====================================================
+           ERROR
+      ====================================================== -->
+
+      @if (errorMessage) {
+        <div
+          class="alert alert-danger d-flex align-items-center justify-content-between"
+          role="alert"
+        >
+          <div>
+            <i class="bi bi-exclamation-circle me-2"></i>
+
+            {{ errorMessage }}
+          </div>
+
+          <button type="button" class="btn btn-sm btn-outline-danger" (click)="retry()">
+            Retry
+          </button>
+        </div>
+      }
+
+      <!-- =====================================================
+           TOOLBAR
+      ====================================================== -->
+
+      <div class="toolbar-card">
+        <div class="toolbar-left">
+          <!-- SEARCH -->
+
+          <div class="search-box">
+            <i class="bi bi-search"></i>
+
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search customer, email, mobile, product..."
+              [(ngModel)]="searchTerm"
+              (input)="onSearch()"
+            />
+          </div>
+
+          <!-- STATUS -->
+
+          <div class="status-filter">
+            <select class="form-select" [(ngModel)]="selectedStatus" (change)="onStatusChange()">
+              @for (status of statusOptions; track status) {
+                <option [value]="status">
+                  {{ status }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <!-- CLEAR -->
+
+          @if (searchTerm || selectedStatus !== 'All') {
+            <button type="button" class="btn btn-light clear-btn" (click)="clearFilters()">
+              <i class="bi bi-x-circle me-1"></i>
+
+              Clear
+            </button>
+          }
+        </div>
+
+        <!-- TOTAL -->
+
+        <div class="total-count">
+          <span> Total Enquiries </span>
+
+          <strong>
+            {{ filteredEnquiries.length }}
+          </strong>
+        </div>
+      </div>
+
+      <!-- =====================================================
+           LOADING
+      ====================================================== -->
+
+      @if (isLoading) {
+        <div class="loading-card">
+          <div class="spinner-border text-primary" role="status"></div>
+
+          <p>Loading bulk enquiries...</p>
+        </div>
+      }
+
+      <!-- =====================================================
+           EMPTY
+      ====================================================== -->
+
+      @if (!isLoading && !errorMessage && filteredEnquiries.length === 0) {
+        <div class="empty-card">
+          <div class="empty-icon">
+            <i class="bi bi-inbox"></i>
+          </div>
+
+          <h4>No Bulk Enquiries Found</h4>
+
+          @if (searchTerm || selectedStatus !== 'All') {
+            <p>No enquiries match your current filters.</p>
+
+            <button type="button" class="btn btn-outline-primary" (click)="clearFilters()">
+              Clear Filters
+            </button>
+          } @else {
+            <p>There are no bulk enquiries available yet.</p>
+          }
+        </div>
+      }
+
+      <!-- =====================================================
+           TABLE
+      ====================================================== -->
+
+      @if (!isLoading && !errorMessage && filteredEnquiries.length > 0) {
+        <div class="table-card">
+          <!-- TABLE HEADER -->
+
+          <div class="table-card-header">
+            <div>
+              <h4>Bulk Enquiry List</h4>
+
+              <p>
+                {{ filteredEnquiries.length }}
+                enquiry(s) found
+              </p>
+            </div>
+
+            <div class="header-count">
+              <i class="bi bi-chat-left-text"></i>
+
+              {{ enquiries.length }} Total
+            </div>
+          </div>
+
+          <!-- TABLE -->
+
+          <div class="table-responsive">
+            <table class="table enquiry-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+
+                  <th>Customer</th>
+
+                  <th>Contact</th>
+
+                  <th>Product</th>
+
+                  <th>Quantity</th>
+
+                  <th>Message</th>
+
+                  <th>Status</th>
+
+                  <th>Date</th>
+
+                  <th class="text-center">Actions</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @for (enquiry of filteredEnquiries; track enquiry.bulkEnquiryId) {
+                  <tr>
+                    <!-- =====================================
+                         ID
+                    ====================================== -->
+
+                    <td>
+                      <span class="enquiry-id"> #{{ enquiry.bulkEnquiryId }} </span>
+                    </td>
+
+                    <!-- =====================================
+                         CUSTOMER
+                    ====================================== -->
+
+                    <td>
+                      <div class="customer-cell">
+                        <div class="customer-avatar">
+                          <i class="bi bi-person-fill"></i>
+                        </div>
+
+                        <div class="customer-details">
+                          <strong>
+                            {{ enquiry.customerName }}
+                          </strong>
+
+                          @if (enquiry.userId) {
+                            <span> User #{{ enquiry.userId }} </span>
+                          } @else {
+                            <span> Guest Customer </span>
+                          }
+                        </div>
+                      </div>
+                    </td>
+
+                    <!-- =====================================
+                         CONTACT
+                    ====================================== -->
+
+                    <td>
+                      <div class="contact-cell">
+                        <a [href]="'mailto:' + enquiry.email" class="contact-item">
+                          <i class="bi bi-envelope"></i>
+
+                          <span>
+                            {{ enquiry.email }}
+                          </span>
+                        </a>
+
+                        <a [href]="'tel:' + enquiry.mobile" class="contact-item">
+                          <i class="bi bi-telephone"></i>
+
+                          <span>
+                            {{ enquiry.mobile }}
+                          </span>
+                        </a>
+                      </div>
+                    </td>
+
+                    <!-- =====================================
+                         PRODUCT
+                    ====================================== -->
+
+                    <td>
+                      <div class="product-cell">
+                        <div class="product-icon">
+                          <i class="bi bi-box-seam"></i>
+                        </div>
+
+                        <div>
+                          @if (enquiry.productName) {
+                            <strong>
+                              {{ enquiry.productName }}
+                            </strong>
+                          } @else {
+                            <strong> Product Not Specified </strong>
+                          }
+
+                          @if (enquiry.productId) {
+                            <span> Product #{{ enquiry.productId }} </span>
+                          }
+                        </div>
+                      </div>
+                    </td>
+
+                    <!-- =====================================
+                         QUANTITY
+                    ====================================== -->
+
+                    <td>
+                      <span class="quantity-badge">
+                        <i class="bi bi-stack me-1"></i>
+
+                        {{ enquiry.quantity }}
+                      </span>
+                    </td>
+
+                    <!-- =====================================
+                         MESSAGE
+                    ====================================== -->
+
+                    <td>
+                      <div class="message-cell" [title]="enquiry.message">
+                        {{ enquiry.message }}
+                      </div>
+                    </td>
+
+                    <!-- =====================================
+                         STATUS
+                    ====================================== -->
+
+                    <td>
+                      <span class="status-badge" [ngClass]="getStatusClass(enquiry.status)">
+                        <i class="bi" [ngClass]="getStatusIcon(enquiry.status)"></i>
+
+                        {{ enquiry.status }}
+                      </span>
+                    </td>
+
+                    <!-- =====================================
+                         DATE
+                    ====================================== -->
+
+                    <td>
+                      <div class="date-cell">
+                        <strong>
+                          {{ formatDate(enquiry.createdDate) }}
+                        </strong>
+
+                        <span>
+                          {{ formatDateTime(enquiry.createdDate) }}
+                        </span>
+                      </div>
+                    </td>
+
+                    <!-- =====================================
+                         ACTIONS
+                    ====================================== -->
+
+                    <td>
+                      <div class="action-buttons">
+                        <!-- VIEW -->
+
+                        <a
+                          [routerLink]="['/admin/bulk-enquiries', enquiry.bulkEnquiryId]"
+                          class="action-btn view-btn"
+                          title="View Details"
+                        >
+                          <i class="bi bi-eye"></i>
+                        </a>
+
+                        <!-- DELETE -->
+
+                        <button
+                          type="button"
+                          class="action-btn delete-btn"
+                          title="Delete"
+                          (click)="deleteEnquiry(enquiry)"
+                        >
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+</div>

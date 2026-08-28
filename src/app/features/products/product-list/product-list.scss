@@ -814,3 +814,155 @@
 
   border-width: 2px;
 }
+/* =========================================================
+   PRODUCT CARD ACTIONS
+========================================================= */
+
+.product-card-actions {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.product-card-actions .add-cart-button {
+  flex: 1;
+  min-width: 0;
+  margin-top: 0;
+}
+
+.product-card-actions .view-product-button {
+  flex: 0 0 46px;
+  width: 46px;
+  height: 42px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid #0d6efd;
+  border-radius: 9px;
+
+  background: #ffffff;
+  color: #0d6efd;
+
+  font-size: 1.1rem;
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.product-card-actions .view-product-button:hover {
+  background: #0d6efd;
+  color: #ffffff;
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 5px 12px rgba(13, 110, 253, 0.22);
+}
+
+.product-card-actions .view-product-button:active {
+  transform: translateY(0) scale(0.96);
+}
+
+.product-card-actions .view-product-button i {
+  line-height: 1;
+}
+
+/* =========================================================
+   RESPONSIVE PRODUCT ACTIONS
+========================================================= */
+
+@media (max-width: 575.98px) {
+  .product-card-actions {
+    gap: 8px;
+  }
+
+  .product-card-actions .view-product-button {
+    flex-basis: 44px;
+    width: 44px;
+    height: 42px;
+  }
+}
+/* =========================================================
+   PRODUCT CARD ACTIONS
+========================================================= */
+
+.product-card-actions {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.product-card-actions .add-cart-button {
+  flex: 1;
+  min-width: 0;
+  margin-top: 0;
+}
+
+.product-card-actions .view-product-button {
+  flex: 0 0 46px;
+  width: 46px;
+  height: 42px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid #0d6efd;
+  border-radius: 9px;
+
+  background: #ffffff;
+  color: #0d6efd;
+
+  font-size: 1.1rem;
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.product-card-actions .view-product-button:hover {
+  background: #0d6efd;
+  color: #ffffff;
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 5px 12px rgba(13, 110, 253, 0.22);
+}
+
+.product-card-actions .view-product-button:active {
+  transform: translateY(0) scale(0.96);
+}
+
+.product-card-actions .view-product-button i {
+  line-height: 1;
+}
+
+/* =========================================================
+   RESPONSIVE PRODUCT ACTIONS
+========================================================= */
+
+@media (max-width: 575.98px) {
+  .product-card-actions {
+    gap: 8px;
+  }
+
+  .product-card-actions .view-product-button {
+    flex-basis: 44px;
+    width: 44px;
+    height: 42px;
+  }
+}

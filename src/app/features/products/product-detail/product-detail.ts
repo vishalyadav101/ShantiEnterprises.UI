@@ -13,12 +13,16 @@ import { AuthService } from '../../../core/services/auth';
 
 import { ReviewService } from '../../../core/services/review';
 
+import { BulkEnquiryService } from '../../../core/services/bulk-enquiry';
+
 import {
   Review,
   ReviewSummary,
   CreateReview,
   UpdateReview,
 } from '../../../core/models/review.model';
+
+import { CreateBulkEnquiry } from '../../../core/models/bulk-enquiry.model';
 
 import { Product } from '../../../core/models/product.model';
 
@@ -45,6 +49,8 @@ export class ProductDetail implements OnInit {
   private readonly authService = inject(AuthService);
 
   private readonly reviewService = inject(ReviewService);
+
+  private readonly bulkEnquiryService = inject(BulkEnquiryService);
 
   private readonly route = inject(ActivatedRoute);
 
@@ -93,6 +99,28 @@ export class ProductDetail implements OnInit {
   reviewTitle = '';
 
   reviewComment = '';
+
+  // =========================================================
+  // BULK ENQUIRY
+  // =========================================================
+
+  isBulkEnquiryOpen = false;
+
+  isSubmittingBulkEnquiry = false;
+
+  bulkEnquirySuccessMessage = '';
+
+  bulkEnquiryErrorMessage = '';
+
+  bulkCustomerName = '';
+
+  bulkMobile = '';
+
+  bulkEmail = '';
+
+  bulkQuantity = 1;
+
+  bulkMessage = '';
 
   // =========================================================
   // STATES
@@ -411,6 +439,177 @@ export class ProductDetail implements OnInit {
   }
 
   // =========================================================
+  // OPEN BULK ENQUIRY
+  // =========================================================
+
+  openBulkEnquiry(): void {
+    this.isBulkEnquiryOpen = true;
+
+    this.bulkEnquirySuccessMessage = '';
+
+    this.bulkEnquiryErrorMessage = '';
+
+    setTimeout(() => {
+      const element = document.getElementById('bulk-enquiry-form');
+
+      element?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }, 100);
+  }
+
+  // =========================================================
+  // CLOSE BULK ENQUIRY
+  // =========================================================
+
+  closeBulkEnquiry(): void {
+    if (this.isSubmittingBulkEnquiry) {
+      return;
+    }
+
+    this.isBulkEnquiryOpen = false;
+
+    this.bulkEnquiryErrorMessage = '';
+
+    this.bulkEnquirySuccessMessage = '';
+  }
+
+  // =========================================================
+  // SUBMIT BULK ENQUIRY
+  // POST /api/BulkEnquiry
+  // =========================================================
+
+  submitBulkEnquiry(): void {
+    if (this.isSubmittingBulkEnquiry) {
+      return;
+    }
+
+    this.bulkEnquiryErrorMessage = '';
+
+    this.bulkEnquirySuccessMessage = '';
+
+    // =======================================================
+    // VALIDATION
+    // =======================================================
+
+    if (!this.bulkCustomerName.trim()) {
+      this.bulkEnquiryErrorMessage = 'Customer name is required.';
+      return;
+    }
+
+    if (!this.bulkMobile.trim()) {
+      this.bulkEnquiryErrorMessage = 'Mobile number is required.';
+      return;
+    }
+
+    if (!/^[0-9]{10}$/.test(this.bulkMobile.trim())) {
+      this.bulkEnquiryErrorMessage = 'Please enter a valid 10-digit mobile number.';
+      return;
+    }
+
+    if (!this.bulkEmail.trim()) {
+      this.bulkEnquiryErrorMessage = 'Email is required.';
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.bulkEmail.trim())) {
+      this.bulkEnquiryErrorMessage = 'Please enter a valid email address.';
+      return;
+    }
+
+    if (!this.bulkQuantity || this.bulkQuantity <= 0) {
+      this.bulkEnquiryErrorMessage = 'Quantity must be greater than 0.';
+      return;
+    }
+
+    if (!this.bulkMessage.trim()) {
+      this.bulkEnquiryErrorMessage = 'Message is required.';
+      return;
+    }
+
+    if (!this.product) {
+      this.bulkEnquiryErrorMessage = 'Product information is unavailable.';
+      return;
+    }
+
+    // =======================================================
+    // REQUEST DATA
+    // =======================================================
+
+    const currentUser = this.authService.getCurrentUser();
+
+    const data: CreateBulkEnquiry = {
+      userId: currentUser ? Number(currentUser.id) : null,
+
+      customerName: this.bulkCustomerName.trim(),
+
+      mobile: this.bulkMobile.trim(),
+
+      email: this.bulkEmail.trim(),
+
+      productId: this.product.productId,
+
+      quantity: Number(this.bulkQuantity),
+
+      message: this.bulkMessage.trim(),
+    };
+
+    console.log('Bulk Enquiry Request:', data);
+
+    // =======================================================
+    // API CALL
+    // =======================================================
+
+    this.isSubmittingBulkEnquiry = true;
+
+    this.bulkEnquiryService
+      .create(data)
+      .pipe(
+        finalize(() => {
+          this.isSubmittingBulkEnquiry = false;
+        }),
+      )
+      .subscribe({
+        next: (response) => {
+          console.log('Bulk Enquiry Created:', response);
+
+          this.bulkEnquirySuccessMessage =
+            'Your bulk enquiry has been submitted successfully. We will contact you shortly.';
+
+          this.resetBulkEnquiryForm();
+
+          setTimeout(() => {
+            this.bulkEnquirySuccessMessage = '';
+          }, 5000);
+        },
+
+        error: (error) => {
+          console.error('Bulk Enquiry Error:', error);
+
+          this.bulkEnquiryErrorMessage =
+            error?.error?.message || 'Unable to submit bulk enquiry. Please try again.';
+        },
+      });
+  }
+
+  // =========================================================
+  // RESET BULK ENQUIRY FORM
+  // =========================================================
+
+  resetBulkEnquiryForm(): void {
+    this.bulkCustomerName = '';
+
+    this.bulkMobile = '';
+
+    this.bulkEmail = '';
+
+    this.bulkQuantity = 1;
+
+    this.bulkMessage = '';
+  }
+
+  // =========================================================
   // LOAD REVIEWS
   // GET /api/Review/product/{productId}
   // =========================================================
@@ -554,8 +753,11 @@ export class ProductDetail implements OnInit {
 
     const data: CreateReview = {
       productId: this.productId,
+
       rating: this.reviewRating,
+
       reviewTitle: this.reviewTitle.trim() || null,
+
       reviewComment: this.reviewComment.trim() || null,
     };
 
@@ -648,7 +850,9 @@ export class ProductDetail implements OnInit {
 
     const data: UpdateReview = {
       rating: this.reviewRating,
+
       reviewTitle: this.reviewTitle.trim() || null,
+
       reviewComment: this.reviewComment.trim() || null,
     };
 

@@ -520,26 +520,46 @@
 
                     <!-- ADD CART -->
 
-                    <button
-                      type="button"
-                      class="btn btn-primary w-100 home-cart-button"
-                      [disabled]="product.stock <= 0 || isAddingToCart"
-                      (click)="addToCart(product)"
-                    >
-                      @if (isAddingToCart && addingProductId === product.productId) {
-                        <span class="spinner-border spinner-border-sm me-2"></span>
+                    <!-- =====================================================
+     PRODUCT ACTIONS
+===================================================== -->
 
-                        Adding...
-                      } @else {
-                        <i class="bi bi-cart-plus me-2"></i>
+                    <div class="home-product-actions">
+                      <!-- ADD TO CART -->
 
-                        @if (product.stock > 0) {
-                          Add to Cart
+                      <button
+                        type="button"
+                        class="btn btn-primary home-cart-button"
+                        [disabled]="product.stock <= 0 || isAddingToCart"
+                        (click)="addToCart(product)"
+                      >
+                        @if (isAddingToCart && addingProductId === product.productId) {
+                          <span class="spinner-border spinner-border-sm me-2"></span>
+
+                          Adding...
                         } @else {
-                          Out of Stock
+                          <i class="bi bi-cart-plus me-2"></i>
+
+                          @if (product.stock > 0) {
+                            Add to Cart
+                          } @else {
+                            Out of Stock
+                          }
                         }
-                      }
-                    </button>
+                      </button>
+
+                      <!-- VIEW PRODUCT -->
+
+                      <button
+                        type="button"
+                        class="home-view-product-button"
+                        title="View Product"
+                        aria-label="View Product"
+                        (click)="viewProduct(product.productId)"
+                      >
+                        <i class="bi bi-eye"></i>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -88,6 +88,8 @@ import { ContactEnquiryList } from './features/contact-enquiries/contact-enquiry
 
 import { ContactEnquiryDetail } from './features/contact-enquiries/contact-enquiry-detail/contact-enquiry-detail';
 import { ContactEnquiryForm } from './features/contact-enquiry/contact-enquiry-form/contact-enquiry-form';
+import { BulkEnquiryList } from './features/bulk-enquiries/bulk-enquiry-list/bulk-enquiry-list';
+import { BulkEnquiryDetail } from './features/bulk-enquiries/bulk-enquiry-detail/bulk-enquiry-detail';
 
 // =========================================================
 // ROUTES
@@ -233,6 +235,20 @@ export const routes: Routes = [
   {
     path: 'admin/contact-enquiries/:id',
     component: ContactEnquiryDetail,
+    canActivate: [adminGuard],
+  },
+  // =========================================================
+  // ADMIN BULK ENQUIRIES
+  //==========================================================
+  {
+    path: 'admin/bulk-enquiries',
+    component: BulkEnquiryList,
+    canActivate: [adminGuard],
+  },
+
+  {
+    path: 'admin/bulk-enquiries/:id',
+    component: BulkEnquiryDetail,
     canActivate: [adminGuard],
   },
   // =========================================================

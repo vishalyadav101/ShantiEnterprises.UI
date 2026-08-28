@@ -84,6 +84,7 @@
               } @else {
                 <div class="no-image">
                   <i class="bi bi-image"></i>
+
                   <span>No Image Available</span>
                 </div>
               }
@@ -224,7 +225,9 @@
               }
             </div>
 
-            <!-- ACTIONS -->
+            <!-- =================================================
+                 ACTIONS
+            ================================================== -->
 
             <div class="action-buttons">
               <!-- WISHLIST -->
@@ -275,6 +278,16 @@
                   }
                 }
               </button>
+
+              <!-- =================================================
+                   BULK ENQUIRY
+              ================================================== -->
+
+              <button type="button" class="bulk-enquiry-button" (click)="openBulkEnquiry()">
+                <i class="bi bi-chat-left-text me-2"></i>
+
+                Bulk Enquiry
+              </button>
             </div>
 
             <!-- SUCCESS MESSAGE -->
@@ -288,6 +301,226 @@
             }
           </div>
         </div>
+
+        <!-- =====================================================
+             BULK ENQUIRY SECTION
+        ====================================================== -->
+
+        @if (isBulkEnquiryOpen) {
+          <section id="bulk-enquiry-form" class="bulk-enquiry-section">
+            <div class="bulk-enquiry-card">
+              <!-- =================================================
+                   HEADER
+              ================================================== -->
+
+              <div class="bulk-enquiry-header">
+                <div>
+                  <span class="section-label"> Bulk Purchase </span>
+
+                  <h2>Bulk Enquiry</h2>
+
+                  <p>
+                    Looking for a larger quantity? Send us your requirements and our team will
+                    contact you.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  class="bulk-close-button"
+                  [disabled]="isSubmittingBulkEnquiry"
+                  (click)="closeBulkEnquiry()"
+                  aria-label="Close bulk enquiry"
+                >
+                  <i class="bi bi-x-lg"></i>
+                </button>
+              </div>
+
+              <!-- =================================================
+                   PRODUCT INFO
+              ================================================== -->
+
+              <div class="bulk-product-info">
+                <div class="bulk-product-icon">
+                  <i class="bi bi-box-seam"></i>
+                </div>
+
+                <div>
+                  <span> Product </span>
+
+                  <strong>
+                    {{ product.productName }}
+                  </strong>
+
+                  <small> SKU: {{ product.sku }} </small>
+                </div>
+              </div>
+
+              <!-- =================================================
+                   ERROR
+              ================================================== -->
+
+              @if (bulkEnquiryErrorMessage) {
+                <div class="alert alert-danger bulk-alert">
+                  <i class="bi bi-exclamation-circle me-2"></i>
+
+                  {{ bulkEnquiryErrorMessage }}
+                </div>
+              }
+
+              <!-- =================================================
+                   SUCCESS
+              ================================================== -->
+
+              @if (bulkEnquirySuccessMessage) {
+                <div class="alert alert-success bulk-alert">
+                  <i class="bi bi-check-circle me-2"></i>
+
+                  {{ bulkEnquirySuccessMessage }}
+                </div>
+              }
+
+              <!-- =================================================
+                   FORM
+              ================================================== -->
+
+              <div class="bulk-enquiry-form">
+                <!-- CUSTOMER NAME -->
+
+                <div class="bulk-field">
+                  <label for="bulkCustomerName">
+                    Customer Name
+                    <span>*</span>
+                  </label>
+
+                  <input
+                    id="bulkCustomerName"
+                    type="text"
+                    class="form-control"
+                    placeholder="Enter your full name"
+                    maxlength="150"
+                    [(ngModel)]="bulkCustomerName"
+                    [disabled]="isSubmittingBulkEnquiry"
+                  />
+                </div>
+
+                <!-- MOBILE -->
+
+                <div class="bulk-field">
+                  <label for="bulkMobile">
+                    Mobile Number
+                    <span>*</span>
+                  </label>
+
+                  <input
+                    id="bulkMobile"
+                    type="tel"
+                    class="form-control"
+                    placeholder="Enter 10-digit mobile number"
+                    maxlength="10"
+                    inputmode="numeric"
+                    [(ngModel)]="bulkMobile"
+                    [disabled]="isSubmittingBulkEnquiry"
+                  />
+                </div>
+
+                <!-- EMAIL -->
+
+                <div class="bulk-field">
+                  <label for="bulkEmail">
+                    Email Address
+                    <span>*</span>
+                  </label>
+
+                  <input
+                    id="bulkEmail"
+                    type="email"
+                    class="form-control"
+                    placeholder="Enter your email address"
+                    maxlength="200"
+                    [(ngModel)]="bulkEmail"
+                    [disabled]="isSubmittingBulkEnquiry"
+                  />
+                </div>
+
+                <!-- QUANTITY -->
+
+                <div class="bulk-field">
+                  <label for="bulkQuantity">
+                    Required Quantity
+                    <span>*</span>
+                  </label>
+
+                  <input
+                    id="bulkQuantity"
+                    type="number"
+                    class="form-control"
+                    min="1"
+                    [(ngModel)]="bulkQuantity"
+                    [disabled]="isSubmittingBulkEnquiry"
+                  />
+                </div>
+
+                <!-- MESSAGE -->
+
+                <div class="bulk-field bulk-field-full">
+                  <label for="bulkMessage">
+                    Message / Requirements
+                    <span>*</span>
+                  </label>
+
+                  <textarea
+                    id="bulkMessage"
+                    class="form-control"
+                    rows="5"
+                    maxlength="2000"
+                    placeholder="Tell us about your bulk requirement..."
+                    [(ngModel)]="bulkMessage"
+                    [disabled]="isSubmittingBulkEnquiry"
+                  ></textarea>
+
+                  <small class="field-help">
+                    Please mention any specific requirements, delivery details or other information.
+                  </small>
+                </div>
+              </div>
+
+              <!-- =================================================
+                   FORM ACTIONS
+              ================================================== -->
+
+              <div class="bulk-enquiry-actions">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  [disabled]="isSubmittingBulkEnquiry"
+                  (click)="closeBulkEnquiry()"
+                >
+                  <i class="bi bi-x-lg me-1"></i>
+
+                  Cancel
+                </button>
+
+                <button
+                  type="button"
+                  class="btn btn-primary bulk-submit-button"
+                  [disabled]="isSubmittingBulkEnquiry"
+                  (click)="submitBulkEnquiry()"
+                >
+                  @if (isSubmittingBulkEnquiry) {
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+
+                    Submitting...
+                  } @else {
+                    <i class="bi bi-send me-2"></i>
+
+                    Submit Enquiry
+                  }
+                </button>
+              </div>
+            </div>
+          </section>
+        }
 
         <!-- =====================================================
              REVIEW SECTION
