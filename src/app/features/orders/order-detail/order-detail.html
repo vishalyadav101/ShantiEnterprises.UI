@@ -182,7 +182,279 @@
                 </div>
               </div>
             </div>
+            <!-- =========================================================
+     SHIPMENT TRACKING
+========================================================= -->
 
+            <div class="order-card mb-4">
+              <div class="order-card-header">
+                <div>
+                  <h5 class="fw-bold mb-1">
+                    <i class="bi bi-truck me-2 text-primary"></i>
+                    Shipment Tracking
+                  </h5>
+
+                  <span class="text-muted small"> Track your order delivery status </span>
+                </div>
+
+                @if (shipment?.shipmentStatus) {
+                  <span
+                    class="status-badge"
+                    [ngClass]="getShipmentStatusClass(shipment!.shipmentStatus)"
+                  >
+                    {{ shipment!.shipmentStatus }}
+                  </span>
+                }
+              </div>
+
+              <!-- LOADING -->
+
+              @if (isShipmentLoading) {
+                <div class="shipment-loading">
+                  <div class="spinner-border text-primary" role="status"></div>
+
+                  <span> Loading shipment details... </span>
+                </div>
+              }
+
+              <!-- SHIPMENT NOT FOUND / ERROR -->
+
+              @else if (!shipment) {
+                <div class="shipment-empty">
+                  <div class="shipment-empty-icon">
+                    <i class="bi bi-truck"></i>
+                  </div>
+
+                  <div>
+                    <h6 class="fw-bold mb-1">Shipment Not Available</h6>
+
+                    <p class="text-muted small mb-2">
+                      {{ shipmentErrorMessage || 'Shipment details are not available yet.' }}
+                    </p>
+
+                    @if (orderId) {
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-primary"
+                        (click)="retryShipment()"
+                      >
+                        <i class="bi bi-arrow-clockwise me-1"></i>
+                        Retry
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+
+              <!-- SHIPMENT DETAILS -->
+
+              @else {
+                <!-- COURIER + TRACKING -->
+
+                <div class="shipment-details-grid">
+                  <!-- COURIER -->
+
+                  <div class="shipment-detail-item">
+                    <div class="shipment-detail-icon">
+                      <i class="bi bi-building"></i>
+                    </div>
+
+                    <div>
+                      <span class="shipment-label"> Courier </span>
+
+                      <strong>
+                        {{ shipment.courierName || '-' }}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <!-- TRACKING NUMBER -->
+
+                  <div class="shipment-detail-item">
+                    <div class="shipment-detail-icon">
+                      <i class="bi bi-upc-scan"></i>
+                    </div>
+
+                    <div>
+                      <span class="shipment-label"> Tracking Number </span>
+
+                      <strong>
+                        {{ shipment.trackingNumber || '-' }}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <!-- SHIPPING METHOD -->
+
+                  <div class="shipment-detail-item">
+                    <div class="shipment-detail-icon">
+                      <i class="bi bi-box-seam"></i>
+                    </div>
+
+                    <div>
+                      <span class="shipment-label"> Shipping Method </span>
+
+                      <strong>
+                        {{ shipment.shippingMethod || '-' }}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <!-- ESTIMATED DELIVERY -->
+
+                  <div class="shipment-detail-item">
+                    <div class="shipment-detail-icon">
+                      <i class="bi bi-calendar-check"></i>
+                    </div>
+
+                    <div>
+                      <span class="shipment-label"> Estimated Delivery </span>
+
+                      <strong>
+                        {{ formatDate(shipment.estimatedDeliveryDate) }}
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- STATUS DESCRIPTION -->
+
+                @if (shipment.statusDescription) {
+                  <div class="shipment-status-description">
+                    <i class="bi bi-info-circle me-2"></i>
+
+                    <span>
+                      {{ shipment.statusDescription }}
+                    </span>
+                  </div>
+                }
+
+                <!-- TRACKING BUTTON -->
+
+                @if (hasTracking()) {
+                  <div class="shipment-track-action">
+                    <button type="button" class="btn btn-primary" (click)="trackShipment()">
+                      <i class="bi bi-geo-alt me-2"></i>
+                      Track Shipment
+                    </button>
+                  </div>
+                }
+
+                <!-- DELIVERY TIMELINE -->
+
+                <div class="shipment-timeline">
+                  <!-- CREATED -->
+
+                  <div class="shipment-timeline-item completed">
+                    <div class="shipment-timeline-icon">
+                      <i class="bi bi-check-lg"></i>
+                    </div>
+
+                    <div class="shipment-timeline-content">
+                      <strong> Shipment Created </strong>
+
+                      <span>
+                        {{ formatDateTime(shipment.createdDate) }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- SHIPPED -->
+
+                  <div class="shipment-timeline-item" [class.completed]="shipment.shippedDate">
+                    <div class="shipment-timeline-icon">
+                      @if (shipment.shippedDate) {
+                        <i class="bi bi-check-lg"></i>
+                      } @else {
+                        <i class="bi bi-box-arrow-up"></i>
+                      }
+                    </div>
+
+                    <div class="shipment-timeline-content">
+                      <strong> Shipped </strong>
+
+                      <span>
+                        {{ formatDateTime(shipment.shippedDate) }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- OUT FOR DELIVERY -->
+
+                  <div
+                    class="shipment-timeline-item"
+                    [class.completed]="shipment.outForDeliveryDate"
+                  >
+                    <div class="shipment-timeline-icon">
+                      @if (shipment.outForDeliveryDate) {
+                        <i class="bi bi-check-lg"></i>
+                      } @else {
+                        <i class="bi bi-truck"></i>
+                      }
+                    </div>
+
+                    <div class="shipment-timeline-content">
+                      <strong> Out for Delivery </strong>
+
+                      <span>
+                        {{ formatDateTime(shipment.outForDeliveryDate) }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- DELIVERED -->
+
+                  <div class="shipment-timeline-item" [class.completed]="shipment.deliveredDate">
+                    <div class="shipment-timeline-icon">
+                      @if (shipment.deliveredDate) {
+                        <i class="bi bi-check-lg"></i>
+                      } @else {
+                        <i class="bi bi-house-check"></i>
+                      }
+                    </div>
+
+                    <div class="shipment-timeline-content">
+                      <strong> Delivered </strong>
+
+                      <span>
+                        {{ formatDateTime(shipment.deliveredDate) }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- DELIVERY INFORMATION -->
+
+                @if (shipment.deliveredTo || shipment.deliveryNotes) {
+                  <div class="shipment-delivery-info">
+                    <h6 class="fw-bold mb-3">
+                      <i class="bi bi-person-check me-2 text-primary"></i>
+                      Delivery Information
+                    </h6>
+
+                    @if (shipment.deliveredTo) {
+                      <div class="info-row">
+                        <span> Delivered To </span>
+
+                        <strong>
+                          {{ shipment.deliveredTo }}
+                        </strong>
+                      </div>
+                    }
+
+                    @if (shipment.deliveryNotes) {
+                      <div class="info-row">
+                        <span> Delivery Notes </span>
+
+                        <strong>
+                          {{ shipment.deliveryNotes }}
+                        </strong>
+                      </div>
+                    }
+                  </div>
+                }
+              }
+            </div>
             <!-- =========================
                  ORDER ITEMS
             ========================== -->

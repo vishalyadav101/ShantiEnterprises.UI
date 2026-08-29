@@ -1,0 +1,548 @@
+<div class="admin-shipments-page">
+  <!-- =========================================================
+       PAGE HEADER
+  ========================================================== -->
+
+  <div class="page-header">
+    <div>
+      <span class="page-eyebrow"> Shanti Enterprises </span>
+
+      <h1>Shipment Management</h1>
+
+      <p>Manage courier, tracking and delivery information.</p>
+    </div>
+
+    <button type="button" class="btn btn-primary add-shipment-btn" (click)="openCreateForm()">
+      <i class="bi bi-plus-lg me-2"></i>
+      Add Shipment
+    </button>
+  </div>
+
+  <!-- =========================================================
+       ALERTS
+  ========================================================== -->
+
+  @if (successMessage) {
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="bi bi-check-circle me-2"></i>
+
+      {{ successMessage }}
+
+      <button
+        type="button"
+        class="btn-close"
+        aria-label="Close"
+        (click)="successMessage = ''"
+      ></button>
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="bi bi-exclamation-circle me-2"></i>
+
+      {{ errorMessage }}
+
+      <button
+        type="button"
+        class="btn-close"
+        aria-label="Close"
+        (click)="errorMessage = ''"
+      ></button>
+    </div>
+  }
+
+  <!-- =========================================================
+       FILTER CARD
+  ========================================================== -->
+
+  <div class="filter-card">
+    <div class="filter-group search-group">
+      <label for="shipmentSearch"> Search </label>
+
+      <div class="search-input-wrapper">
+        <i class="bi bi-search"></i>
+
+        <input
+          id="shipmentSearch"
+          type="text"
+          class="form-control"
+          placeholder="Search order, courier or tracking number..."
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()"
+        />
+      </div>
+    </div>
+
+    <div class="filter-group status-group">
+      <label for="shipmentStatus"> Status </label>
+
+      <select
+        id="shipmentStatus"
+        class="form-select"
+        [(ngModel)]="selectedStatus"
+        (change)="onStatusChange()"
+      >
+        <option value="">All Statuses</option>
+
+        @for (status of statusOptions; track status) {
+          <option [value]="status">
+            {{ status }}
+          </option>
+        }
+      </select>
+    </div>
+
+    <div class="filter-summary">
+      <span> Total Shipments </span>
+
+      <strong>
+        {{ filteredShipments.length }}
+      </strong>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       SHIPMENT TABLE
+  ========================================================== -->
+
+  <div class="shipment-table-card">
+    <!-- LOADING -->
+
+    @if (isLoading) {
+      <div class="table-loading">
+        <div class="spinner-border text-primary" role="status"></div>
+
+        <span> Loading shipments... </span>
+      </div>
+    }
+
+    <!-- EMPTY -->
+
+    @else if (filteredShipments.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">
+          <i class="bi bi-truck"></i>
+        </div>
+
+        <h5>No Shipments Found</h5>
+
+        @if (searchTerm || selectedStatus) {
+          <p>No shipments match your current search or filter.</p>
+
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-primary"
+            (click)="searchTerm = ''; selectedStatus = ''; applyFilters()"
+          >
+            Clear Filters
+          </button>
+        } @else {
+          <p>No shipments have been created yet.</p>
+
+          <button type="button" class="btn btn-sm btn-primary" (click)="openCreateForm()">
+            <i class="bi bi-plus-lg me-1"></i>
+            Add First Shipment
+          </button>
+        }
+      </div>
+    }
+
+    <!-- TABLE -->
+
+    @else {
+      <div class="table-responsive">
+        <table class="table shipment-table align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Order</th>
+
+              <th>Courier</th>
+
+              <th>Tracking</th>
+
+              <th>Method</th>
+
+              <th>Status</th>
+
+              <th>Estimated Delivery</th>
+
+              <th>Created</th>
+
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (shipment of filteredShipments; track shipment.shipmentId) {
+              <tr>
+                <!-- ORDER -->
+
+                <td>
+                  <div class="order-cell">
+                    <span class="order-label"> Order </span>
+
+                    <strong> #{{ shipment.orderNumber }} </strong>
+
+                    <small> ID: {{ shipment.orderId }} </small>
+                  </div>
+                </td>
+
+                <!-- COURIER -->
+
+                <td>
+                  <div class="courier-cell">
+                    <div class="table-icon">
+                      <i class="bi bi-building"></i>
+                    </div>
+
+                    <span>
+                      {{ shipment.courierName || '-' }}
+                    </span>
+                  </div>
+                </td>
+
+                <!-- TRACKING -->
+
+                <td>
+                  @if (shipment.trackingNumber) {
+                    <div class="tracking-cell">
+                      <strong>
+                        {{ shipment.trackingNumber }}
+                      </strong>
+
+                      @if (shipment.trackingUrl) {
+                        <button
+                          type="button"
+                          class="tracking-link-btn"
+                          title="Open Tracking"
+                          (click)="openTrackingUrl(shipment)"
+                        >
+                          <i class="bi bi-box-arrow-up-right"></i>
+                        </button>
+                      }
+                    </div>
+                  } @else {
+                    <span class="text-muted"> - </span>
+                  }
+                </td>
+
+                <!-- SHIPPING METHOD -->
+
+                <td>
+                  <span class="shipping-method">
+                    {{ shipment.shippingMethod || '-' }}
+                  </span>
+                </td>
+
+                <!-- STATUS -->
+
+                <td>
+                  <span class="status-badge" [ngClass]="getStatusClass(shipment.shipmentStatus)">
+                    {{ shipment.shipmentStatus }}
+                  </span>
+                </td>
+
+                <!-- ESTIMATED DELIVERY -->
+
+                <td>
+                  <div class="date-cell">
+                    <i class="bi bi-calendar-check"></i>
+
+                    <span>
+                      {{ formatDate(shipment.estimatedDeliveryDate) }}
+                    </span>
+                  </div>
+                </td>
+
+                <!-- CREATED -->
+
+                <td>
+                  <div class="date-cell">
+                    <i class="bi bi-calendar3"></i>
+
+                    <span>
+                      {{ formatDate(shipment.createdDate) }}
+                    </span>
+                  </div>
+                </td>
+
+                <!-- ACTIONS -->
+
+                <td>
+                  <div class="table-actions">
+                    <!-- TRACK -->
+
+                    @if (shipment.trackingUrl) {
+                      <button
+                        type="button"
+                        class="action-btn track-btn"
+                        title="Track Shipment"
+                        (click)="openTrackingUrl(shipment)"
+                      >
+                        <i class="bi bi-geo-alt"></i>
+                      </button>
+                    }
+
+                    <!-- EDIT -->
+
+                    <button
+                      type="button"
+                      class="action-btn edit-btn"
+                      title="Edit Shipment"
+                      (click)="openEditForm(shipment)"
+                    >
+                      <i class="bi bi-pencil"></i>
+                    </button>
+
+                    <!-- DELETE -->
+
+                    <button
+                      type="button"
+                      class="action-btn delete-btn"
+                      title="Delete Shipment"
+                      [disabled]="isDeleting"
+                      (click)="deleteShipment(shipment)"
+                    >
+                      @if (isDeleting) {
+                        <span class="spinner-border spinner-border-sm" role="status"></span>
+                      } @else {
+                        <i class="bi bi-trash"></i>
+                      }
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+  <!-- =========================================================
+       CREATE / EDIT MODAL
+  ========================================================== -->
+
+  @if (isFormOpen) {
+    <div class="shipment-modal-backdrop" (click)="closeForm()">
+      <div class="shipment-modal" (click)="$event.stopPropagation()">
+        <!-- MODAL HEADER -->
+
+        <div class="shipment-modal-header">
+          <div>
+            <span class="modal-eyebrow"> Shipment </span>
+
+            <h4>
+              @if (isEditMode) {
+                Edit Shipment
+              } @else {
+                Create Shipment
+              }
+            </h4>
+          </div>
+
+          <button type="button" class="modal-close-btn" [disabled]="isSaving" (click)="closeForm()">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
+        <!-- MODAL BODY -->
+
+        <div class="shipment-modal-body">
+          <!-- FORM ERROR -->
+
+          @if (errorMessage) {
+            <div class="alert alert-danger">
+              <i class="bi bi-exclamation-circle me-2"></i>
+              {{ errorMessage }}
+            </div>
+          }
+
+          <div class="row g-3">
+            <!-- ORDER ID -->
+
+            <div class="col-md-6">
+              <label class="form-label">
+                Order ID
+                <span class="text-danger">*</span>
+              </label>
+
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="formData.orderId"
+                [disabled]="isEditMode"
+                min="1"
+                placeholder="Enter order ID"
+              />
+
+              @if (isEditMode) {
+                <small class="form-text text-muted">
+                  Order cannot be changed after shipment creation.
+                </small>
+              }
+            </div>
+
+            <!-- SHIPPING METHOD -->
+
+            <div class="col-md-6">
+              <label class="form-label"> Shipping Method </label>
+
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="formData.shippingMethod"
+                placeholder="Standard"
+              />
+            </div>
+
+            <!-- COURIER -->
+
+            <div class="col-md-6">
+              <label class="form-label"> Courier Name </label>
+
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="formData.courierName"
+                placeholder="e.g. Delhivery"
+              />
+            </div>
+
+            <!-- TRACKING NUMBER -->
+
+            <div class="col-md-6">
+              <label class="form-label"> Tracking Number </label>
+
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="formData.trackingNumber"
+                placeholder="Enter tracking number"
+              />
+            </div>
+
+            <!-- TRACKING URL -->
+
+            <div class="col-12">
+              <label class="form-label"> Tracking URL </label>
+
+              <input
+                type="url"
+                class="form-control"
+                [(ngModel)]="formData.trackingUrl"
+                placeholder="https://..."
+              />
+            </div>
+
+            <!-- ESTIMATED DELIVERY -->
+
+            <div class="col-md-6">
+              <label class="form-label"> Estimated Delivery </label>
+
+              <input
+                type="date"
+                class="form-control"
+                [(ngModel)]="formData.estimatedDeliveryDate"
+              />
+            </div>
+
+            <!-- STATUS -->
+
+            @if (isEditMode) {
+              <div class="col-md-6">
+                <label class="form-label"> Shipment Status </label>
+
+                <select class="form-select" [(ngModel)]="formData.shipmentStatus">
+                  @for (status of statusOptions; track status) {
+                    <option [value]="status">
+                      {{ status }}
+                    </option>
+                  }
+                </select>
+              </div>
+            }
+
+            <!-- STATUS DESCRIPTION -->
+
+            @if (isEditMode) {
+              <div class="col-12">
+                <label class="form-label"> Status Description </label>
+
+                <textarea
+                  class="form-control"
+                  rows="3"
+                  [(ngModel)]="formData.statusDescription"
+                  placeholder="Enter shipment status description..."
+                ></textarea>
+              </div>
+            }
+
+            <!-- DELIVERED TO -->
+
+            @if (isEditMode && (formData.shipmentStatus === 'Delivered' || formData.deliveredTo)) {
+              <div class="col-md-6">
+                <label class="form-label"> Delivered To </label>
+
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="formData.deliveredTo"
+                  placeholder="Receiver name"
+                />
+              </div>
+            }
+
+            <!-- DELIVERY NOTES -->
+
+            <div class="col-12">
+              <label class="form-label"> Delivery Notes </label>
+
+              <textarea
+                class="form-control"
+                rows="3"
+                [(ngModel)]="formData.deliveryNotes"
+                placeholder="Enter delivery notes..."
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODAL FOOTER -->
+
+        <div class="shipment-modal-footer">
+          <button type="button" class="btn btn-light" [disabled]="isSaving" (click)="closeForm()">
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-primary"
+            [disabled]="isSaving"
+            (click)="saveShipment()"
+          >
+            @if (isSaving) {
+              <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+
+              Saving...
+            } @else {
+              <i
+                class="bi"
+                [class.bi-check-lg]="isEditMode"
+                [class.bi-plus-lg]="!isEditMode"
+                class="me-2"
+              ></i>
+
+              @if (isEditMode) {
+                Update Shipment
+              } @else {
+                Create Shipment
+              }
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
