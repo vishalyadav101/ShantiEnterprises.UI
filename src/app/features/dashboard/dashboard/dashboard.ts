@@ -92,6 +92,11 @@ export class Dashboard implements OnInit {
       icon: 'bi-truck',
       route: '/admin/shipments',
     },
+    {
+      title: 'Returns',
+      icon: 'bi-arrow-return-left',
+      route: '/admin/returns',
+    },
 
     // =======================================================
     // REVIEWS

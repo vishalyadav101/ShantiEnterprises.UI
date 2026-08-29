@@ -1,0 +1,569 @@
+<div class="return-detail-page">
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
+
+  <section class="return-detail-header">
+    <div class="container">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div>
+          <span class="return-detail-eyebrow"> Return & Refund </span>
+
+          <h1>Return Details</h1>
+
+          <p class="mb-0">Track your return request and refund progress.</p>
+        </div>
+
+        <div class="header-actions">
+          <button type="button" class="btn btn-outline-primary" (click)="goToReturns()">
+            <i class="bi bi-arrow-left me-2"></i>
+            My Returns
+          </button>
+
+          @if (returnRequest?.orderId) {
+            <button type="button" class="btn btn-primary" (click)="goToOrder()">
+              <i class="bi bi-box-seam me-2"></i>
+              View Order
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       CONTENT
+  ========================================================== -->
+
+  <section class="return-detail-content">
+    <div class="container">
+      <!-- =====================================================
+           LOADING
+      ====================================================== -->
+
+      @if (isLoading) {
+        <div class="return-detail-loading">
+          <div class="spinner-border text-primary" role="status"></div>
+
+          <p>Loading return details...</p>
+        </div>
+      }
+
+      <!-- =====================================================
+           ERROR
+      ====================================================== -->
+
+      @else if (errorMessage) {
+        <div class="return-error-card">
+          <div class="return-error-icon">
+            <i class="bi bi-exclamation-triangle"></i>
+          </div>
+
+          <h4>Unable to Load Return</h4>
+
+          <p>
+            {{ errorMessage }}
+          </p>
+
+          <div class="d-flex gap-2 flex-wrap justify-content-center">
+            <button type="button" class="btn btn-primary" (click)="retry()">
+              <i class="bi bi-arrow-clockwise me-2"></i>
+              Retry
+            </button>
+
+            <button type="button" class="btn btn-outline-secondary" (click)="goToReturns()">
+              Back to Returns
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- =====================================================
+           RETURN DETAILS
+      ====================================================== -->
+
+      @else if (returnRequest) {
+        <div class="row g-4">
+          <!-- =================================================
+               LEFT SIDE
+          ================================================== -->
+
+          <div class="col-lg-8">
+            <!-- ===============================================
+                 RETURN SUMMARY
+            ================================================ -->
+
+            <div class="return-detail-card">
+              <div class="return-card-header">
+                <div>
+                  <span class="section-eyebrow"> Return Request </span>
+
+                  <h5>#RET-{{ returnRequest.returnId }}</h5>
+                </div>
+
+                <span
+                  class="status-badge"
+                  [ngClass]="getReturnStatusClass(returnRequest.returnStatus)"
+                >
+                  {{ returnRequest.returnStatus }}
+                </span>
+              </div>
+
+              <div class="return-summary-body">
+                <!-- ORDER -->
+
+                <div class="summary-detail">
+                  <span> Order Number </span>
+
+                  <strong> #{{ returnRequest.orderNumber }} </strong>
+                </div>
+
+                <!-- PRODUCT -->
+
+                <div class="summary-detail">
+                  <span> Product </span>
+
+                  <strong>
+                    {{ returnRequest.productName }}
+                  </strong>
+                </div>
+
+                <!-- QUANTITY -->
+
+                <div class="summary-detail">
+                  <span> Quantity </span>
+
+                  <strong>
+                    {{ returnRequest.quantity }}
+                  </strong>
+                </div>
+
+                <!-- REFUND AMOUNT -->
+
+                <div class="summary-detail highlight">
+                  <span> Refund Amount </span>
+
+                  <strong>
+                    {{ formatCurrency(returnRequest.refundAmount) }}
+                  </strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===============================================
+                 RETURN TIMELINE
+            ================================================ -->
+
+            <div class="return-detail-card">
+              <div class="return-card-header">
+                <div>
+                  <span class="section-eyebrow"> Progress </span>
+
+                  <h5>Return Timeline</h5>
+                </div>
+              </div>
+
+              <div class="return-timeline">
+                <!-- REQUESTED -->
+
+                <div
+                  class="return-timeline-item"
+                  [class.completed]="isReturnStepCompleted('requested')"
+                >
+                  <div class="return-timeline-icon">
+                    <i class="bi bi-check-lg"></i>
+                  </div>
+
+                  <div class="return-timeline-content">
+                    <strong> Return Requested </strong>
+
+                    <span>
+                      {{ formatDateTime(returnRequest.requestedDate) }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- APPROVED -->
+
+                <div
+                  class="return-timeline-item"
+                  [class.completed]="isReturnStepCompleted('approved')"
+                >
+                  <div class="return-timeline-icon">
+                    @if (isReturnStepCompleted('approved')) {
+                      <i class="bi bi-check-lg"></i>
+                    } @else {
+                      <i class="bi bi-check"></i>
+                    }
+                  </div>
+
+                  <div class="return-timeline-content">
+                    <strong> Return Approved </strong>
+
+                    <span>
+                      {{ formatDateTime(returnRequest.approvedDate) }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- PRODUCT RECEIVED -->
+
+                <div
+                  class="return-timeline-item"
+                  [class.completed]="isReturnStepCompleted('received')"
+                >
+                  <div class="return-timeline-icon">
+                    @if (isReturnStepCompleted('received')) {
+                      <i class="bi bi-check-lg"></i>
+                    } @else {
+                      <i class="bi bi-box-seam"></i>
+                    }
+                  </div>
+
+                  <div class="return-timeline-content">
+                    <strong> Product Received </strong>
+
+                    <span>
+                      {{ formatDateTime(returnRequest.receivedDate) }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- REFUND -->
+
+                <div
+                  class="return-timeline-item"
+                  [class.completed]="isReturnStepCompleted('refund')"
+                >
+                  <div class="return-timeline-icon">
+                    @if (isReturnStepCompleted('refund')) {
+                      <i class="bi bi-check-lg"></i>
+                    } @else {
+                      <i class="bi bi-currency-rupee"></i>
+                    }
+                  </div>
+
+                  <div class="return-timeline-content">
+                    <strong> Refund Processing </strong>
+
+                    @if (returnRequest.refund) {
+                      <span>
+                        {{ returnRequest.refund.refundStatus }}
+                      </span>
+                    } @else {
+                      <span> Refund not initiated yet </span>
+                    }
+                  </div>
+                </div>
+
+                <!-- COMPLETED -->
+
+                <div
+                  class="return-timeline-item"
+                  [class.completed]="isReturnStepCompleted('completed')"
+                >
+                  <div class="return-timeline-icon">
+                    @if (isReturnStepCompleted('completed')) {
+                      <i class="bi bi-check-lg"></i>
+                    } @else {
+                      <i class="bi bi-check2-circle"></i>
+                    }
+                  </div>
+
+                  <div class="return-timeline-content">
+                    <strong> Return Completed </strong>
+
+                    <span>
+                      {{ formatDateTime(returnRequest.completedDate) }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- REJECTED -->
+
+              @if (isRejected()) {
+                <div class="rejected-return-box">
+                  <div class="rejected-icon">
+                    <i class="bi bi-x-circle"></i>
+                  </div>
+
+                  <div>
+                    <strong> Return Rejected </strong>
+
+                    <p>Your return request has been rejected.</p>
+
+                    @if (returnRequest.adminComment) {
+                      <small>
+                        Reason:
+                        {{ returnRequest.adminComment }}
+                      </small>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- ===============================================
+                 RETURN REASON
+            ================================================ -->
+
+            <div class="return-detail-card">
+              <div class="return-card-header">
+                <div>
+                  <span class="section-eyebrow"> Request Information </span>
+
+                  <h5>Return Reason</h5>
+                </div>
+              </div>
+
+              <div class="return-reason-body">
+                <div class="reason-box">
+                  <span> Reason </span>
+
+                  <strong>
+                    {{ returnRequest.reason }}
+                  </strong>
+                </div>
+
+                @if (returnRequest.description) {
+                  <div class="reason-box">
+                    <span> Description </span>
+
+                    <p>
+                      {{ returnRequest.description }}
+                    </p>
+                  </div>
+                }
+
+                @if (returnRequest.adminComment) {
+                  <div class="admin-comment-box">
+                    <div class="comment-icon">
+                      <i class="bi bi-chat-left-text"></i>
+                    </div>
+
+                    <div>
+                      <span> Admin Comment </span>
+
+                      <p>
+                        {{ returnRequest.adminComment }}
+                      </p>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- ===============================================
+                 REFUND DETAILS
+            ================================================ -->
+
+            <div class="return-detail-card">
+              <div class="return-card-header">
+                <div>
+                  <span class="section-eyebrow"> Refund </span>
+
+                  <h5>Refund Details</h5>
+                </div>
+
+                @if (returnRequest.refund) {
+                  <span
+                    class="refund-status"
+                    [ngClass]="getRefundStatusClass(returnRequest.refund.refundStatus)"
+                  >
+                    {{ returnRequest.refund.refundStatus }}
+                  </span>
+                }
+              </div>
+
+              @if (returnRequest.refund) {
+                <div class="refund-details-grid">
+                  <!-- AMOUNT -->
+
+                  <div class="refund-detail">
+                    <span> Refund Amount </span>
+
+                    <strong>
+                      {{ formatCurrency(returnRequest.refund.refundAmount) }}
+                    </strong>
+                  </div>
+
+                  <!-- STATUS -->
+
+                  <div class="refund-detail">
+                    <span> Refund Status </span>
+
+                    <strong>
+                      {{ returnRequest.refund.refundStatus }}
+                    </strong>
+                  </div>
+
+                  <!-- REFERENCE -->
+
+                  <div class="refund-detail">
+                    <span> Refund Reference </span>
+
+                    <strong>
+                      {{ returnRequest.refund.refundReference || '-' }}
+                    </strong>
+                  </div>
+
+                  <!-- DATE -->
+
+                  <div class="refund-detail">
+                    <span> Refund Date </span>
+
+                    <strong>
+                      {{ formatDate(returnRequest.refund.refundDate) }}
+                    </strong>
+                  </div>
+                </div>
+
+                @if (returnRequest.refund.failureReason) {
+                  <div class="refund-failure-box">
+                    <i class="bi bi-exclamation-triangle"></i>
+
+                    <div>
+                      <strong> Refund Issue </strong>
+
+                      <p>
+                        {{ returnRequest.refund.failureReason }}
+                      </p>
+                    </div>
+                  </div>
+                }
+              } @else {
+                <div class="refund-not-available">
+                  <div class="refund-not-available-icon">
+                    <i class="bi bi-wallet2"></i>
+                  </div>
+
+                  <div>
+                    <strong> Refund Not Initiated </strong>
+
+                    <p>
+                      Your refund will be initiated after the returned product is received and
+                      approved for refund.
+                    </p>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- =================================================
+               RIGHT SIDE
+          ================================================== -->
+
+          <div class="col-lg-4">
+            <!-- ===============================================
+                 RETURN INFO CARD
+            ================================================ -->
+
+            <div class="return-side-card">
+              <div class="side-card-title">
+                <i class="bi bi-info-circle text-primary"></i>
+
+                <strong> Return Information </strong>
+              </div>
+
+              <div class="side-info-row">
+                <span> Return ID </span>
+
+                <strong> #{{ returnRequest.returnId }} </strong>
+              </div>
+
+              <div class="side-info-row">
+                <span> Order </span>
+
+                <strong> #{{ returnRequest.orderNumber }} </strong>
+              </div>
+
+              <div class="side-info-row">
+                <span> Requested </span>
+
+                <strong>
+                  {{ formatDate(returnRequest.requestedDate) }}
+                </strong>
+              </div>
+
+              <div class="side-info-row">
+                <span> Approved </span>
+
+                <strong>
+                  {{ formatDate(returnRequest.approvedDate) }}
+                </strong>
+              </div>
+
+              <div class="side-info-row">
+                <span> Product Received </span>
+
+                <strong>
+                  {{ formatDate(returnRequest.receivedDate) }}
+                </strong>
+              </div>
+
+              <div class="side-info-row">
+                <span> Completed </span>
+
+                <strong>
+                  {{ formatDate(returnRequest.completedDate) }}
+                </strong>
+              </div>
+            </div>
+
+            <!-- ===============================================
+                 PRODUCT CARD
+            ================================================ -->
+
+            <div class="return-side-card">
+              <div class="side-card-title">
+                <i class="bi bi-box-seam text-primary"></i>
+
+                <strong> Returned Product </strong>
+              </div>
+
+              <div class="returned-product">
+                <div class="returned-product-icon">
+                  <i class="bi bi-box-seam"></i>
+                </div>
+
+                <div>
+                  <strong>
+                    {{ returnRequest.productName }}
+                  </strong>
+
+                  <span> Quantity: {{ returnRequest.quantity }} </span>
+
+                  <span>
+                    Refund:
+                    {{ formatCurrency(returnRequest.refundAmount) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===============================================
+                 HELP CARD
+            ================================================ -->
+
+            <div class="return-help-card">
+              <div class="help-icon">
+                <i class="bi bi-headset"></i>
+              </div>
+
+              <h6>Need Help?</h6>
+
+              <p>Have questions about your return or refund? Contact our customer support team.</p>
+
+              <a routerLink="/contact" class="btn btn-outline-primary btn-sm w-100">
+                <i class="bi bi-envelope me-2"></i>
+                Contact Support
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+</div>

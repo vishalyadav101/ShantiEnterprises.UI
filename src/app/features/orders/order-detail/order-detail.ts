@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 
 import { OrderService } from '../../../core/services/order';
@@ -9,10 +10,13 @@ import { Order } from '../../../core/models/order.model';
 import { ShipmentService } from '../../../core/services/shipment';
 import { Shipment } from '../../../core/models/shipment.model';
 
+import { ReturnService } from '../../../core/services/return';
+import { ReturnRequest, CreateReturn } from '../../../core/models/return.model';
+
 @Component({
   selector: 'app-order-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './order-detail.html',
   styleUrl: './order-detail.scss',
 })
@@ -24,6 +28,8 @@ export class OrderDetailComponent implements OnInit {
   private readonly orderService = inject(OrderService);
 
   private readonly shipmentService = inject(ShipmentService);
+
+  private readonly returnService = inject(ReturnService);
 
   private readonly route = inject(ActivatedRoute);
 
@@ -50,6 +56,48 @@ export class OrderDetailComponent implements OnInit {
   isShipmentLoading = false;
 
   shipmentErrorMessage = '';
+
+  // =========================================================
+  // RETURNS
+  // =========================================================
+
+  returns: ReturnRequest[] = [];
+
+  isReturnsLoading = false;
+
+  returnLoadError = '';
+
+  // =========================================================
+  // RETURN FORM / MODAL
+  // =========================================================
+
+  isReturnModalOpen = false;
+
+  isSubmittingReturn = false;
+
+  returnSuccessMessage = '';
+
+  returnErrorMessage = '';
+
+  selectedReturnItem: Order['items'][number] | null = null;
+
+  returnReason = '';
+
+  returnDescription = '';
+
+  // =========================================================
+  // RETURN REASONS
+  // =========================================================
+
+  returnReasons = [
+    'Product is defective',
+    'Product is damaged',
+    'Wrong product received',
+    'Product does not match description',
+    'Product size or fit issue',
+    'Changed my mind',
+    'Other',
+  ];
 
   // =========================================================
   // INIT
@@ -97,11 +145,17 @@ export class OrderDetailComponent implements OnInit {
 
           this.order = response;
 
-          // =================================================
-          // LOAD SHIPMENT AFTER ORDER LOAD
-          // =================================================
+          // -----------------------------------------------
+          // Load shipment
+          // -----------------------------------------------
 
           this.loadShipment(id);
+
+          // -----------------------------------------------
+          // Load existing returns
+          // -----------------------------------------------
+
+          this.loadReturns();
         },
 
         error: (error: any) => {
@@ -156,6 +210,220 @@ export class OrderDetailComponent implements OnInit {
     }
 
     this.loadShipment(this.orderId);
+  }
+
+  // =========================================================
+  // LOAD CUSTOMER RETURNS
+  // =========================================================
+
+  loadReturns(): void {
+    this.isReturnsLoading = true;
+
+    this.returnLoadError = '';
+
+    this.returnService
+      .getMyReturns()
+      .pipe(
+        finalize(() => {
+          this.isReturnsLoading = false;
+        }),
+      )
+      .subscribe({
+        next: (response) => {
+          this.returns = response ?? [];
+        },
+
+        error: (error: any) => {
+          console.error('Returns API Error:', error);
+
+          this.returns = [];
+
+          this.returnLoadError = error?.error?.message || 'Unable to load return details.';
+        },
+      });
+  }
+
+  // =========================================================
+  // CHECK ORDER IS DELIVERED
+  // =========================================================
+
+  isOrderDelivered(): boolean {
+    return this.order?.orderStatus?.toLowerCase() === 'delivered';
+  }
+
+  // =========================================================
+  // CHECK ITEM RETURN
+  // =========================================================
+
+  getReturnForItem(orderItemId: number): ReturnRequest | null {
+    return this.returns.find((item) => item.orderItemId === orderItemId) ?? null;
+  }
+
+  // =========================================================
+  // CHECK RETURN EXISTS
+  // =========================================================
+
+  hasReturnForItem(orderItemId: number): boolean {
+    return !!this.getReturnForItem(orderItemId);
+  }
+
+  // =========================================================
+  // OPEN RETURN MODAL
+  // =========================================================
+
+  openReturnModal(item: Order['items'][number]): void {
+    // -----------------------------------------------
+    // Order must be delivered
+    // -----------------------------------------------
+
+    if (!this.isOrderDelivered()) {
+      this.returnErrorMessage = 'Return can only be requested after the order is delivered.';
+
+      return;
+    }
+
+    // -----------------------------------------------
+    // Duplicate return check
+    // -----------------------------------------------
+
+    if (this.hasReturnForItem(item.orderItemId)) {
+      this.returnErrorMessage = 'A return request already exists for this product.';
+
+      return;
+    }
+
+    this.selectedReturnItem = item;
+
+    this.returnReason = '';
+
+    this.returnDescription = '';
+
+    this.returnSuccessMessage = '';
+
+    this.returnErrorMessage = '';
+
+    this.isReturnModalOpen = true;
+  }
+
+  // =========================================================
+  // CLOSE RETURN MODAL
+  // =========================================================
+
+  closeReturnModal(): void {
+    if (this.isSubmittingReturn) {
+      return;
+    }
+
+    this.isReturnModalOpen = false;
+
+    this.selectedReturnItem = null;
+
+    this.returnReason = '';
+
+    this.returnDescription = '';
+
+    this.returnSuccessMessage = '';
+
+    this.returnErrorMessage = '';
+  }
+
+  // =========================================================
+  // SUBMIT RETURN
+  // =========================================================
+
+  submitReturn(): void {
+    this.returnSuccessMessage = '';
+
+    this.returnErrorMessage = '';
+
+    if (this.isSubmittingReturn) {
+      return;
+    }
+
+    if (!this.orderId || !this.order) {
+      this.returnErrorMessage = 'Order details are not available.';
+
+      return;
+    }
+
+    if (!this.selectedReturnItem) {
+      this.returnErrorMessage = 'Please select a product to return.';
+
+      return;
+    }
+
+    if (!this.isOrderDelivered()) {
+      this.returnErrorMessage = 'Return can only be requested after the order is delivered.';
+
+      return;
+    }
+
+    if (this.hasReturnForItem(this.selectedReturnItem.orderItemId)) {
+      this.returnErrorMessage = 'A return request already exists for this product.';
+
+      return;
+    }
+
+    if (!this.returnReason.trim()) {
+      this.returnErrorMessage = 'Please select a return reason.';
+
+      return;
+    }
+
+    const createData: CreateReturn = {
+      orderId: this.orderId,
+
+      orderItemId: this.selectedReturnItem.orderItemId,
+
+      reason: this.returnReason.trim(),
+
+      description: this.returnDescription.trim() ? this.returnDescription.trim() : null,
+    };
+
+    this.isSubmittingReturn = true;
+
+    this.returnService
+      .create(createData)
+      .pipe(
+        finalize(() => {
+          this.isSubmittingReturn = false;
+        }),
+      )
+      .subscribe({
+        next: (response) => {
+          console.log('Return Created:', response);
+
+          this.returnSuccessMessage = 'Return request submitted successfully.';
+
+          // ---------------------------------------------
+          // Refresh returns
+          // ---------------------------------------------
+
+          this.loadReturns();
+
+          // ---------------------------------------------
+          // Close modal shortly after success
+          // ---------------------------------------------
+
+          setTimeout(() => {
+            this.closeReturnModal();
+          }, 900);
+        },
+
+        error: (error: any) => {
+          console.error('Create Return API Error:', error);
+
+          this.returnErrorMessage = error?.error?.message || 'Unable to submit return request.';
+        },
+      });
+  }
+
+  // =========================================================
+  // VIEW RETURN
+  // =========================================================
+
+  viewReturn(returnRequest: ReturnRequest): void {
+    this.router.navigate(['/returns', returnRequest.returnId]);
   }
 
   // =========================================================

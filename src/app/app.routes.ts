@@ -91,8 +91,9 @@ import { ContactEnquiryForm } from './features/contact-enquiry/contact-enquiry-f
 import { BulkEnquiryList } from './features/bulk-enquiries/bulk-enquiry-list/bulk-enquiry-list';
 import { BulkEnquiryDetail } from './features/bulk-enquiries/bulk-enquiry-detail/bulk-enquiry-detail';
 import { AdminShipmentsComponent } from './features/admin-shipments/admin-shipments';
-
-// =========================================================
+import { ReturnList } from './features/returns/return-list/return-list';
+import { ReturnDetail } from './features/returns/return-detail/return-detail';
+import { AdminReturns } from './features/admin-returns/admin-returns/admin-returns'; // =========================================================
 // ROUTES
 // =========================================================
 
@@ -262,6 +263,15 @@ export const routes: Routes = [
     canActivate: [adminGuard],
   },
   // =========================================================
+  // ADMIN RETURNS
+  // =========================================================
+
+  {
+    path: 'admin/returns',
+    component: AdminReturns,
+    canActivate: [adminGuard],
+  },
+  // =========================================================
   // ADMIN BANNERS
   // =========================================================
 
@@ -386,6 +396,18 @@ export const routes: Routes = [
       {
         path: 'orders/:id',
         component: OrderDetailComponent,
+      },
+      // =======================================================
+      // RETURNS & REFUNDS
+      // =======================================================
+
+      {
+        path: 'returns',
+        component: ReturnList,
+      },
+      {
+        path: 'returns/:id',
+        component: ReturnDetail,
       },
     ],
   },

@@ -1,0 +1,1007 @@
+<div class="admin-returns-page">
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
+
+  <section class="admin-returns-header">
+    <div class="container-fluid">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div>
+          <span class="admin-returns-eyebrow"> Shanti Enterprises </span>
+
+          <h1>Return Management</h1>
+
+          <p class="mb-0">Manage customer return requests and refunds.</p>
+        </div>
+
+        <a routerLink="/admin" class="btn btn-outline-primary">
+          <i class="bi bi-arrow-left me-2"></i>
+          Dashboard
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       CONTENT
+  ========================================================== -->
+
+  <section class="admin-returns-content">
+    <div class="container-fluid">
+      <!-- =====================================================
+           SUCCESS
+      ====================================================== -->
+
+      @if (successMessage) {
+        <div
+          class="alert alert-success d-flex align-items-center justify-content-between"
+          role="alert"
+        >
+          <div>
+            <i class="bi bi-check-circle me-2"></i>
+            {{ successMessage }}
+          </div>
+
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            (click)="successMessage = ''"
+          ></button>
+        </div>
+      }
+
+      <!-- =====================================================
+           ERROR
+      ====================================================== -->
+
+      @if (errorMessage) {
+        <div
+          class="alert alert-danger d-flex align-items-center justify-content-between"
+          role="alert"
+        >
+          <div>
+            <i class="bi bi-exclamation-circle me-2"></i>
+            {{ errorMessage }}
+          </div>
+
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            (click)="errorMessage = ''"
+          ></button>
+        </div>
+      }
+
+      <!-- =====================================================
+           STATISTICS
+      ====================================================== -->
+
+      <div class="return-stat-grid">
+        <!-- TOTAL -->
+
+        <div class="return-stat-card">
+          <div class="return-stat-icon total-icon">
+            <i class="bi bi-arrow-return-left"></i>
+          </div>
+
+          <div>
+            <span> Total Returns </span>
+
+            <strong>
+              {{ returns.length }}
+            </strong>
+          </div>
+        </div>
+
+        <!-- PENDING -->
+
+        <div class="return-stat-card">
+          <div class="return-stat-icon pending-icon">
+            <i class="bi bi-hourglass-split"></i>
+          </div>
+
+          <div>
+            <span> Pending </span>
+
+            <strong>
+              {{ getStatusCount('Pending') }}
+            </strong>
+          </div>
+        </div>
+
+        <!-- APPROVED -->
+
+        <div class="return-stat-card">
+          <div class="return-stat-icon approved-icon">
+            <i class="bi bi-check-circle"></i>
+          </div>
+
+          <div>
+            <span> Approved </span>
+
+            <strong>
+              {{ getStatusCount('Approved') }}
+            </strong>
+          </div>
+        </div>
+
+        <!-- PRODUCT RECEIVED -->
+
+        <div class="return-stat-card">
+          <div class="return-stat-icon received-icon">
+            <i class="bi bi-box-seam"></i>
+          </div>
+
+          <div>
+            <span> Product Received </span>
+
+            <strong>
+              {{ getStatusCount('ProductReceived') }}
+            </strong>
+          </div>
+        </div>
+
+        <!-- REFUND PROCESSING -->
+
+        <div class="return-stat-card">
+          <div class="return-stat-icon refund-icon">
+            <i class="bi bi-currency-rupee"></i>
+          </div>
+
+          <div>
+            <span> Refund Processing </span>
+
+            <strong>
+              {{ getStatusCount('RefundProcessing') }}
+            </strong>
+          </div>
+        </div>
+
+        <!-- COMPLETED -->
+
+        <div class="return-stat-card">
+          <div class="return-stat-icon completed-icon">
+            <i class="bi bi-check2-all"></i>
+          </div>
+
+          <div>
+            <span> Completed </span>
+
+            <strong>
+              {{ getStatusCount('Completed') }}
+            </strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- =====================================================
+           SUMMARY CARDS
+      ====================================================== -->
+
+      <div class="return-summary-grid">
+        <div class="return-summary-card">
+          <span> Total Refund Value </span>
+
+          <strong>
+            {{ formatCurrency(getTotalRefundAmount()) }}
+          </strong>
+        </div>
+
+        <div class="return-summary-card">
+          <span> Completed Refunds </span>
+
+          <strong>
+            {{ getCompletedRefundCount() }}
+          </strong>
+        </div>
+      </div>
+
+      <!-- =====================================================
+           FILTER CARD
+      ====================================================== -->
+
+      <div class="admin-return-filter-card">
+        <div class="return-search-box">
+          <label for="returnSearch"> Search </label>
+
+          <div class="return-search-input">
+            <i class="bi bi-search"></i>
+
+            <input
+              id="returnSearch"
+              type="text"
+              class="form-control"
+              [(ngModel)]="searchTerm"
+              (input)="onSearchChange()"
+              placeholder="Search order, customer, product or reason..."
+            />
+          </div>
+        </div>
+
+        <div class="return-status-select">
+          <label for="returnStatusFilter"> Status </label>
+
+          <select
+            id="returnStatusFilter"
+            class="form-select"
+            [(ngModel)]="selectedStatus"
+            (change)="onStatusChange()"
+          >
+            <option value="">All Statuses</option>
+
+            @for (status of statusOptions; track status) {
+              <option [value]="status">
+                {{ status }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <div class="return-result-count">
+          <span> Showing </span>
+
+          <strong>
+            {{ filteredReturns.length }}
+          </strong>
+
+          <small> of {{ returns.length }} </small>
+        </div>
+
+        @if (searchTerm || selectedStatus) {
+          <button type="button" class="clear-return-filter" (click)="clearFilters()">
+            <i class="bi bi-x-circle me-1"></i>
+
+            Clear
+          </button>
+        }
+      </div>
+
+      <!-- =====================================================
+           LOADING
+      ====================================================== -->
+
+      @if (isLoading) {
+        <div class="admin-return-loading">
+          <div class="spinner-border text-primary" role="status"></div>
+
+          <p>Loading return requests...</p>
+        </div>
+      }
+
+      <!-- =====================================================
+           EMPTY
+      ====================================================== -->
+
+      @else if (filteredReturns.length === 0) {
+        <div class="admin-return-empty">
+          <div class="admin-return-empty-icon">
+            <i class="bi bi-arrow-return-left"></i>
+          </div>
+
+          <h4>No Return Requests Found</h4>
+
+          <p>There are no return requests matching your current filters.</p>
+
+          @if (searchTerm || selectedStatus) {
+            <button type="button" class="btn btn-outline-primary" (click)="clearFilters()">
+              Clear Filters
+            </button>
+          }
+        </div>
+      }
+
+      <!-- =====================================================
+           RETURNS TABLE
+      ====================================================== -->
+
+      @else {
+        <div class="admin-return-table-card">
+          <div class="table-responsive">
+            <table class="table admin-return-table align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Return</th>
+
+                  <th>Order</th>
+
+                  <th>Customer</th>
+
+                  <th>Product</th>
+
+                  <th>Refund</th>
+
+                  <th>Return Status</th>
+
+                  <th>Refund Status</th>
+
+                  <th>Requested</th>
+
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @for (item of filteredReturns; track item.returnId) {
+                  <tr>
+                    <!-- RETURN -->
+
+                    <td>
+                      <div class="return-id-cell">
+                        <span> Return ID </span>
+
+                        <strong> #RET-{{ item.returnId }} </strong>
+                      </div>
+                    </td>
+
+                    <!-- ORDER -->
+
+                    <td>
+                      <div class="admin-return-order-cell">
+                        <span> Order </span>
+
+                        <strong> #{{ item.orderNumber }} </strong>
+                      </div>
+                    </td>
+
+                    <!-- CUSTOMER -->
+
+                    <td>
+                      <div class="customer-cell">
+                        <div class="customer-icon">
+                          <i class="bi bi-person"></i>
+                        </div>
+
+                        <div>
+                          <strong>
+                            {{ item.customerName || 'Customer' }}
+                          </strong>
+
+                          <small> User ID: {{ item.userId }} </small>
+                        </div>
+                      </div>
+                    </td>
+
+                    <!-- PRODUCT -->
+
+                    <td>
+                      <div class="admin-return-product-cell">
+                        <div class="product-icon">
+                          <i class="bi bi-box-seam"></i>
+                        </div>
+
+                        <div>
+                          <strong [title]="item.productName">
+                            {{ item.productName }}
+                          </strong>
+
+                          <small> Qty: {{ item.quantity }} </small>
+                        </div>
+                      </div>
+                    </td>
+
+                    <!-- REFUND AMOUNT -->
+
+                    <td>
+                      <strong class="refund-amount">
+                        {{ formatCurrency(item.refundAmount) }}
+                      </strong>
+                    </td>
+
+                    <!-- RETURN STATUS -->
+
+                    <td>
+                      <span
+                        class="status-badge"
+                        [ngClass]="getReturnStatusClass(item.returnStatus)"
+                      >
+                        {{ item.returnStatus }}
+                      </span>
+                    </td>
+
+                    <!-- REFUND STATUS -->
+
+                    <td>
+                      @if (item.refund) {
+                        <span
+                          class="refund-status"
+                          [ngClass]="getRefundStatusClass(item.refund.refundStatus)"
+                        >
+                          {{ item.refund.refundStatus }}
+                        </span>
+                      } @else {
+                        <span class="refund-not-created"> Not Created </span>
+                      }
+                    </td>
+
+                    <!-- DATE -->
+
+                    <td>
+                      <div class="requested-date">
+                        <i class="bi bi-calendar3"></i>
+
+                        {{ formatDate(item.requestedDate) }}
+                      </div>
+                    </td>
+
+                    <!-- ACTIONS -->
+
+                    <td>
+                      <div class="return-actions">
+                        <!-- VIEW -->
+
+                        <button
+                          type="button"
+                          class="action-btn view-btn"
+                          title="View Return"
+                          (click)="viewReturn(item)"
+                        >
+                          <i class="bi bi-eye"></i>
+                        </button>
+
+                        <!-- UPDATE RETURN -->
+
+                        <button
+                          type="button"
+                          class="action-btn edit-btn"
+                          title="Update Return Status"
+                          (click)="openStatusModal(item)"
+                        >
+                          <i class="bi bi-pencil"></i>
+                        </button>
+
+                        <!-- CREATE REFUND -->
+
+                        @if (canCreateRefund(item)) {
+                          <button
+                            type="button"
+                            class="action-btn refund-btn"
+                            title="Create Refund"
+                            (click)="openRefundModal(item)"
+                          >
+                            <i class="bi bi-cash-coin"></i>
+                          </button>
+                        }
+
+                        <!-- REFUND STATUS -->
+
+                        @if (item.refund) {
+                          <button
+                            type="button"
+                            class="action-btn refund-status-btn"
+                            title="Update Refund Status"
+                            (click)="openRefundStatusModal(item.refund!)"
+                          >
+                            <i class="bi bi-wallet2"></i>
+                          </button>
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ===================================================
+             MOBILE CARDS
+        ==================================================== -->
+
+        <div class="admin-return-mobile-list">
+          @for (item of filteredReturns; track item.returnId) {
+            <div class="admin-return-mobile-card">
+              <!-- HEADER -->
+
+              <div class="mobile-return-top">
+                <div>
+                  <span> Return </span>
+
+                  <strong> #RET-{{ item.returnId }} </strong>
+                </div>
+
+                <span class="status-badge" [ngClass]="getReturnStatusClass(item.returnStatus)">
+                  {{ item.returnStatus }}
+                </span>
+              </div>
+
+              <!-- ORDER -->
+
+              <div class="mobile-return-info">
+                <span> Order </span>
+
+                <strong> #{{ item.orderNumber }} </strong>
+              </div>
+
+              <!-- CUSTOMER -->
+
+              <div class="mobile-return-info">
+                <span> Customer </span>
+
+                <strong>
+                  {{ item.customerName || 'Customer' }}
+                </strong>
+              </div>
+
+              <!-- PRODUCT -->
+
+              <div class="mobile-return-product">
+                <div class="product-icon">
+                  <i class="bi bi-box-seam"></i>
+                </div>
+
+                <div>
+                  <strong>
+                    {{ item.productName }}
+                  </strong>
+
+                  <small> Quantity: {{ item.quantity }} </small>
+                </div>
+              </div>
+
+              <!-- MONEY -->
+
+              <div class="mobile-return-money">
+                <div>
+                  <span> Refund </span>
+
+                  <strong>
+                    {{ formatCurrency(item.refundAmount) }}
+                  </strong>
+                </div>
+
+                <div>
+                  <span> Refund Status </span>
+
+                  @if (item.refund) {
+                    <span
+                      class="refund-status"
+                      [ngClass]="getRefundStatusClass(item.refund.refundStatus)"
+                    >
+                      {{ item.refund.refundStatus }}
+                    </span>
+                  } @else {
+                    <span class="refund-not-created"> Not Created </span>
+                  }
+                </div>
+              </div>
+
+              <!-- DATE -->
+
+              <div class="mobile-return-info">
+                <span> Requested </span>
+
+                <strong>
+                  {{ formatDate(item.requestedDate) }}
+                </strong>
+              </div>
+
+              <!-- ACTIONS -->
+
+              <div class="mobile-return-actions">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-primary"
+                  (click)="viewReturn(item)"
+                >
+                  <i class="bi bi-eye me-1"></i>
+                  View
+                </button>
+
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-secondary"
+                  (click)="openStatusModal(item)"
+                >
+                  <i class="bi bi-pencil me-1"></i>
+                  Status
+                </button>
+
+                @if (canCreateRefund(item)) {
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-success"
+                    (click)="openRefundModal(item)"
+                  >
+                    <i class="bi bi-cash-coin me-1"></i>
+                    Refund
+                  </button>
+                }
+
+                @if (item.refund) {
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-info"
+                    (click)="openRefundStatusModal(item.refund!)"
+                  >
+                    <i class="bi bi-wallet2 me-1"></i>
+                    Refund Status
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- =========================================================
+       UPDATE RETURN STATUS MODAL
+  ========================================================== -->
+
+  @if (isStatusModalOpen) {
+    <div class="admin-return-modal-backdrop" (click)="closeStatusModal()">
+      <div class="admin-return-modal" (click)="$event.stopPropagation()">
+        <!-- HEADER -->
+
+        <div class="admin-return-modal-header">
+          <div>
+            <span> Return Management </span>
+
+            <h4>Update Return Status</h4>
+          </div>
+
+          <button
+            type="button"
+            class="modal-close-btn"
+            [disabled]="isUpdatingStatus"
+            (click)="closeStatusModal()"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
+        <!-- BODY -->
+
+        <div class="admin-return-modal-body">
+          @if (statusUpdateError) {
+            <div class="alert alert-danger" role="alert">
+              <i class="bi bi-exclamation-circle me-2"></i>
+              {{ statusUpdateError }}
+            </div>
+          }
+
+          @if (selectedReturn) {
+            <div class="modal-selected-return">
+              <div class="selected-return-icon">
+                <i class="bi bi-arrow-return-left"></i>
+              </div>
+
+              <div>
+                <span> Return </span>
+
+                <strong> #RET-{{ selectedReturn.returnId }} </strong>
+
+                <small> Order #{{ selectedReturn.orderNumber }} </small>
+              </div>
+            </div>
+
+            <div class="modal-form-group">
+              <label for="returnStatusUpdate" class="form-label"> Return Status </label>
+
+              <select
+                id="returnStatusUpdate"
+                class="form-select"
+                [(ngModel)]="selectedReturnStatus"
+                [disabled]="isUpdatingStatus"
+              >
+                @for (status of statusOptions; track status) {
+                  <option [value]="status">
+                    {{ status }}
+                  </option>
+                }
+              </select>
+            </div>
+
+            <div class="modal-form-group">
+              <label for="adminComment" class="form-label"> Admin Comment </label>
+
+              <textarea
+                id="adminComment"
+                class="form-control"
+                rows="4"
+                maxlength="1000"
+                [(ngModel)]="adminComment"
+                [disabled]="isUpdatingStatus"
+                placeholder="Enter a comment for the customer..."
+              ></textarea>
+            </div>
+
+            <div class="modal-info-box">
+              <i class="bi bi-info-circle"></i>
+
+              <span>
+                The customer will receive a notification when the return status changes.
+              </span>
+            </div>
+          }
+        </div>
+
+        <!-- FOOTER -->
+
+        <div class="admin-return-modal-footer">
+          <button
+            type="button"
+            class="btn btn-light"
+            [disabled]="isUpdatingStatus"
+            (click)="closeStatusModal()"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-primary"
+            [disabled]="isUpdatingStatus || !selectedReturnStatus"
+            (click)="updateReturnStatus()"
+          >
+            @if (isUpdatingStatus) {
+              <span class="spinner-border spinner-border-sm me-2"></span>
+
+              Updating...
+            } @else {
+              <i class="bi bi-check2 me-2"></i>
+
+              Update Status
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- =========================================================
+       CREATE REFUND MODAL
+  ========================================================== -->
+
+  @if (isRefundModalOpen) {
+    <div class="admin-return-modal-backdrop" (click)="closeRefundModal()">
+      <div class="admin-return-modal" (click)="$event.stopPropagation()">
+        <!-- HEADER -->
+
+        <div class="admin-return-modal-header">
+          <div>
+            <span> Refund Management </span>
+
+            <h4>Create Refund</h4>
+          </div>
+
+          <button
+            type="button"
+            class="modal-close-btn"
+            [disabled]="isCreatingRefund"
+            (click)="closeRefundModal()"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
+        <!-- BODY -->
+
+        <div class="admin-return-modal-body">
+          @if (refundError) {
+            <div class="alert alert-danger" role="alert">
+              <i class="bi bi-exclamation-circle me-2"></i>
+              {{ refundError }}
+            </div>
+          }
+
+          @if (selectedRefundReturn) {
+            <div class="modal-selected-return">
+              <div class="selected-return-icon">
+                <i class="bi bi-wallet2"></i>
+              </div>
+
+              <div>
+                <span> Return </span>
+
+                <strong> #RET-{{ selectedRefundReturn.returnId }} </strong>
+
+                <small>
+                  {{ selectedRefundReturn.productName }}
+                </small>
+              </div>
+            </div>
+
+            <div class="refund-confirm-box">
+              <div>
+                <span> Refund Amount </span>
+
+                <strong>
+                  {{ formatCurrency(selectedRefundReturn.refundAmount) }}
+                </strong>
+              </div>
+
+              <i class="bi bi-check-circle"></i>
+            </div>
+
+            <div class="modal-info-box">
+              <i class="bi bi-info-circle"></i>
+
+              <span>
+                Refund can be created only after the returned product has been received.
+              </span>
+            </div>
+          }
+        </div>
+
+        <!-- FOOTER -->
+
+        <div class="admin-return-modal-footer">
+          <button
+            type="button"
+            class="btn btn-light"
+            [disabled]="isCreatingRefund"
+            (click)="closeRefundModal()"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-success"
+            [disabled]="isCreatingRefund"
+            (click)="createRefund()"
+          >
+            @if (isCreatingRefund) {
+              <span class="spinner-border spinner-border-sm me-2"></span>
+
+              Creating...
+            } @else {
+              <i class="bi bi-cash-coin me-2"></i>
+
+              Create Refund
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- =========================================================
+       UPDATE REFUND STATUS MODAL
+  ========================================================== -->
+
+  @if (isRefundStatusModalOpen) {
+    <div class="admin-return-modal-backdrop" (click)="closeRefundStatusModal()">
+      <div class="admin-return-modal" (click)="$event.stopPropagation()">
+        <!-- HEADER -->
+
+        <div class="admin-return-modal-header">
+          <div>
+            <span> Refund Management </span>
+
+            <h4>Update Refund Status</h4>
+          </div>
+
+          <button
+            type="button"
+            class="modal-close-btn"
+            [disabled]="isUpdatingRefundStatus"
+            (click)="closeRefundStatusModal()"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
+        <!-- BODY -->
+
+        <div class="admin-return-modal-body">
+          @if (refundError) {
+            <div class="alert alert-danger" role="alert">
+              <i class="bi bi-exclamation-circle me-2"></i>
+              {{ refundError }}
+            </div>
+          }
+
+          @if (selectedRefund) {
+            <div class="modal-selected-return">
+              <div class="selected-return-icon">
+                <i class="bi bi-wallet2"></i>
+              </div>
+
+              <div>
+                <span> Refund </span>
+
+                <strong> #REF-{{ selectedRefund.refundId }} </strong>
+
+                <small>
+                  Amount:
+                  {{ formatCurrency(selectedRefund.refundAmount) }}
+                </small>
+              </div>
+            </div>
+
+            <div class="modal-form-group">
+              <label for="refundStatusUpdate" class="form-label"> Refund Status </label>
+
+              <select
+                id="refundStatusUpdate"
+                class="form-select"
+                [(ngModel)]="selectedRefundStatus"
+                [disabled]="isUpdatingRefundStatus"
+              >
+                @for (status of refundStatusOptions; track status) {
+                  <option [value]="status">
+                    {{ status }}
+                  </option>
+                }
+              </select>
+            </div>
+
+            <div class="modal-form-group">
+              <label for="refundReference" class="form-label"> Refund Reference </label>
+
+              <input
+                id="refundReference"
+                type="text"
+                class="form-control"
+                maxlength="150"
+                [(ngModel)]="refundReference"
+                [disabled]="isUpdatingRefundStatus"
+                placeholder="Enter refund transaction/reference number..."
+              />
+            </div>
+
+            @if (selectedRefundStatus.toLowerCase() === 'failed') {
+              <div class="modal-form-group">
+                <label for="refundFailureReason" class="form-label">
+                  Failure Reason
+                  <span class="text-danger"> * </span>
+                </label>
+
+                <textarea
+                  id="refundFailureReason"
+                  class="form-control"
+                  rows="3"
+                  maxlength="500"
+                  [(ngModel)]="failureReason"
+                  [disabled]="isUpdatingRefundStatus"
+                  placeholder="Enter the reason why the refund failed..."
+                ></textarea>
+              </div>
+            }
+
+            <div class="modal-info-box">
+              <i class="bi bi-info-circle"></i>
+
+              <span> Completing the refund will automatically complete the related return. </span>
+            </div>
+          }
+        </div>
+
+        <!-- FOOTER -->
+
+        <div class="admin-return-modal-footer">
+          <button
+            type="button"
+            class="btn btn-light"
+            [disabled]="isUpdatingRefundStatus"
+            (click)="closeRefundStatusModal()"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-primary"
+            [disabled]="isUpdatingRefundStatus || !selectedRefundStatus"
+            (click)="updateRefundStatus()"
+          >
+            @if (isUpdatingRefundStatus) {
+              <span class="spinner-border spinner-border-sm me-2"></span>
+
+              Updating...
+            } @else {
+              <i class="bi bi-check2 me-2"></i>
+
+              Update Refund
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
