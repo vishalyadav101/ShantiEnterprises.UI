@@ -101,7 +101,7 @@
               </div>
             </div>
 
-            <!-- Order Status -->
+            <!-- ORDER STATUS -->
 
             <div class="status-section">
               <span class="status-label"> Order Status </span>
@@ -111,7 +111,7 @@
               </span>
             </div>
 
-            <!-- Payment Status -->
+            <!-- PAYMENT STATUS -->
 
             <div class="status-section">
               <span class="status-label"> Payment Status </span>
@@ -182,15 +182,17 @@
                 </div>
               </div>
             </div>
+
             <!-- =========================================================
-     SHIPMENT TRACKING
-========================================================= -->
+                 SHIPMENT TRACKING
+            ========================================================= -->
 
             <div class="order-card mb-4">
               <div class="order-card-header">
                 <div>
                   <h5 class="fw-bold mb-1">
                     <i class="bi bi-truck me-2 text-primary"></i>
+
                     Shipment Tracking
                   </h5>
 
@@ -207,7 +209,7 @@
                 }
               </div>
 
-              <!-- LOADING -->
+              <!-- SHIPMENT LOADING -->
 
               @if (isShipmentLoading) {
                 <div class="shipment-loading">
@@ -217,7 +219,7 @@
                 </div>
               }
 
-              <!-- SHIPMENT NOT FOUND / ERROR -->
+              <!-- SHIPMENT NOT AVAILABLE -->
 
               @else if (!shipment) {
                 <div class="shipment-empty">
@@ -239,6 +241,7 @@
                         (click)="retryShipment()"
                       >
                         <i class="bi bi-arrow-clockwise me-1"></i>
+
                         Retry
                       </button>
                     }
@@ -249,8 +252,6 @@
               <!-- SHIPMENT DETAILS -->
 
               @else {
-                <!-- COURIER + TRACKING -->
-
                 <div class="shipment-details-grid">
                   <!-- COURIER -->
 
@@ -335,6 +336,7 @@
                   <div class="shipment-track-action">
                     <button type="button" class="btn btn-primary" (click)="trackShipment()">
                       <i class="bi bi-geo-alt me-2"></i>
+
                       Track Shipment
                     </button>
                   </div>
@@ -429,6 +431,7 @@
                   <div class="shipment-delivery-info">
                     <h6 class="fw-bold mb-3">
                       <i class="bi bi-person-check me-2 text-primary"></i>
+
                       Delivery Information
                     </h6>
 
@@ -455,6 +458,7 @@
                 }
               }
             </div>
+
             <!-- =========================
                  ORDER ITEMS
             ========================== -->
@@ -475,13 +479,13 @@
               <div class="order-items">
                 @for (item of order.items; track item.orderItemId) {
                   <div class="order-item">
-                    <!-- Product Icon -->
+                    <!-- PRODUCT ICON -->
 
                     <div class="order-item-icon">
                       <i class="bi bi-box-seam"></i>
                     </div>
 
-                    <!-- Product Details -->
+                    <!-- PRODUCT DETAILS -->
 
                     <div class="order-item-details">
                       <h6 class="fw-bold mb-1" [title]="item.productName">
@@ -511,9 +515,41 @@
                           {{ item.quantity }}
                         </strong>
                       </div>
+
+                      <!-- ==================================
+                           RETURN ACTION
+                      =================================== -->
+
+                      @if (isOrderDelivered()) {
+                        @if (hasReturnForItem(item.orderItemId)) {
+                          <div class="return-item-action">
+                            <button
+                              type="button"
+                              class="btn btn-sm btn-outline-primary"
+                              (click)="viewReturn(getReturnForItem(item.orderItemId)!)"
+                            >
+                              <i class="bi bi-eye me-1"></i>
+
+                              View Return
+                            </button>
+                          </div>
+                        } @else {
+                          <div class="return-item-action">
+                            <button
+                              type="button"
+                              class="btn btn-sm btn-outline-danger"
+                              (click)="openReturnModal(item)"
+                            >
+                              <i class="bi bi-arrow-return-left me-1"></i>
+
+                              Return Product
+                            </button>
+                          </div>
+                        }
+                      }
                     </div>
 
-                    <!-- Price -->
+                    <!-- PRICE -->
 
                     <div class="order-item-price">
                       <div class="unit-price">
@@ -544,7 +580,7 @@
             <div class="order-summary-box">
               <h5 class="fw-bold mb-4">Order Summary</h5>
 
-              <!-- Items -->
+              <!-- ITEMS -->
 
               <div class="summary-row">
                 <span> Items </span>
@@ -554,7 +590,7 @@
                 </strong>
               </div>
 
-              <!-- Subtotal -->
+              <!-- SUBTOTAL -->
 
               <div class="summary-row">
                 <span> Subtotal </span>
@@ -570,7 +606,7 @@
                 <strong> ₹{{ order.gstAmount | number: '1.2-2' }} </strong>
               </div>
 
-              <!-- Shipping -->
+              <!-- SHIPPING -->
 
               <div class="summary-row">
                 <span> Shipping </span>
@@ -582,7 +618,7 @@
                 }
               </div>
 
-              <!-- Coupon -->
+              <!-- COUPON -->
 
               @if (order.couponDiscount > 0) {
                 <div class="summary-row">
@@ -602,7 +638,7 @@
 
               <hr />
 
-              <!-- Grand Total -->
+              <!-- GRAND TOTAL -->
 
               <div class="summary-total">
                 <span> Grand Total </span>
@@ -657,4 +693,167 @@
       }
     </div>
   </section>
+
+  <!-- =========================================================
+       RETURN REQUEST MODAL
+  ========================================================== -->
+
+  @if (isReturnModalOpen) {
+    <div class="return-modal-backdrop" (click)="closeReturnModal()">
+      <div class="return-modal" (click)="$event.stopPropagation()">
+        <!-- MODAL HEADER -->
+
+        <div class="return-modal-header">
+          <div>
+            <span class="return-modal-eyebrow"> Return Request </span>
+
+            <h4>Return Product</h4>
+          </div>
+
+          <button
+            type="button"
+            class="return-modal-close"
+            [disabled]="isSubmittingReturn"
+            (click)="closeReturnModal()"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
+        <!-- MODAL BODY -->
+
+        <div class="return-modal-body">
+          <!-- SUCCESS -->
+
+          @if (returnSuccessMessage) {
+            <div class="alert alert-success" role="alert">
+              <i class="bi bi-check-circle me-2"></i>
+
+              {{ returnSuccessMessage }}
+            </div>
+          }
+
+          <!-- ERROR -->
+
+          @if (returnErrorMessage) {
+            <div class="alert alert-danger" role="alert">
+              <i class="bi bi-exclamation-circle me-2"></i>
+
+              {{ returnErrorMessage }}
+            </div>
+          }
+
+          @if (selectedReturnItem) {
+            <!-- PRODUCT -->
+
+            <div class="return-selected-product">
+              <div class="return-selected-icon">
+                <i class="bi bi-box-seam"></i>
+              </div>
+
+              <div>
+                <span> Product </span>
+
+                <strong>
+                  {{ selectedReturnItem.productName }}
+                </strong>
+
+                <small>
+                  Quantity:
+                  {{ selectedReturnItem.quantity }}
+                </small>
+              </div>
+            </div>
+
+            <!-- REASON -->
+
+            <div class="return-form-group">
+              <label for="returnReason" class="form-label">
+                Return Reason
+
+                <span class="text-danger"> * </span>
+              </label>
+
+              <select
+                id="returnReason"
+                class="form-select"
+                [(ngModel)]="returnReason"
+                [disabled]="isSubmittingReturn"
+              >
+                <option value="">Select a reason</option>
+
+                @for (reason of returnReasons; track reason) {
+                  <option [value]="reason">
+                    {{ reason }}
+                  </option>
+                }
+              </select>
+            </div>
+
+            <!-- DESCRIPTION -->
+
+            <div class="return-form-group">
+              <label for="returnDescription" class="form-label"> Additional Details </label>
+
+              <textarea
+                id="returnDescription"
+                class="form-control"
+                rows="4"
+                maxlength="1000"
+                [(ngModel)]="returnDescription"
+                [disabled]="isSubmittingReturn"
+                placeholder="Tell us more about the return..."
+              ></textarea>
+
+              <small class="form-text text-muted">
+                Explain the issue or provide any additional information.
+              </small>
+            </div>
+
+            <!-- IMPORTANT NOTE -->
+
+            <div class="return-info-box">
+              <i class="bi bi-info-circle"></i>
+
+              <div>
+                <strong> Return Policy </strong>
+
+                <p>Return requests can be submitted only for delivered orders.</p>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- MODAL FOOTER -->
+
+        <div class="return-modal-footer">
+          <button
+            type="button"
+            class="btn btn-light"
+            [disabled]="isSubmittingReturn"
+            (click)="closeReturnModal()"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-danger"
+            [disabled]="isSubmittingReturn || !returnReason.trim()"
+            (click)="submitReturn()"
+          >
+            @if (isSubmittingReturn) {
+              <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+
+              Submitting...
+            } @else {
+              <i class="bi bi-arrow-return-left me-2"></i>
+
+              Submit Return
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>

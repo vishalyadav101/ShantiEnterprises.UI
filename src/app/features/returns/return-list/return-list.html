@@ -1,0 +1,379 @@
+<div class="return-list-page">
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
+
+  <section class="return-header">
+    <div class="container">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div>
+          <span class="return-eyebrow"> Shanti Enterprises </span>
+
+          <h1>My Returns & Refunds</h1>
+
+          <p class="mb-0">Track your return requests and refund status.</p>
+        </div>
+
+        <a routerLink="/orders" class="btn btn-outline-primary">
+          <i class="bi bi-arrow-left me-2"></i>
+          My Orders
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       CONTENT
+  ========================================================== -->
+
+  <section class="return-content">
+    <div class="container">
+      <!-- =====================================================
+           ERROR
+      ====================================================== -->
+
+      @if (errorMessage) {
+        <div
+          class="alert alert-danger d-flex align-items-center justify-content-between"
+          role="alert"
+        >
+          <div>
+            <i class="bi bi-exclamation-circle me-2"></i>
+            {{ errorMessage }}
+          </div>
+
+          <button type="button" class="btn btn-sm btn-outline-danger" (click)="retry()">
+            <i class="bi bi-arrow-clockwise me-1"></i>
+            Retry
+          </button>
+        </div>
+      }
+
+      <!-- =====================================================
+           LOADING
+      ====================================================== -->
+
+      @if (isLoading) {
+        <div class="return-loading">
+          <div class="spinner-border text-primary" role="status"></div>
+
+          <p>Loading your returns...</p>
+        </div>
+      }
+
+      <!-- =====================================================
+           MAIN CONTENT
+      ====================================================== -->
+
+      @if (!isLoading) {
+        <!-- ===================================================
+             FILTER BAR
+        ==================================================== -->
+
+        <div class="return-filter-card">
+          <div class="return-search">
+            <label for="returnSearch"> Search </label>
+
+            <div class="search-wrapper">
+              <i class="bi bi-search"></i>
+
+              <input
+                id="returnSearch"
+                type="text"
+                class="form-control"
+                placeholder="Search order, product or reason..."
+                [(ngModel)]="searchTerm"
+                (input)="onSearchChange()"
+              />
+            </div>
+          </div>
+
+          <div class="return-status-filter">
+            <label for="returnStatus"> Status </label>
+
+            <select
+              id="returnStatus"
+              class="form-select"
+              [(ngModel)]="selectedStatus"
+              (change)="onStatusChange()"
+            >
+              <option value="">All Statuses</option>
+
+              @for (status of statusOptions; track status) {
+                <option [value]="status">
+                  {{ status }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="return-filter-count">
+            <span> Returns </span>
+
+            <strong>
+              {{ filteredReturns.length }}
+            </strong>
+          </div>
+
+          @if (searchTerm || selectedStatus) {
+            <button type="button" class="clear-filter-btn" (click)="clearFilters()">
+              <i class="bi bi-x-circle me-1"></i>
+              Clear
+            </button>
+          }
+        </div>
+
+        <!-- ===================================================
+             EMPTY
+        ==================================================== -->
+
+        @if (filteredReturns.length === 0) {
+          <div class="return-empty-card">
+            <div class="return-empty-icon">
+              <i class="bi bi-arrow-return-left"></i>
+            </div>
+
+            <h4>No Return Requests</h4>
+
+            @if (searchTerm || selectedStatus) {
+              <p>No return requests match your current filter.</p>
+
+              <button type="button" class="btn btn-sm btn-outline-primary" (click)="clearFilters()">
+                Clear Filters
+              </button>
+            } @else {
+              <p>You don't have any return requests yet.</p>
+
+              <a routerLink="/orders" class="btn btn-sm btn-primary">
+                <i class="bi bi-box-seam me-1"></i>
+                View My Orders
+              </a>
+            }
+          </div>
+        }
+
+        <!-- ===================================================
+             RETURN LIST - DESKTOP TABLE
+        ==================================================== -->
+
+        @if (filteredReturns.length > 0) {
+          <div class="return-table-card">
+            <div class="table-responsive">
+              <table class="table return-table align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>Order</th>
+
+                    <th>Product</th>
+
+                    <th>Reason</th>
+
+                    <th>Return Status</th>
+
+                    <th>Refund</th>
+
+                    <th>Requested</th>
+
+                    <th class="text-end">Action</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  @for (item of filteredReturns; track item.returnId) {
+                    <tr>
+                      <!-- ORDER -->
+
+                      <td>
+                        <div class="return-order-cell">
+                          <span> Order </span>
+
+                          <strong> #{{ item.orderNumber }} </strong>
+                        </div>
+                      </td>
+
+                      <!-- PRODUCT -->
+
+                      <td>
+                        <div class="return-product-cell">
+                          <div class="return-product-icon">
+                            <i class="bi bi-box-seam"></i>
+                          </div>
+
+                          <div>
+                            <strong>
+                              {{ item.productName }}
+                            </strong>
+
+                            <small> Qty: {{ item.quantity }} </small>
+                          </div>
+                        </div>
+                      </td>
+
+                      <!-- REASON -->
+
+                      <td>
+                        <span class="return-reason">
+                          {{ item.reason }}
+                        </span>
+                      </td>
+
+                      <!-- RETURN STATUS -->
+
+                      <td>
+                        <span
+                          class="status-badge"
+                          [ngClass]="getReturnStatusClass(item.returnStatus)"
+                        >
+                          {{ item.returnStatus }}
+                        </span>
+                      </td>
+
+                      <!-- REFUND -->
+
+                      <td>
+                        <div class="refund-cell">
+                          <strong>
+                            {{ formatCurrency(item.refundAmount) }}
+                          </strong>
+
+                          @if (item.refund) {
+                            <span
+                              class="refund-status"
+                              [ngClass]="getRefundStatusClass(item.refund.refundStatus)"
+                            >
+                              {{ item.refund.refundStatus }}
+                            </span>
+                          } @else {
+                            <span class="refund-not-created"> Not initiated </span>
+                          }
+                        </div>
+                      </td>
+
+                      <!-- REQUESTED DATE -->
+
+                      <td>
+                        <div class="return-date-cell">
+                          <i class="bi bi-calendar3"></i>
+
+                          <span>
+                            {{ formatDate(item.requestedDate) }}
+                          </span>
+                        </div>
+                      </td>
+
+                      <!-- ACTION -->
+
+                      <td>
+                        <div class="return-action">
+                          <button
+                            type="button"
+                            class="view-return-btn"
+                            (click)="viewReturn(item)"
+                            title="View Return"
+                          >
+                            <i class="bi bi-eye"></i>
+                            View
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- =================================================
+               MOBILE CARDS
+          ================================================== -->
+
+          <div class="return-mobile-list">
+            @for (item of filteredReturns; track item.returnId) {
+              <div class="return-mobile-card">
+                <!-- CARD HEADER -->
+
+                <div class="mobile-return-header">
+                  <div>
+                    <span> Order </span>
+
+                    <strong> #{{ item.orderNumber }} </strong>
+                  </div>
+
+                  <span class="status-badge" [ngClass]="getReturnStatusClass(item.returnStatus)">
+                    {{ item.returnStatus }}
+                  </span>
+                </div>
+
+                <!-- PRODUCT -->
+
+                <div class="mobile-product">
+                  <div class="return-product-icon">
+                    <i class="bi bi-box-seam"></i>
+                  </div>
+
+                  <div>
+                    <strong>
+                      {{ item.productName }}
+                    </strong>
+
+                    <span> Quantity: {{ item.quantity }} </span>
+                  </div>
+                </div>
+
+                <!-- DETAILS -->
+
+                <div class="mobile-return-details">
+                  <div>
+                    <span> Reason </span>
+
+                    <strong>
+                      {{ item.reason }}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span> Refund Amount </span>
+
+                    <strong>
+                      {{ formatCurrency(item.refundAmount) }}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span> Requested </span>
+
+                    <strong>
+                      {{ formatDate(item.requestedDate) }}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span> Refund Status </span>
+
+                    @if (item.refund) {
+                      <span
+                        class="refund-status"
+                        [ngClass]="getRefundStatusClass(item.refund.refundStatus)"
+                      >
+                        {{ item.refund.refundStatus }}
+                      </span>
+                    } @else {
+                      <span class="refund-not-created"> Not initiated </span>
+                    }
+                  </div>
+                </div>
+
+                <!-- ACTION -->
+
+                <button type="button" class="btn btn-primary w-100" (click)="viewReturn(item)">
+                  <i class="bi bi-eye me-2"></i>
+                  View Return Details
+                </button>
+              </div>
+            }
+          </div>
+        }
+      }
+    </div>
+  </section>
+</div>
