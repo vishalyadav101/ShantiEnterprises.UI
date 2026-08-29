@@ -90,6 +90,7 @@ import { ContactEnquiryDetail } from './features/contact-enquiries/contact-enqui
 import { ContactEnquiryForm } from './features/contact-enquiry/contact-enquiry-form/contact-enquiry-form';
 import { BulkEnquiryList } from './features/bulk-enquiries/bulk-enquiry-list/bulk-enquiry-list';
 import { BulkEnquiryDetail } from './features/bulk-enquiries/bulk-enquiry-detail/bulk-enquiry-detail';
+import { AdminShipmentsComponent } from './features/admin-shipments/admin-shipments';
 
 // =========================================================
 // ROUTES
@@ -249,6 +250,15 @@ export const routes: Routes = [
   {
     path: 'admin/bulk-enquiries/:id',
     component: BulkEnquiryDetail,
+    canActivate: [adminGuard],
+  },
+  // =========================================================
+  // ADMIN SHIPMENTS
+  // =========================================================
+
+  {
+    path: 'admin/shipments',
+    component: AdminShipmentsComponent,
     canActivate: [adminGuard],
   },
   // =========================================================

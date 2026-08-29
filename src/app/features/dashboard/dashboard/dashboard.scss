@@ -847,3 +847,68 @@
     padding: 18px;
   }
 }
+/* =========================================================
+   ADMIN SIDEBAR FIX
+========================================================= */
+
+.admin-sidebar {
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+}
+
+/* =========================================================
+   SIDEBAR NAVIGATION
+   Menu area will scroll
+========================================================= */
+
+.sidebar-nav {
+  flex: 1 1 auto;
+
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding-bottom: 8px;
+}
+
+/* =========================================================
+   SIDEBAR BOTTOM
+   Profile + Logout always visible
+========================================================= */
+
+.sidebar-bottom {
+  flex: 0 0 auto;
+
+  background: #ffffff;
+
+  border-top: 1px solid #e9ecef;
+
+  padding: 12px 14px;
+}
+
+/* =========================================================
+   SIDEBAR SCROLLBAR
+========================================================= */
+
+.sidebar-nav::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: #d5dbe3;
+
+  border-radius: 10px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background: #b8c1ce;
+}
