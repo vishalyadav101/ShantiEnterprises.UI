@@ -121,17 +121,27 @@
       ======================================================== -->
 
       @if (!isLoading && !errorMessage && products.length > 0) {
-        <div class="row g-4">
+        <div class="row g-3 product-grid">
           @for (product of products; track product.productId) {
-            <div class="col-sm-6 col-lg-4 col-xl-3">
+            <div class="col-6 col-lg-4 col-xl-3">
               <div class="product-card">
                 <!-- =================================================
-                     PRODUCT IMAGE CAROUSEL
+                     PRODUCT IMAGE
                 ================================================== -->
 
                 <div class="product-image-wrapper">
                   <!-- =================================================
-                       WISHLIST BUTTON
+                       STOCK - TOP LEFT
+                  ================================================== -->
+
+                  @if (product.stock > 0) {
+                    <span class="stock-badge"> {{ product.stock }} left </span>
+                  } @else {
+                    <span class="stock-badge out-of-stock"> Out of stock </span>
+                  }
+
+                  <!-- =================================================
+                       WISHLIST - TOP RIGHT
                   ================================================== -->
 
                   <button
@@ -179,7 +189,7 @@
                   }
 
                   <!-- =================================================
-                       PREVIOUS BUTTON
+                       PREVIOUS IMAGE
                   ================================================== -->
 
                   @if (getImages(product).length > 1) {
@@ -193,7 +203,7 @@
                     </button>
 
                     <!-- =================================================
-                         NEXT BUTTON
+                         NEXT IMAGE
                     ================================================== -->
 
                     <button
@@ -206,7 +216,7 @@
                     </button>
 
                     <!-- =================================================
-                         IMAGE COUNT
+                         IMAGE COUNTER
                     ================================================== -->
 
                     <span class="image-counter">
@@ -217,20 +227,10 @@
                       {{ getImages(product).length }}
                     </span>
                   }
-
-                  <!-- =================================================
-                       STOCK BADGE
-                  ================================================== -->
-
-                  @if (product.stock > 0) {
-                    <span class="stock-badge"> In Stock </span>
-                  } @else {
-                    <span class="stock-badge out-of-stock"> Out of Stock </span>
-                  }
                 </div>
 
                 <!-- =================================================
-                     THUMBNAILS
+                     PRODUCT THUMBNAILS
                 ================================================== -->
 
                 @if (getImages(product).length > 1) {
@@ -279,104 +279,86 @@
                   </h5>
 
                   <!-- =================================================
-                       CUSTOMER RATING
-                  ================================================== -->
+     PRICE + RATING
+================================================== -->
 
-                  <div class="product-rating">
-                    @if (isReviewLoading(product)) {
-                      <span class="rating-loading">
-                        <span class="spinner-border spinner-border-sm"></span>
+                  <div class="product-price-rating">
+                    <!-- CUSTOMER RETAIL PRICE -->
 
-                        Loading reviews...
-                      </span>
-                    } @else {
-                      @if (getReviewCount(product.productId) > 0) {
-                        <span class="rating-stars">
-                          @for (star of [1, 2, 3, 4, 5]; track star) {
-                            @if (star <= getRoundedRating(product.productId)) {
-                              <i class="bi bi-star-fill"></i>
-                            } @else {
-                              <i class="bi bi-star"></i>
-                            }
-                          }
-                        </span>
+                    <div class="price-block">
+                      <div class="product-price">
+                        ₹{{ product.retailPrice | number: '1.2-2' }}
 
-                        <strong class="rating-value">
-                          {{ getAverageRating(product.productId) | number: '1.1-1' }}
-                        </strong>
-
-                        <span class="review-count">
-                          (
-                          {{ getReviewCount(product.productId) }}
-                          Reviews)
-                        </span>
-                      } @else {
-                        <span class="no-reviews">
-                          <i class="bi bi-star"></i>
-
-                          No Reviews
-                        </span>
-                      }
-                    }
-                  </div>
-
-                  <!-- =================================================
-                       DESCRIPTION
-                  ================================================== -->
-
-                  <p class="product-description" [title]="product.description">
-                    {{ product.description }}
-                  </p>
-
-                  <!-- =================================================
-                       SKU / GST
-                  ================================================== -->
-
-                  <div class="product-meta">
-                    <span>
-                      SKU:
-
-                      <strong>
-                        {{ product.sku }}
-                      </strong>
-                    </span>
-
-                    <span>
-                      GST:
-
-                      <strong> {{ product.gstPercentage }}% </strong>
-                    </span>
-                  </div>
-
-                  <!-- =================================================
-                       PRICE
-                  ================================================== -->
-
-                  <div class="price-section">
-                    <div>
-                      <span class="price-label"> Price </span>
-
-                      <div class="product-price">₹{{ product.wholesalePrice }}</div>
-
-                      <div class="mrp">
-                        MRP:
-
-                        <del> ₹{{ product.mrp }} </del>
+                        <span class="unit-text"> / unit </span>
                       </div>
+
+                      <div class="price-label">Retail Price</div>
+
+                      <!-- MRP -->
+
+                      @if (product.mrp > product.retailPrice) {
+                        <div class="product-mrp">
+                          <del> ₹{{ product.mrp | number: '1.2-2' }} </del>
+                        </div>
+                      }
                     </div>
 
-                    <!-- STOCK -->
+                    <!-- RATING -->
 
-                    <span class="stock-count" [class.low-stock]="product.stock <= 10">
-                      {{ product.stock }}
+                    <div class="product-rating compact-rating">
+                      @if (isReviewLoading(product)) {
+                        <span class="rating-loading">
+                          <span class="spinner-border spinner-border-sm"></span>
+                        </span>
+                      } @else {
+                        @if (getReviewCount(product.productId) > 0) {
+                          <span class="rating-stars">
+                            <i class="bi bi-star-fill"></i>
+                          </span>
 
-                      left
-                    </span>
+                          <strong class="rating-value">
+                            {{ getAverageRating(product.productId) | number: '1.1-1' }}
+                          </strong>
+
+                          <span class="review-count">
+                            ({{ getReviewCount(product.productId) }})
+                          </span>
+                        } @else {
+                          <span class="no-reviews">
+                            <i class="bi bi-star"></i>
+                            No reviews
+                          </span>
+                        }
+                      }
+                    </div>
                   </div>
 
                   <!-- =================================================
-                       ADD TO CART
+                       WHOLESALE PRICE
                   ================================================== -->
+
+                  @if (getDisplayPriceTier(product); as displayTier) {
+                    <div class="wholesale-box">
+                      <span class="wholesale-min">
+                        {{ getPriceTierRangeLabel(displayTier) }}
+                      </span>
+
+                      <div class="wholesale-price-content">
+                        <div>
+                          <strong> ₹{{ displayTier.price | number: '1.2-2' }} </strong>
+
+                          <span> / unit </span>
+                        </div>
+
+                        <small> Wholesale Price </small>
+                      </div>
+                    </div>
+                  }
+
+                  <!-- =================================================
+                       ADD TO CART + VIEW
+                  ================================================== -->
+
                   <div class="product-card-actions">
                     <!-- ADD TO CART -->
 
@@ -387,11 +369,11 @@
                       (click)="addToCart(product)"
                     >
                       @if (isAddingToCart && addingProductId === product.productId) {
-                        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                        <span class="spinner-border spinner-border-sm me-1" role="status"></span>
 
-                        Adding...
+                        <span> Adding... </span>
                       } @else {
-                        <i class="bi bi-cart-plus me-2"></i>
+                        <i class="bi bi-cart-plus me-1"></i>
 
                         @if (product.stock > 0) {
                           Add to Cart

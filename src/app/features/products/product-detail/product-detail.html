@@ -70,11 +70,42 @@
       @if (!isLoading && product) {
         <div class="product-detail-card">
           <!-- =================================================
-               IMAGE SECTION
+               PRODUCT IMAGE
           ================================================== -->
 
           <div class="image-section">
             <div class="main-image-wrapper">
+              <!-- STOCK BADGE -->
+
+              @if (product.stock > 0) {
+                <span class="detail-stock-badge"> {{ product.stock }} left </span>
+              } @else {
+                <span class="detail-stock-badge out"> Out of stock </span>
+              }
+
+              <!-- WISHLIST -->
+
+              <button
+                type="button"
+                class="detail-wishlist-button"
+                [class.active]="isInWishlist"
+                [disabled]="isAddingToWishlist"
+                (click)="toggleWishlist()"
+                aria-label="Wishlist"
+              >
+                @if (isAddingToWishlist) {
+                  <span class="spinner-border spinner-border-sm"></span>
+                } @else {
+                  <i
+                    class="bi"
+                    [class.bi-heart-fill]="isInWishlist"
+                    [class.bi-heart]="!isInWishlist"
+                  ></i>
+                }
+              </button>
+
+              <!-- MAIN IMAGE -->
+
               @if (getCurrentImage()) {
                 <img
                   [src]="getImageUrl(getCurrentImage()?.imageUrl ?? null)"
@@ -85,7 +116,7 @@
                 <div class="no-image">
                   <i class="bi bi-image"></i>
 
-                  <span>No Image Available</span>
+                  <span> No Image Available </span>
                 </div>
               }
 
@@ -109,8 +140,6 @@
                 >
                   <i class="bi bi-chevron-right"></i>
                 </button>
-
-                <!-- COUNTER -->
 
                 <span class="image-counter">
                   {{ currentImageIndex + 1 }}
@@ -143,124 +172,198 @@
           ================================================== -->
 
           <div class="product-info">
-            <!-- STATUS -->
-
-            <div class="status-row">
-              @if (product.isActive) {
-                <span class="status active">
-                  <i class="bi bi-check-circle me-1"></i>
-                  Active
-                </span>
-              } @else {
-                <span class="status inactive"> Inactive </span>
-              }
-
-              @if (isInWishlist) {
-                <span class="saved-label">
-                  <i class="bi bi-heart-fill me-1"></i>
-                  Saved
-                </span>
-              }
-            </div>
-
             <!-- PRODUCT NAME -->
 
-            <h2>
+            <h2 class="detail-product-name">
               {{ product.productName }}
             </h2>
 
             <!-- CATEGORY -->
 
-            <div class="category">
-              {{ product.categoryName }}
+            @if (product.categoryName) {
+              <div class="detail-category">
+                {{ product.categoryName }}
+              </div>
+            }
+
+            <!-- RATING + SKU -->
+
+            <div class="detail-meta-row">
+              <div class="detail-rating">
+                @for (star of ratingStars; track star) {
+                  <i
+                    class="bi"
+                    [class.bi-star-fill]="
+                      reviewSummary && star <= Math.round(reviewSummary.averageRating)
+                    "
+                    [class.bi-star]="
+                      !reviewSummary || star > Math.round(reviewSummary.averageRating)
+                    "
+                  ></i>
+                }
+
+                <strong>
+                  {{ reviewSummary?.averageRating ?? 0 }}
+                </strong>
+
+                <span>
+                  ({{ reviewSummary?.reviewCount ?? 0 }}
+                  reviews)
+                </span>
+              </div>
+
+              <span class="detail-meta-divider"> | </span>
+
+              <div class="detail-sku">
+                SKU:
+                <strong>
+                  {{ product.sku }}
+                </strong>
+              </div>
             </div>
 
             <!-- DESCRIPTION -->
 
-            <p class="description">
-              {{ product.description }}
-            </p>
+            @if (product.description) {
+              <p class="detail-description">
+                {{ product.description }}
+              </p>
+            }
 
-            <!-- SKU -->
+            <!-- CURRENT PRICE -->
 
-            <div class="sku-row">
-              <span>SKU</span>
+            <div class="mobile-price-block">
+              <div class="detail-price-main">
+                <strong> ₹{{ getCurrentUnitPrice() | number: '1.2-2' }} </strong>
 
-              <strong>
-                {{ product.sku }}
-              </strong>
-            </div>
-
-            <!-- PRICE -->
-
-            <div class="price-box">
-              <div class="price-item">
-                <span>Wholesale Price</span>
-
-                <strong> ₹{{ product.wholesalePrice | number: '1.2-2' }} </strong>
+                <span> / unit </span>
               </div>
 
-              <div class="price-item">
-                <span>MRP</span>
+              <div class="detail-price-subrow">
+                <span class="detail-retail-label"> Retail Price </span>
 
-                <strong class="mrp"> ₹{{ product.mrp | number: '1.2-2' }} </strong>
-              </div>
+                @if (getCurrentUnitPrice() < getRetailPrice()) {
+                  <!-- Retail Price is crossed only after a tier price is unlocked -->
+                  <del class="detail-retail-price"> ₹{{ getRetailPrice() | number: '1.2-2' }} </del>
+                } @else {
+                  <!-- Normal retail price - no strike-through -->
+                  <span class="detail-retail-price">
+                    ₹{{ getRetailPrice() | number: '1.2-2' }}
+                  </span>
+                }
 
-              <div class="price-item">
-                <span>GST</span>
+                @if (product.mrp > getRetailPrice()) {
+                  <span class="detail-mrp-label"> MRP </span>
 
-                <strong> {{ product.gstPercentage }}% </strong>
+                  <del class="detail-mrp-price"> ₹{{ product.mrp | number: '1.2-2' }} </del>
+                }
+
+                @if (getSavingPerUnit() > 0) {
+                  <span class="detail-saving-pill">
+                    You save ₹{{ getSavingPerUnit() | number: '1.2-2' }}
+
+                    ({{ (getSavingPerUnit() / getRetailPrice()) * 100 | number: '1.0-2' }}%)
+                  </span>
+                }
               </div>
             </div>
 
-            <!-- STOCK -->
+            <!-- WHOLESALE MESSAGE -->
 
-            <div class="stock-box">
-              <span>Available Stock</span>
+            @if (getSavingPerUnit() > 0 || getNextPriceTier()) {
+              <div class="wholesale-message">
+                <div class="wholesale-message-icon">
+                  <i class="bi bi-tag-fill"></i>
+                </div>
 
-              @if (product.stock > 0) {
-                <strong class="in-stock"> {{ product.stock }} available </strong>
-              } @else {
-                <strong class="out-stock"> Out of Stock </strong>
-              }
-            </div>
+                <div>
+                  <strong> Buy more, save more! </strong>
 
-            <!-- =================================================
-                 ACTIONS
-            ================================================== -->
+                  <span> Better quantity = Better price </span>
+                </div>
+              </div>
+            }
 
-            <div class="action-buttons">
-              <!-- WISHLIST -->
+            <!-- NEXT BULK PRICE -->
+
+            @if (getNextPriceTier()) {
+              <div class="detail-next-tier">
+                <div class="detail-next-tier-icon">
+                  <i class="bi bi-arrow-up-circle-fill"></i>
+                </div>
+
+                <div>
+                  <div class="detail-next-tier-title">Next bulk price</div>
+
+                  <div class="detail-next-tier-text">
+                    Buy
+
+                    <strong>
+                      {{ getQuantityToNextTier() }}
+                    </strong>
+
+                    more to unlock
+
+                    <strong>
+                      {{ getNextTierLabel(getNextPriceTier()!) }}
+                    </strong>
+                  </div>
+
+                  <div class="detail-next-tier-price">
+                    Get at ₹{{ getNextPriceTier()?.price | number: '1.2-2' }}
+
+                    <span> / unit </span>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- BEST PRICE -->
+
+            @if (isBestPrice()) {
+              <div class="detail-best-price">
+                <i class="bi bi-stars"></i>
+
+                <span> Best bulk price unlocked! </span>
+              </div>
+            }
+
+            <!-- QUANTITY -->
+
+            <div class="detail-purchase-card">
+              <div class="detail-quantity-section">
+                <span class="detail-field-label"> Quantity </span>
+
+                <div class="detail-quantity-control">
+                  <button
+                    type="button"
+                    [disabled]="isAddingToCart || quantity <= 1"
+                    (click)="decreaseQuantity()"
+                    aria-label="Decrease quantity"
+                  >
+                    <i class="bi bi-dash"></i>
+                  </button>
+
+                  <span>
+                    {{ quantity }}
+                  </span>
+
+                  <button
+                    type="button"
+                    [disabled]="isAddingToCart || product.stock <= quantity"
+                    (click)="increaseQuantity()"
+                    aria-label="Increase quantity"
+                  >
+                    <i class="bi bi-plus"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- ADD CART -->
 
               <button
                 type="button"
-                class="wishlist-button"
-                [class.active]="isInWishlist"
-                [disabled]="isAddingToWishlist"
-                (click)="toggleWishlist()"
-              >
-                @if (isAddingToWishlist) {
-                  <span class="spinner-border spinner-border-sm me-2"></span>
-                } @else {
-                  <i
-                    class="bi"
-                    [class.bi-heart-fill]="isInWishlist"
-                    [class.bi-heart]="!isInWishlist"
-                  ></i>
-                }
-
-                @if (isInWishlist) {
-                  Remove from Wishlist
-                } @else {
-                  Add to Wishlist
-                }
-              </button>
-
-              <!-- CART -->
-
-              <button
-                type="button"
-                class="cart-button"
+                class="detail-add-cart-button"
                 [disabled]="product.stock <= 0 || isAddingToCart"
                 (click)="addToCart()"
               >
@@ -269,28 +372,35 @@
 
                   Adding...
                 } @else {
-                  <i class="bi bi-cart-plus me-2"></i>
+                  <i class="bi bi-cart-plus"></i>
 
-                  @if (product.stock > 0) {
-                    Add to Cart
-                  } @else {
-                    Out of Stock
-                  }
+                  Add to Cart
                 }
               </button>
 
-              <!-- =================================================
-                   BULK ENQUIRY
-              ================================================== -->
+              <!-- BUY NOW -->
 
-              <button type="button" class="bulk-enquiry-button" (click)="openBulkEnquiry()">
-                <i class="bi bi-chat-left-text me-2"></i>
+              <button
+                type="button"
+                class="detail-buy-now-button"
+                [disabled]="product.stock <= 0 || isAddingToCart"
+                (click)="buyNow()"
+              >
+                <i class="bi bi-lightning-charge"></i>
+
+                Buy Now
+              </button>
+
+              <!-- BULK ENQUIRY -->
+
+              <button type="button" class="detail-bulk-enquiry-button" (click)="openBulkEnquiry()">
+                <i class="bi bi-chat-left-text"></i>
 
                 Bulk Enquiry
               </button>
             </div>
 
-            <!-- SUCCESS MESSAGE -->
+            <!-- SUCCESS / ERROR -->
 
             @if (successMessage) {
               <div class="success-message">
@@ -299,6 +409,108 @@
                 {{ successMessage }}
               </div>
             }
+
+            @if (errorMessage) {
+              <div class="detail-inline-error">
+                <i class="bi bi-exclamation-circle"></i>
+
+                {{ errorMessage }}
+              </div>
+            }
+
+            <!-- ALL PRICE TIERS -->
+
+            @if (product.priceTiers && product.priceTiers.length > 0) {
+              <div class="detail-price-tiers">
+                <div class="detail-price-tiers-header">
+                  <strong> Price Tiers </strong>
+
+                  <span> Quantity-based pricing </span>
+                </div>
+
+                <div class="detail-price-tier-list">
+                  @for (tier of product.priceTiers; track tier.productPriceTierId) {
+                    <div
+                      class="detail-price-tier-row"
+                      [class.current]="
+                        getCurrentPriceTier()?.productPriceTierId === tier.productPriceTierId
+                      "
+                      [class.next]="
+                        getNextPriceTier()?.productPriceTierId === tier.productPriceTierId
+                      "
+                    >
+                      <div>
+                        @if (
+                          getCurrentPriceTier()?.productPriceTierId === tier.productPriceTierId
+                        ) {
+                          <span class="tier-status current"> Current </span>
+                        } @else if (
+                          getNextPriceTier()?.productPriceTierId === tier.productPriceTierId
+                        ) {
+                          <span class="tier-status next"> Next </span>
+                        } @else {
+                          <span class="tier-status bulk"> Bulk </span>
+                        }
+                      </div>
+
+                      <strong class="tier-range">
+                        {{ getTierRangeLabel(tier) }}
+
+                        <small> units </small>
+                      </strong>
+
+                      <strong class="tier-price">
+                        ₹{{ tier.price | number: '1.2-2' }}
+
+                        <small> / unit </small>
+                      </strong>
+
+                      <span class="tier-saving">
+                        Save ₹{{ getTierSaving(tier) | number: '1.2-2' }}
+                      </span>
+                    </div>
+                  }
+                </div>
+
+                <div class="detail-price-tiers-note">
+                  <i class="bi bi-info-circle"></i>
+
+                  Prices are applied automatically in your cart based on quantity.
+                </div>
+              </div>
+            }
+
+            <!-- STOCK -->
+
+            <div class="detail-stock-line">
+              @if (product.stock > 0) {
+                <span class="in-stock"> {{ product.stock }} units available </span>
+              } @else {
+                <span class="out-stock"> Out of stock </span>
+              }
+            </div>
+
+            <!-- TRUST -->
+
+            <div class="detail-trust-row">
+              <div>
+                <i class="bi bi-shield-check"></i>
+
+                <span> Secure Shopping </span>
+              </div>
+
+              <div>
+                <i class="bi bi-arrow-counterclockwise"></i>
+
+                <span> Easy Returns </span>
+              </div>
+
+              <div>
+                <i class="bi bi-shield-check"></i>
+
+                <span> Warranty </span>
+              </div>
+            </div>
           </div>
         </div>
 
