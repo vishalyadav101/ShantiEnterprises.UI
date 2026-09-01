@@ -1,37 +1,41 @@
 <div class="cart-page">
-  <!-- =========================
+  <!-- =========================================================
        HEADER
-  ========================== -->
+  ========================================================== -->
+
   <section class="cart-header">
     <div class="container">
-      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+      <div class="cart-header-content">
         <div>
-          <span class="text-primary fw-semibold"> Shanti Enterprises </span>
+          <span class="brand-name"> Shanti Enterprises </span>
 
-          <h1 class="fw-bold mb-1">Shopping Cart</h1>
+          <h1>Shopping Cart</h1>
 
-          <p class="text-muted mb-0">Review your items before placing your order.</p>
+          <p>Review your items before placing your order.</p>
         </div>
 
-        <a routerLink="/products" class="btn btn-outline-primary">
-          <i class="bi bi-arrow-left me-2"></i>
+        <a routerLink="/products" class="continue-shopping-btn">
+          <i class="bi bi-arrow-left"></i>
+
           Continue Shopping
         </a>
       </div>
     </div>
   </section>
 
-  <!-- =========================
-       CART CONTENT
-  ========================== -->
+  <!-- =========================================================
+       CART SECTION
+  ========================================================== -->
+
   <section class="cart-section">
     <div class="container">
-      <!-- =========================
+      <!-- =====================================================
            SUCCESS MESSAGE
-      ========================== -->
+      ====================================================== -->
+
       @if (successMessage) {
-        <div class="alert alert-success d-flex align-items-center" role="alert">
-          <i class="bi bi-check-circle me-2"></i>
+        <div class="cart-alert success" role="alert">
+          <i class="bi bi-check-circle-fill"></i>
 
           <span>
             {{ successMessage }}
@@ -39,102 +43,137 @@
         </div>
       }
 
-      <!-- =========================
+      <!-- =====================================================
            LOADING
-      ========================== -->
+      ====================================================== -->
+
       @if (isLoading) {
         <div class="cart-loading">
-          <div class="spinner-border text-primary" role="status"></div>
+          <div class="spinner-border text-primary"></div>
 
-          <p class="text-muted mt-3 mb-0">Loading your cart...</p>
+          <p>Loading your cart...</p>
         </div>
       }
 
-      <!-- =========================
+      <!-- =====================================================
            ERROR
-      ========================== -->
+      ====================================================== -->
+
       @if (!isLoading && errorMessage) {
-        <div
-          class="alert alert-danger d-flex align-items-center justify-content-between"
-          role="alert"
-        >
-          <div>
-            <i class="bi bi-exclamation-circle me-2"></i>
+        <div class="cart-alert error" role="alert">
+          <div class="cart-error-content">
+            <div class="cart-error-message">
+              <i class="bi bi-exclamation-circle-fill"></i>
 
-            {{ errorMessage }}
+              <span>
+                {{ errorMessage }}
+              </span>
+            </div>
+
+            <button type="button" class="retry-btn" (click)="loadCart()">Retry</button>
           </div>
-
-          <button type="button" class="btn btn-sm btn-outline-danger" (click)="loadCart()">
-            Retry
-          </button>
         </div>
       }
 
-      <!-- =========================
+      <!-- =====================================================
            EMPTY CART
-      ========================== -->
+      ====================================================== -->
+
       @if (!isLoading && !errorMessage && cart && cart.items.length === 0) {
         <div class="empty-cart">
           <div class="empty-cart-icon">
             <i class="bi bi-cart-x"></i>
           </div>
 
-          <h3 class="fw-bold mt-4">Your Cart is Empty</h3>
+          <h3>Your Cart is Empty</h3>
 
-          <p class="text-muted">Looks like you haven't added anything to your cart yet.</p>
+          <p>Looks like you haven't added anything to your cart yet.</p>
 
-          <a routerLink="/products" class="btn btn-primary mt-2">
-            <i class="bi bi-shop me-2"></i>
+          <a routerLink="/products" class="browse-products-btn">
+            <i class="bi bi-shop"></i>
+
             Browse Products
           </a>
         </div>
       }
 
-      <!-- =========================
+      <!-- =====================================================
            CART
-      ========================== -->
+      ====================================================== -->
+
       @if (!isLoading && !errorMessage && cart && cart.items.length > 0) {
-        <div class="row g-4">
-          <!-- =========================
+        <div class="cart-layout">
+          <!-- =================================================
                CART ITEMS
-          ========================== -->
-          <div class="col-lg-8">
+          ================================================== -->
+
+          <div class="cart-items-column">
+            <!-- ===============================================
+                 WHOLESALE NOTICE
+            ================================================ -->
+
+            <div class="wholesale-banner">
+              <div class="wholesale-banner-icon">
+                <i class="bi bi-tag-fill"></i>
+              </div>
+
+              <div class="wholesale-banner-content">
+                <strong> You're getting wholesale prices! </strong>
+
+                <span> Buy more to unlock better quantity discounts. </span>
+              </div>
+            </div>
+
+            <!-- ===============================================
+                 CART CARD
+            ================================================ -->
+
             <div class="cart-card">
               <!-- CART HEADER -->
+
               <div class="cart-card-header">
                 <div>
-                  <h5 class="fw-bold mb-1">Cart Items</h5>
+                  <h5>Cart Items</h5>
 
-                  <span class="text-muted small"> {{ cart.totalItems }} item(s) </span>
+                  <span> {{ cart.totalItems }} item(s) </span>
                 </div>
 
-                <!-- CLEAR COMPLETE CART -->
+                <!-- CLEAR CART -->
+
                 <button
                   type="button"
-                  class="btn btn-sm btn-outline-danger"
+                  class="clear-cart-btn"
                   [disabled]="isUpdating"
                   (click)="clearCart()"
                 >
                   @if (isUpdating) {
-                    <span class="spinner-border spinner-border-sm me-1"></span>
+                    <span class="spinner-border spinner-border-sm"></span>
                   } @else {
-                    <i class="bi bi-trash3 me-1"></i>
+                    <i class="bi bi-trash3"></i>
                   }
 
                   Clear Cart
                 </button>
               </div>
 
-              <!-- =========================
+              <!-- =============================================
                    ITEMS
-              ========================== -->
+              ============================================== -->
+
               <div class="cart-items">
                 @for (item of cart.items; track item.cartItemId) {
                   <div class="cart-item">
-                    <!-- PRODUCT IMAGE -->
+                    <!-- =======================================
+                         PRODUCT IMAGE
+                    ======================================== -->
+
                     <div class="cart-item-image">
                       @if (item.imageUrl) {
-                        <img [src]="item.imageUrl" [alt]="item.productName" loading="lazy" />
+                        <img
+                          [src]="getImageUrl(item.imageUrl)"
+                          [alt]="item.productName"
+                          loading="lazy"
+                        />
                       } @else {
                         <div class="no-image">
                           <i class="bi bi-image"></i>
@@ -142,46 +181,261 @@
                       }
                     </div>
 
-                    <!-- PRODUCT DETAILS -->
+                    <!-- =======================================
+                         PRODUCT DETAILS
+                    ======================================== -->
+
                     <div class="cart-item-details">
+                      <!-- PRODUCT NAME -->
+
                       <h5 class="product-name">
                         {{ item.productName }}
                       </h5>
 
-                      <div class="product-price">
-                        ₹{{ item.unitPrice }}
+                      <!-- =====================================
+                           WHOLESALE STATUS
+                      ====================================== -->
 
-                        <span> / item </span>
+                      @if (item.unitPrice < item.retailPrice) {
+                        <div class="wholesale-status">
+                          <span class="status-check">
+                            <i class="bi bi-check-lg"></i>
+                          </span>
+
+                          <span> Wholesale price applied </span>
+                        </div>
+                      }
+
+                      <!-- =====================================
+                           CURRENT PRICE
+                      ====================================== -->
+
+                      <div class="current-price-row">
+                        <strong class="current-price">
+                          ₹{{ item.unitPrice | number: '1.2-2' }}
+                        </strong>
+
+                        <span class="per-unit"> / unit </span>
                       </div>
 
-                      <div class="item-gst">GST {{ item.gstPercentage }}%</div>
+                      <!-- =====================================
+                           RETAIL PRICE
+                      ====================================== -->
 
-                      <!-- QUANTITY -->
+                      @if (item.retailPrice > item.unitPrice) {
+                        <div class="retail-price-row">
+                          <span class="retail-price">
+                            ₹{{ item.retailPrice | number: '1.2-2' }}
+                          </span>
+
+                          <span class="retail-label"> Retail Price </span>
+                        </div>
+                      } @else {
+                        <div class="retail-price-row normal-price">
+                          <span class="retail-label"> Retail Price </span>
+                        </div>
+                      }
+
+                      <!-- =====================================
+                           SAVING PER UNIT
+                      ====================================== -->
+
+                      @if (item.retailPrice > item.unitPrice) {
+                        <div class="saving-badge">
+                          <i class="bi bi-piggy-bank"></i>
+
+                          <span> You save </span>
+
+                          <strong>
+                            ₹{{ item.retailPrice - item.unitPrice | number: '1.2-2' }}
+                          </strong>
+
+                          <span> / unit </span>
+                        </div>
+                      }
+
+                      <!-- =====================================
+                           NEXT BULK PRICE
+                      ====================================== -->
+
+                      @if (hasNextPriceTier(item)) {
+                        <div class="next-tier-card">
+                          <div class="next-tier-icon">
+                            <i class="bi bi-arrow-up-circle-fill"></i>
+                          </div>
+
+                          <div class="next-tier-content">
+                            <div class="next-tier-title">Next bulk price</div>
+
+                            <div class="next-tier-main">
+                              Buy
+
+                              <strong>
+                                {{ getQuantityToNextTier(item) }}
+                              </strong>
+
+                              more to unlock
+
+                              <strong>
+                                {{ getNextTierLabel(item) }}
+                              </strong>
+                            </div>
+
+                            <div class="next-tier-price">
+                              ₹{{ getNextPriceTier(item)?.price | number: '1.2-2' }}
+
+                              <span> / unit </span>
+                            </div>
+                          </div>
+                        </div>
+                      }
+
+                      <!-- =====================================
+                           BEST BULK PRICE
+                      ====================================== -->
+
+                      @if (isBestPriceUnlocked(item)) {
+                        <div class="best-price-card">
+                          <i class="bi bi-stars"></i>
+
+                          <span> Best bulk price unlocked! </span>
+                        </div>
+                      }
+
+                      <!-- =====================================
+                           ALL PRICE TIERS
+                      ====================================== -->
+
+                      @if (item.priceTiers && item.priceTiers.length > 0) {
+                        <div class="all-price-tiers">
+                          <!-- =================================
+                               TIER HEADER
+                          ================================== -->
+
+                          <div class="all-price-tiers-header">
+                            <div>
+                              <strong> All Price Tiers </strong>
+
+                              <span> quantity-based pricing </span>
+                            </div>
+                          </div>
+
+                          <!-- =================================
+                               TIER LIST
+                          ================================== -->
+
+                          <div class="price-tier-list">
+                            @for (tier of item.priceTiers; track tier.productPriceTierId) {
+                              <div
+                                class="price-tier-row"
+                                [class.current-tier]="
+                                  getCurrentPriceTier(item)?.productPriceTierId ===
+                                  tier.productPriceTierId
+                                "
+                                [class.next-tier]="
+                                  getNextPriceTier(item)?.productPriceTierId ===
+                                  tier.productPriceTierId
+                                "
+                              >
+                                <!-- =========================
+                                     BADGE
+                                ========================== -->
+
+                                <div class="price-tier-badge">
+                                  @if (
+                                    getCurrentPriceTier(item)?.productPriceTierId ===
+                                    tier.productPriceTierId
+                                  ) {
+                                    <span class="current-badge"> Current </span>
+                                  } @else if (
+                                    getNextPriceTier(item)?.productPriceTierId ===
+                                    tier.productPriceTierId
+                                  ) {
+                                    <span class="next-badge"> Next </span>
+                                  } @else {
+                                    <span class="bulk-badge"> Bulk </span>
+                                  }
+                                </div>
+
+                                <!-- =========================
+                                     QUANTITY
+                                ========================== -->
+
+                                <div class="price-tier-quantity">
+                                  <strong>
+                                    {{ tier.minQuantity }}
+
+                                    @if (
+                                      tier.maxQuantity !== null && tier.maxQuantity !== undefined
+                                    ) {
+                                      –
+                                      {{ tier.maxQuantity }}
+                                    } @else {
+                                      +
+                                    }
+                                  </strong>
+
+                                  <span> units </span>
+                                </div>
+
+                                <!-- =========================
+                                     PRICE
+                                ========================== -->
+
+                                <div class="price-tier-price">
+                                  <strong> ₹{{ tier.price | number: '1.2-2' }} </strong>
+
+                                  <span> / unit </span>
+                                </div>
+                              </div>
+                            }
+                          </div>
+                        </div>
+                      }
+
+                      <!-- =====================================
+                           GST
+                      ====================================== -->
+
+                      <div class="item-gst">
+                        GST
+                        {{ item.gstPercentage | number: '1.0-2' }}%
+                      </div>
+
+                      <!-- =====================================
+                           QUANTITY
+                      ====================================== -->
+
                       <div class="quantity-wrapper">
                         <span class="quantity-label"> Quantity </span>
 
                         <div class="quantity-control">
                           <!-- DECREASE -->
+
                           <button
                             type="button"
                             class="quantity-btn"
                             [disabled]="isUpdating || item.quantity <= 1"
                             (click)="decreaseQuantity(item)"
+                            aria-label="Decrease quantity"
                           >
                             <i class="bi bi-dash"></i>
                           </button>
 
-                          <!-- CURRENT QUANTITY -->
+                          <!-- VALUE -->
+
                           <span class="quantity-value">
                             {{ item.quantity }}
                           </span>
 
                           <!-- INCREASE -->
+
                           <button
                             type="button"
                             class="quantity-btn"
                             [disabled]="isUpdating"
                             (click)="increaseQuantity(item)"
+                            aria-label="Increase quantity"
                           >
                             <i class="bi bi-plus"></i>
                           </button>
@@ -189,29 +443,46 @@
                       </div>
                     </div>
 
-                    <!-- ITEM TOTAL -->
+                    <!-- =======================================
+                         ITEM TOTAL
+                    ======================================== -->
+
                     <div class="cart-item-total">
-                      <div class="total-label">Total</div>
+                      <!-- REMOVE -->
 
-                      <div class="item-total-price">₹{{ item.totalPrice }}</div>
-
-                      <div class="item-gst-amount">GST ₹{{ item.gstAmount }}</div>
-
-                      <!-- REMOVE ONLY THIS ITEM -->
                       <button
                         type="button"
                         class="remove-btn"
                         [disabled]="isUpdating"
                         (click)="removeItem(item)"
+                        title="Remove item"
                       >
                         @if (isUpdating) {
-                          <span class="spinner-border spinner-border-sm me-1"></span>
+                          <span class="spinner-border spinner-border-sm"></span>
                         } @else {
-                          <i class="bi bi-trash3 me-1"></i>
+                          <i class="bi bi-trash3"></i>
                         }
-
-                        Remove
                       </button>
+
+                      <div class="total-label">Total</div>
+
+                      <div class="item-total-price">₹{{ item.totalPrice | number: '1.2-2' }}</div>
+
+                      <!-- =====================================
+                           ITEM TOTAL SAVING
+                      ====================================== -->
+
+                      @if (item.retailPrice > item.unitPrice) {
+                        <div class="item-total-saving">
+                          Save ₹{{
+                            (item.retailPrice - item.unitPrice) * item.quantity | number: '1.2-2'
+                          }}
+                        </div>
+                      }
+
+                      <!-- GST AMOUNT -->
+
+                      <div class="item-gst-amount">GST ₹{{ item.gstAmount | number: '1.2-2' }}</div>
                     </div>
                   </div>
                 }
@@ -219,77 +490,136 @@
             </div>
           </div>
 
-          <!-- =========================
+          <!-- =================================================
                ORDER SUMMARY
-          ========================== -->
-          <div class="col-lg-4">
+          ================================================== -->
+
+          <aside class="summary-column">
             <div class="summary-card">
-              <h5 class="fw-bold mb-4">Order Summary</h5>
+              <h5>Order Summary</h5>
 
-              <!-- TOTAL ITEMS -->
+              <!-- =============================================
+                   ITEMS
+              ============================================== -->
+
               <div class="summary-row">
-                <span> Items </span>
+                <span> Items ({{ cart.totalItems }}) </span>
 
-                <strong>
-                  {{ cart.totalItems }}
-                </strong>
+                <strong> ₹{{ cart.subtotal | number: '1.2-2' }} </strong>
               </div>
 
-              <!-- SUBTOTAL -->
-              <div class="summary-row">
-                <span> Subtotal </span>
+              <!-- =============================================
+                   YOU SAVE
+              ============================================== -->
 
-                <strong> ₹{{ cart.subtotal }} </strong>
-              </div>
+              @if (getTotalSavings() > 0) {
+                <div class="summary-row savings-row">
+                  <span> You Save </span>
 
-              <!-- GST -->
+                  <strong> - ₹{{ getTotalSavings() | number: '1.2-2' }} </strong>
+                </div>
+              }
+
+              <!-- =============================================
+                   GST
+              ============================================== -->
+
               <div class="summary-row">
                 <span> GST </span>
 
-                <strong> ₹{{ cart.gstAmount }} </strong>
+                <strong> ₹{{ cart.gstAmount | number: '1.2-2' }} </strong>
               </div>
 
-              <hr />
+              <!-- =============================================
+                   SHIPPING
+              ============================================== -->
 
-              <!-- GRAND TOTAL -->
+              <div class="summary-row">
+                <span class="shipping-label">
+                  Shipping
+
+                  <i
+                    class="bi bi-info-circle"
+                    title="Shipping charge based on the products in your cart."
+                  ></i>
+                </span>
+
+                <strong>
+                  @if (cart.shippingCharge > 0) {
+                    ₹{{ cart.shippingCharge | number: '1.2-2' }}
+                  } @else {
+                    <span class="free-shipping"> FREE </span>
+                  }
+                </strong>
+              </div>
+
+              <div class="summary-divider"></div>
+
+              <!-- =============================================
+                   GRAND TOTAL
+              ============================================== -->
+
               <div class="summary-total">
                 <span> Grand Total </span>
 
-                <strong> ₹{{ cart.grandTotal }} </strong>
+                <strong> ₹{{ cart.grandTotal | number: '1.2-2' }} </strong>
               </div>
 
-              <!-- =========================
+              <!-- =============================================
                    CHECKOUT
-              ========================== -->
+              ============================================== -->
 
-              <a
-                routerLink="/checkout"
-                class="btn btn-primary btn-lg w-100 mt-4"
-                [class.disabled]="isUpdating"
-                [attr.aria-disabled]="isUpdating"
+              <button
+                type="button"
+                class="checkout-btn"
+                [disabled]="isUpdating"
+                (click)="goToCheckout()"
               >
-                <i class="bi bi-credit-card me-2"></i>
-
+                <i class="bi bi-lock-fill"></i>
                 Proceed to Checkout
-              </a>
+              </button>
 
-              <!-- SECURE PAYMENT -->
+              <!-- SECURE -->
+
               <div class="secure-payment">
-                <i class="bi bi-shield-check me-2"></i>
+                <i class="bi bi-shield-check"></i>
 
                 Secure checkout
               </div>
             </div>
 
-            <!-- =========================
-                 GST INFO
-            ========================== -->
-            <div class="info-card mt-3">
-              <i class="bi bi-info-circle text-primary me-2"></i>
+            <!-- =============================================
+                 SAVINGS INFO
+            ============================================== -->
 
-              GST is calculated according to the product's applicable GST percentage.
+            @if (getTotalSavings() > 0) {
+              <div class="savings-info-card">
+                <div class="savings-info-icon">
+                  <i class="bi bi-stars"></i>
+                </div>
+
+                <div>
+                  <strong> You're saving with bulk pricing </strong>
+
+                  <p>
+                    Quantity-based wholesale prices are automatically applied to eligible products.
+                  </p>
+                </div>
+              </div>
+            }
+
+            <!-- =============================================
+                 GST INFO
+            ============================================== -->
+
+            <div class="info-card">
+              <i class="bi bi-info-circle"></i>
+
+              <span>
+                GST is calculated according to each product's applicable GST percentage.
+              </span>
             </div>
-          </div>
+          </aside>
         </div>
       }
     </div>

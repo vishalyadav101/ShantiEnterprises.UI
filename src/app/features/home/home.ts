@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { forkJoin, finalize, Subscription } from 'rxjs';
+import { forkJoin, finalize } from 'rxjs';
 
 import { AuthService } from '../../core/services/auth';
 import { ProductService } from '../../core/services/product';
@@ -10,12 +10,13 @@ import { CartService } from '../../core/services/cart';
 import { ProductImageService, ProductImage } from '../../core/services/product-image';
 import { OrderService } from '../../core/services/order';
 import { BannerService, Banner } from '../../core/services/banner';
+import { ReviewService } from '../../core/services/review';
+
+import { ProductPriceTierService, ProductPriceTier } from '../../core/services/product-price-tier';
 
 import { Product } from '../../core/models/product.model';
 import { Cart } from '../../core/models/cart.model';
 import { Order } from '../../core/models/order.model';
-import { ReviewService } from '../../core/services/review';
-
 import { ReviewSummary } from '../../core/models/review.model';
 
 @Component({
@@ -43,7 +44,11 @@ export class Home implements OnInit, OnDestroy {
   private readonly orderService = inject(OrderService);
 
   private readonly bannerService = inject(BannerService);
+
   private readonly reviewService = inject(ReviewService);
+
+  private readonly productPriceTierService = inject(ProductPriceTierService);
+
   private readonly router = inject(Router);
 
   // =========================================================
@@ -79,6 +84,15 @@ export class Home implements OnInit, OnDestroy {
   currentImageIndex: Record<number, number> = {};
 
   isLoadingImages: Record<number, boolean> = {};
+
+  // =========================================================
+  // PRICE TIERS
+  // =========================================================
+
+  productPriceTiers: Record<number, ProductPriceTier[]> = {};
+
+  isLoadingPriceTiers: Record<number, boolean> = {};
+
   // =========================================================
   // REVIEWS
   // =========================================================
@@ -211,15 +225,18 @@ export class Home implements OnInit, OnDestroy {
            * Show maximum 8 products on Home page.
            */
 
-          this.featuredProducts = this.products.slice(0, 8);
+          this.featuredProducts = this.products.slice(0, 12);
 
           /*
-           * Load images for featured products.
+           * Load data for featured products.
            */
 
           this.featuredProducts.forEach((product) => {
             this.loadProductImages(product);
+
             this.loadReviewSummary(product);
+
+            this.loadProductPriceTiers(product);
           });
 
           // =================================================
@@ -363,6 +380,7 @@ export class Home implements OnInit, OnDestroy {
 
     if (buttonUrl.startsWith('http://') || buttonUrl.startsWith('https://')) {
       window.location.href = buttonUrl;
+
       return;
     }
 
@@ -416,11 +434,8 @@ export class Home implements OnInit, OnDestroy {
             this.productImages[product.productId] = [
               {
                 productImageId: 0,
-
                 productId: product.productId,
-
                 imageUrl: product.imageUrl,
-
                 isPrimary: true,
               },
             ];
@@ -438,11 +453,8 @@ export class Home implements OnInit, OnDestroy {
             this.productImages[product.productId] = [
               {
                 productImageId: 0,
-
                 productId: product.productId,
-
                 imageUrl: product.imageUrl,
-
                 isPrimary: true,
               },
             ];
@@ -454,6 +466,70 @@ export class Home implements OnInit, OnDestroy {
         },
       });
   }
+
+  // =========================================================
+  // LOAD PRODUCT PRICE TIERS
+  // =========================================================
+
+  private loadProductPriceTiers(product: Product): void {
+    this.isLoadingPriceTiers[product.productId] = true;
+
+    this.productPriceTierService
+      .getByProductId(product.productId)
+      .pipe(
+        finalize(() => {
+          this.isLoadingPriceTiers[product.productId] = false;
+        }),
+      )
+      .subscribe({
+        next: (tiers) => {
+          this.productPriceTiers[product.productId] = [...tiers].sort(
+            (a, b) => a.minQuantity - b.minQuantity,
+          );
+        },
+
+        error: (error) => {
+          console.error(`Price Tier Error (${product.productId}):`, error);
+
+          this.productPriceTiers[product.productId] = [];
+        },
+      });
+  }
+
+  // =========================================================
+  // GET PRODUCT PRICE TIERS
+  // =========================================================
+
+  getPriceTiers(product: Product): ProductPriceTier[] {
+    return this.productPriceTiers[product.productId] || [];
+  }
+
+  // =========================================================
+  // GET DISPLAY PRICE TIER
+  // =========================================================
+
+  getDisplayPriceTier(product: Product): ProductPriceTier | null {
+    const tiers = this.getPriceTiers(product);
+
+    if (!tiers.length) {
+      return null;
+    }
+
+    return tiers[0];
+  }
+
+  // =========================================================
+  // PRICE TIER RANGE LABEL
+  // =========================================================
+
+  getPriceTierRangeLabel(tier: ProductPriceTier): string {
+    if (tier.maxQuantity === null || tier.maxQuantity === undefined) {
+      return `${tier.minQuantity}+`;
+    }
+
+    return `${tier.minQuantity}-${tier.maxQuantity}`;
+  }
+
   // =========================================================
   // LOAD REVIEW SUMMARY
   // =========================================================
@@ -524,6 +600,7 @@ export class Home implements OnInit, OnDestroy {
   getRoundedRating(productId: number): number {
     return Math.round(this.getAverageRating(productId));
   }
+
   // =========================================================
   // GET PRODUCT IMAGES
   // =========================================================
@@ -761,7 +838,6 @@ export class Home implements OnInit, OnDestroy {
     this.cartService
       .addItem({
         productId: product.productId,
-
         quantity: 1,
       })
       .pipe(

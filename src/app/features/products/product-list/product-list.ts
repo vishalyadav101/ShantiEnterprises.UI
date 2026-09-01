@@ -11,6 +11,10 @@ import { ReviewService } from '../../../core/services/review';
 
 import { Product } from '../../../core/models/product.model';
 import { ReviewSummary } from '../../../core/models/review.model';
+import {
+  ProductPriceTierService,
+  ProductPriceTier as ServiceProductPriceTier,
+} from '../../../core/services/product-price-tier';
 
 @Component({
   selector: 'app-product-list',
@@ -33,6 +37,8 @@ export class ProductList implements OnInit {
   private readonly wishlistService = inject(WishlistService);
 
   private readonly reviewService = inject(ReviewService);
+
+  private readonly productPriceTierService = inject(ProductPriceTierService);
 
   private readonly router = inject(Router);
 
@@ -79,6 +85,14 @@ export class ProductList implements OnInit {
    * Review summary loading state for every product.
    */
   isLoadingReviews: Record<number, boolean> = {};
+
+  // =========================================================
+  // PRICE TIERS
+  // =========================================================
+
+  productPriceTiers: Record<number, ServiceProductPriceTier[]> = {};
+
+  isLoadingPriceTiers: Record<number, boolean> = {};
 
   // =========================================================
   // WISHLIST
@@ -172,14 +186,20 @@ export class ProductList implements OnInit {
 
           this.isLoadingReviews = {};
 
+          this.productPriceTiers = {};
+
+          this.isLoadingPriceTiers = {};
+
           // ---------------------------------------------------
-          // LOAD IMAGES + REVIEWS
+          // LOAD IMAGES + REVIEWS + PRICE TIERS
           // ---------------------------------------------------
 
           this.products.forEach((product) => {
             this.loadProductImages(product);
 
             this.loadReviewSummary(product);
+
+            this.loadProductPriceTiers(product);
           });
         },
 
@@ -582,6 +602,69 @@ export class ProductList implements OnInit {
 
   isReviewLoading(product: Product): boolean {
     return !!this.isLoadingReviews[product.productId];
+  }
+
+  // =========================================================
+  // LOAD PRODUCT PRICE TIERS
+  // =========================================================
+
+  private loadProductPriceTiers(product: Product): void {
+    this.isLoadingPriceTiers[product.productId] = true;
+
+    this.productPriceTierService
+      .getByProductId(product.productId)
+      .pipe(
+        finalize(() => {
+          this.isLoadingPriceTiers[product.productId] = false;
+        }),
+      )
+      .subscribe({
+        next: (tiers) => {
+          this.productPriceTiers[product.productId] = [...tiers].sort(
+            (a, b) => a.minQuantity - b.minQuantity,
+          );
+        },
+
+        error: (error) => {
+          console.error(`Price Tier Error (${product.productId}):`, error);
+
+          this.productPriceTiers[product.productId] = [];
+        },
+      });
+  }
+
+  // =========================================================
+  // GET PRODUCT PRICE TIERS
+  // =========================================================
+
+  getPriceTiers(product: Product): ServiceProductPriceTier[] {
+    return this.productPriceTiers[product.productId] || [];
+  }
+
+  // =========================================================
+  // GET DISPLAY PRICE TIER
+  // =========================================================
+
+  getDisplayPriceTier(product: Product): ServiceProductPriceTier | null {
+    const tiers = this.getPriceTiers(product);
+
+    if (!tiers.length) {
+      return null;
+    }
+
+    return tiers[0];
+  }
+
+  // =========================================================
+  // PRICE TIER RANGE LABEL
+  // =========================================================
+
+  getPriceTierRangeLabel(tier: ServiceProductPriceTier): string {
+    if (tier.maxQuantity === null || tier.maxQuantity === undefined) {
+      return `${tier.minQuantity}+`;
+    }
+
+    return `${tier.minQuantity}-${tier.maxQuantity}`;
   }
 
   // =========================================================

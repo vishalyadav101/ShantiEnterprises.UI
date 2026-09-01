@@ -5,6 +5,7 @@ import { finalize } from 'rxjs';
 
 import { WishlistService, WishlistItem } from '../../core/services/wishlist';
 import { CartService } from '../../core/services/cart';
+import { ProductImageService } from '../../core/services/product-image';
 
 @Component({
   selector: 'app-wishlist',
@@ -21,6 +22,7 @@ export class Wishlist implements OnInit {
   private readonly wishlistService = inject(WishlistService);
 
   private readonly cartService = inject(CartService);
+  private readonly productImageService = inject(ProductImageService);
 
   private readonly router = inject(Router);
 
@@ -104,6 +106,11 @@ export class Wishlist implements OnInit {
           this.createdDate = response.createdDate;
 
           this.items = response.items || [];
+
+          // Load actual product images
+          this.items.forEach((item) => {
+            this.loadProductImage(item);
+          });
         },
 
         error: (error: unknown) => {
@@ -114,6 +121,58 @@ export class Wishlist implements OnInit {
           this.errorMessage = this.getErrorMessage(error, 'Unable to load wishlist.');
         },
       });
+  }
+  // =========================================================
+  // LOAD PRODUCT IMAGE
+  // =========================================================
+
+  private loadProductImage(item: WishlistItem): void {
+    this.productImageService.getByProductId(item.productId).subscribe({
+      next: (images) => {
+        if (!images || images.length === 0) {
+          return;
+        }
+
+        // Primary image first
+        const sortedImages = [...images].sort((a, b) => {
+          if (a.isPrimary && !b.isPrimary) {
+            return -1;
+          }
+
+          if (!a.isPrimary && b.isPrimary) {
+            return 1;
+          }
+
+          return a.productImageId - b.productImageId;
+        });
+
+        const primaryImage = sortedImages[0];
+
+        if (primaryImage?.imageUrl) {
+          item.imageUrl = primaryImage.imageUrl;
+        }
+      },
+
+      error: (error) => {
+        console.error(`Wishlist Product Image Error (${item.productId}):`, error);
+      },
+    });
+  }
+
+  // =========================================================
+  // IMAGE URL
+  // =========================================================
+
+  getImageUrl(imageUrl: string | null | undefined): string {
+    if (!imageUrl) {
+      return '';
+    }
+
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
+    }
+
+    return `https://localhost:7266${imageUrl}`;
   }
 
   // =========================================================

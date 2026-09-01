@@ -13,7 +13,7 @@ import { Address } from '../../../core/models/address.model';
 import { Cart } from '../../../core/models/cart.model';
 import { CreateOrderRequest, Order } from '../../../core/models/order.model';
 import { Payment } from '../../../core/models/payment.model';
-
+import { ProductImageService } from '../../../core/services/product-image';
 declare const Razorpay: any;
 
 @Component({
@@ -31,6 +31,7 @@ export class CheckoutComponent implements OnInit {
   private readonly addressService = inject(AddressService);
 
   private readonly cartService = inject(CartService);
+  private readonly productImageService = inject(ProductImageService);
 
   private readonly orderService = inject(OrderService);
 
@@ -80,7 +81,7 @@ export class CheckoutComponent implements OnInit {
   // RAZORPAY TEST KEY
   // =========================================================
 
-  private readonly razorpayKeyId = 'rzp_test_TQQFH4ABZkaLOh';
+  private readonly razorpayKeyId = 'rzp_test_TVpwzAjLDlVilx';
 
   // =========================================================
   // INIT
@@ -114,9 +115,13 @@ export class CheckoutComponent implements OnInit {
 
           if (!response || !response.items || response.items.length === 0) {
             this.router.navigate(['/cart']);
-
             return;
           }
+
+          // Load actual product images
+          this.cart.items.forEach((item) => {
+            this.loadProductImage(item);
+          });
 
           this.loadAddresses();
         },
@@ -128,7 +133,48 @@ export class CheckoutComponent implements OnInit {
         },
       });
   }
+  // =========================================================
+  // PRODUCT IMAGE
+  // =========================================================
 
+  private loadProductImage(item: Cart['items'][number]): void {
+    this.productImageService.getByProductId(item.productId).subscribe({
+      next: (images) => {
+        if (!images || images.length === 0) {
+          return;
+        }
+
+        // Primary image first
+        const sortedImages = [...images].sort((a, b) => {
+          if (a.isPrimary && !b.isPrimary) {
+            return -1;
+          }
+
+          if (!a.isPrimary && b.isPrimary) {
+            return 1;
+          }
+
+          return a.productImageId - b.productImageId;
+        });
+
+        const primaryImage = sortedImages[0];
+
+        if (primaryImage?.imageUrl && this.cart) {
+          const cartItem = this.cart.items.find(
+            (cartItem) => cartItem.cartItemId === item.cartItemId,
+          );
+
+          if (cartItem) {
+            cartItem.imageUrl = primaryImage.imageUrl;
+          }
+        }
+      },
+
+      error: (error) => {
+        console.error(`Checkout Product Image Error (${item.productId}):`, error);
+      },
+    });
+  }
   // =========================================================
   // LOAD ADDRESSES
   // =========================================================

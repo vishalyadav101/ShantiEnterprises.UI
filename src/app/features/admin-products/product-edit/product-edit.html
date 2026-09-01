@@ -6,16 +6,24 @@
   <div class="page-header">
     <div>
       <div class="breadcrumb">
-        <a routerLink="/admin">Admin Panel</a>
+        <a routerLink="/admin"> Admin Panel </a>
+
         <span>/</span>
-        <a routerLink="/admin/products">Products</a>
+
+        <a routerLink="/admin/products"> Products </a>
+
         <span>/</span>
-        <span>Edit Product</span>
+
+        <span> Edit Product </span>
       </div>
 
-      <h1>{{ pageTitle }}</h1>
+      <h1>
+        {{ pageTitle }}
+      </h1>
 
-      <p>{{ pageDescription }}</p>
+      <p>
+        {{ pageDescription }}
+      </p>
     </div>
 
     <a routerLink="/admin/products" class="back-button"> ← Back to Products </a>
@@ -36,9 +44,11 @@
   <!-- ===================================================== -->
 
   <div class="message error-message" *ngIf="errorMessage && !isLoadingProduct">
-    <span class="message-icon">!</span>
+    <span class="message-icon"> ! </span>
 
-    <span>{{ errorMessage }}</span>
+    <span>
+      {{ errorMessage }}
+    </span>
   </div>
 
   <!-- ===================================================== -->
@@ -46,9 +56,11 @@
   <!-- ===================================================== -->
 
   <div class="message success-message" *ngIf="successMessage">
-    <span class="message-icon">✓</span>
+    <span class="message-icon"> ✓ </span>
 
-    <span>{{ successMessage }}</span>
+    <span>
+      {{ successMessage }}
+    </span>
   </div>
 
   <!-- ===================================================== -->
@@ -76,7 +88,7 @@
           <label for="productName">
             Product Name
 
-            <span class="required">*</span>
+            <span class="required"> * </span>
           </label>
 
           <input
@@ -86,7 +98,8 @@
             [(ngModel)]="form.productName"
             maxlength="150"
             placeholder="Enter product name"
-            [disabled]="isSaving"
+            [disabled]="isSaving || isSavingPriceTiers"
+            required
           />
         </div>
 
@@ -106,7 +119,7 @@
             maxlength="2000"
             rows="6"
             placeholder="Enter product description"
-            [disabled]="isSaving"
+            [disabled]="isSaving || isSavingPriceTiers"
           ></textarea>
         </div>
 
@@ -116,14 +129,15 @@
           <label for="categoryId">
             Category
 
-            <span class="required">*</span>
+            <span class="required"> * </span>
           </label>
 
           <select
             id="categoryId"
             name="categoryId"
             [(ngModel)]="form.categoryId"
-            [disabled]="isSaving || isLoadingCategories"
+            [disabled]="isSaving || isSavingPriceTiers || isLoadingCategories"
+            required
           >
             <option [ngValue]="0">Select Category</option>
 
@@ -146,18 +160,20 @@
         <div>
           <h2>Pricing & Stock</h2>
 
-          <p>Update pricing and inventory information.</p>
+          <p>Update pricing, shipping and inventory information.</p>
         </div>
       </div>
 
       <div class="form-body two-column">
-        <!-- MRP -->
+        <!-- =================================================
+             MRP
+        ================================================== -->
 
         <div class="form-group">
           <label for="mrp">
             MRP
 
-            <span class="required">*</span>
+            <span class="required"> * </span>
           </label>
 
           <div class="input-with-prefix">
@@ -171,18 +187,51 @@
               min="0.01"
               step="0.01"
               placeholder="0"
-              [disabled]="isSaving"
+              [disabled]="isSaving || isSavingPriceTiers"
+              required
             />
           </div>
         </div>
 
-        <!-- WHOLESALE PRICE -->
+        <!-- =================================================
+             RETAIL PRICE
+        ================================================== -->
+
+        <div class="form-group">
+          <label for="retailPrice">
+            Retail Price
+
+            <span class="required"> * </span>
+          </label>
+
+          <div class="input-with-prefix">
+            <span class="input-prefix"> ₹ </span>
+
+            <input
+              id="retailPrice"
+              type="number"
+              name="retailPrice"
+              [(ngModel)]="form.retailPrice"
+              min="0.01"
+              step="0.01"
+              placeholder="0"
+              [disabled]="isSaving || isSavingPriceTiers"
+              required
+            />
+          </div>
+
+          <small> Normal customer selling price. </small>
+        </div>
+
+        <!-- =================================================
+             WHOLESALE PRICE
+        ================================================== -->
 
         <div class="form-group">
           <label for="wholesalePrice">
             Wholesale Price
 
-            <span class="required">*</span>
+            <span class="required"> * </span>
           </label>
 
           <div class="input-with-prefix">
@@ -196,18 +245,53 @@
               min="0.01"
               step="0.01"
               placeholder="0"
-              [disabled]="isSaving"
+              [disabled]="isSaving || isSavingPriceTiers"
+              required
             />
           </div>
+
+          <small> Base wholesale price. </small>
         </div>
 
-        <!-- STOCK -->
+        <!-- =================================================
+             SHIPPING CHARGE
+        ================================================== -->
+
+        <div class="form-group">
+          <label for="shippingCharge">
+            Shipping Charge
+
+            <span class="required"> * </span>
+          </label>
+
+          <div class="input-with-prefix">
+            <span class="input-prefix"> ₹ </span>
+
+            <input
+              id="shippingCharge"
+              type="number"
+              name="shippingCharge"
+              [(ngModel)]="form.shippingCharge"
+              min="0"
+              step="0.01"
+              placeholder="0"
+              [disabled]="isSaving || isSavingPriceTiers"
+              required
+            />
+          </div>
+
+          <small> Shipping charge for this product. </small>
+        </div>
+
+        <!-- =================================================
+             STOCK
+        ================================================== -->
 
         <div class="form-group">
           <label for="stock">
             Stock
 
-            <span class="required">*</span>
+            <span class="required"> * </span>
           </label>
 
           <input
@@ -218,11 +302,14 @@
             min="0"
             step="1"
             placeholder="0"
-            [disabled]="isSaving"
+            [disabled]="isSaving || isSavingPriceTiers"
+            required
           />
         </div>
 
-        <!-- GST -->
+        <!-- =================================================
+             GST
+        ================================================== -->
 
         <div class="form-group">
           <label for="gstPercentage"> GST Percentage </label>
@@ -237,10 +324,232 @@
               max="100"
               step="0.01"
               placeholder="18"
-              [disabled]="isSaving"
+              [disabled]="isSaving || isSavingPriceTiers"
             />
 
             <span class="input-suffix"> % </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================== -->
+    <!-- WHOLESALE PRICE TIERS -->
+    <!-- =================================================== -->
+
+    <section class="form-card">
+      <div class="card-header tier-card-header">
+        <div>
+          <h2>Wholesale Price Tiers</h2>
+
+          <p>Set quantity-based prices for this product.</p>
+        </div>
+
+        <!-- ADD TIER -->
+
+        <button
+          type="button"
+          class="add-tier-button"
+          (click)="addPriceTier()"
+          [disabled]="isSaving || isSavingPriceTiers"
+        >
+          <span> + </span>
+
+          Add Price Tier
+        </button>
+      </div>
+
+      <!-- =================================================
+           INFO
+      ================================================== -->
+
+      <div class="tier-info-box">
+        <div class="tier-info-icon">ℹ</div>
+
+        <div>
+          <strong> How pricing works </strong>
+
+          <p>
+            Customer ko quantity ke according matching price tier milega. Jis quantity ke liye tier
+            nahi hoga, uske liye Retail Price apply hoga.
+          </p>
+        </div>
+      </div>
+
+      <!-- =================================================
+           EMPTY
+      ================================================== -->
+
+      <div class="tier-empty" *ngIf="priceTiers.length === 0">
+        <div class="tier-empty-icon">#</div>
+
+        <h3>No Price Tiers</h3>
+
+        <p>Abhi is product ke liye koi quantity-based pricing nahi hai.</p>
+
+        <button
+          type="button"
+          class="add-first-tier-button"
+          (click)="addPriceTier()"
+          [disabled]="isSaving || isSavingPriceTiers"
+        >
+          + Add First Price Tier
+        </button>
+      </div>
+
+      <!-- =================================================
+           PRICE TIER LIST
+      ================================================== -->
+
+      <div class="tier-list" *ngIf="priceTiers.length > 0">
+        <!-- =================================================
+             DESKTOP HEADER
+        ================================================== -->
+
+        <div class="tier-header">
+          <div>Minimum Qty</div>
+
+          <div>Maximum Qty</div>
+
+          <div>Price / Unit</div>
+
+          <div>Action</div>
+        </div>
+
+        <!-- =================================================
+             TIER ROW
+        ================================================== -->
+
+        <div class="tier-row" *ngFor="let tier of priceTiers; let i = index">
+          <!-- MINIMUM -->
+
+          <div class="tier-field">
+            <label> Minimum Qty </label>
+
+            <input
+              type="number"
+              [name]="'tierMin' + i"
+              [(ngModel)]="tier.minQuantity"
+              min="1"
+              step="1"
+              placeholder="50"
+              [disabled]="isSaving || isSavingPriceTiers"
+              required
+            />
+          </div>
+
+          <!-- MAXIMUM -->
+
+          <div class="tier-field">
+            <label> Maximum Qty </label>
+
+            <input
+              type="number"
+              [name]="'tierMax' + i"
+              [(ngModel)]="tier.maxQuantity"
+              min="1"
+              step="1"
+              placeholder="99"
+              [disabled]="isSaving || isSavingPriceTiers"
+            />
+
+            <small> Blank = Unlimited </small>
+          </div>
+
+          <!-- PRICE -->
+
+          <div class="tier-field">
+            <label> Price / Unit </label>
+
+            <div class="input-with-prefix">
+              <span class="input-prefix"> ₹ </span>
+
+              <input
+                type="number"
+                [name]="'tierPrice' + i"
+                [(ngModel)]="tier.price"
+                min="0.01"
+                step="0.01"
+                placeholder="249"
+                [disabled]="isSaving || isSavingPriceTiers"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- ACTION -->
+
+          <div class="tier-action">
+            <button
+              type="button"
+              class="remove-tier-button"
+              (click)="removePriceTier(i)"
+              [disabled]="isSaving || isSavingPriceTiers"
+              title="Remove Price Tier"
+            >
+              🗑
+            </button>
+          </div>
+        </div>
+
+        <!-- =================================================
+             ADD MORE
+        ================================================== -->
+
+        <button
+          type="button"
+          class="add-more-tier-button"
+          (click)="addPriceTier()"
+          [disabled]="isSaving || isSavingPriceTiers"
+        >
+          + Add Another Price Tier
+        </button>
+      </div>
+
+      <!-- =================================================
+           SAVING INDICATOR
+      ================================================== -->
+
+      <div class="tier-saving-message" *ngIf="isSavingPriceTiers">
+        <span class="button-spinner"></span>
+
+        Saving price tiers...
+      </div>
+
+      <!-- =================================================
+           EXAMPLE
+      ================================================== -->
+
+      <div class="tier-example" *ngIf="priceTiers.length > 0">
+        <div class="tier-example-title">
+          <span> 💡 </span>
+
+          Example
+        </div>
+
+        <div class="tier-example-content">
+          <div>
+            <strong> 1–9 </strong>
+
+            <span> Retail Price </span>
+          </div>
+
+          <div>
+            <strong> 10–49 </strong>
+
+            <span> Tier Price </span>
+          </div>
+
+          <div>
+            <strong> 50–99 </strong>
+
+            <span> Tier Price </span>
+          </div>
+
+          <div>
+            <strong> 100+ </strong>
+
+            <span> Tier Price </span>
           </div>
         </div>
       </div>
@@ -266,7 +575,7 @@
           <label for="sku">
             SKU
 
-            <span class="required">*</span>
+            <span class="required"> * </span>
           </label>
 
           <input
@@ -276,7 +585,8 @@
             [(ngModel)]="form.sku"
             maxlength="50"
             placeholder="Enter SKU"
-            [disabled]="isSaving"
+            [disabled]="isSaving || isSavingPriceTiers"
+            required
           />
 
           <small> SKU must be unique. </small>
@@ -335,7 +645,7 @@
             type="checkbox"
             name="isActive"
             [(ngModel)]="form.isActive"
-            [disabled]="isSaving"
+            [disabled]="isSaving || isSavingPriceTiers"
           />
 
           <span class="toggle"></span>
@@ -362,15 +672,30 @@
     <!-- =================================================== -->
 
     <div class="form-actions">
-      <button type="button" class="cancel-button" (click)="cancel()" [disabled]="isSaving">
+      <!-- CANCEL -->
+
+      <button
+        type="button"
+        class="cancel-button"
+        (click)="cancel()"
+        [disabled]="isSaving || isSavingPriceTiers"
+      >
         Cancel
       </button>
 
-      <button type="submit" class="save-button" [disabled]="isSaving">
-        <span class="button-spinner" *ngIf="isSaving"></span>
+      <!-- UPDATE -->
+
+      <button type="submit" class="save-button" [disabled]="isSaving || isSavingPriceTiers">
+        <span class="button-spinner" *ngIf="isSaving || isSavingPriceTiers"></span>
 
         <span>
-          {{ isSaving ? 'Updating...' : '✓ Update Product' }}
+          {{
+            isSaving
+              ? 'Updating Product...'
+              : isSavingPriceTiers
+                ? 'Saving Price Tiers...'
+                : '✓ Update Product'
+          }}
         </span>
       </button>
     </div>

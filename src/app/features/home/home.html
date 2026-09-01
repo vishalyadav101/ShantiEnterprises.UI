@@ -134,113 +134,12 @@
     }
 
     <!-- =================================================== -->
-    <!-- HERO -->
-    <!-- =================================================== -->
-
-    <section class="hero-section">
-      <div class="container">
-        <div class="row align-items-center">
-          <!-- HERO CONTENT -->
-
-          <div class="col-lg-7">
-            <span class="welcome-badge"> Welcome to Shanti Enterprises </span>
-
-            <h1 class="hero-title">
-              Welcome back,
-
-              <span class="text-primary">
-                {{ user?.name }}
-              </span>
-            </h1>
-
-            <p class="hero-description">
-              Explore our products, manage your wishlist and cart, place orders and track your
-              purchases easily.
-            </p>
-
-            <div class="hero-actions">
-              <a routerLink="/products" class="btn btn-primary btn-lg">
-                <i class="bi bi-shop me-2"></i>
-
-                Browse Products
-              </a>
-
-              <a routerLink="/cart" class="btn btn-outline-primary btn-lg">
-                <i class="bi bi-cart3 me-2"></i>
-
-                My Cart
-
-                @if (cartItemCount > 0) {
-                  <span class="ms-1"> ({{ cartItemCount }}) </span>
-                }
-              </a>
-            </div>
-          </div>
-
-          <!-- ACCOUNT CARD -->
-
-          <div class="col-lg-5 mt-5 mt-lg-0">
-            <div class="welcome-card">
-              <div class="welcome-icon">
-                <i class="bi bi-person-check"></i>
-              </div>
-
-              <h3>
-                {{ user?.name }}
-              </h3>
-
-              <p>
-                {{ user?.email }}
-              </p>
-
-              <div class="account-status">
-                <i class="bi bi-check-circle-fill"></i>
-
-                Account Active
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =================================================== -->
-    <!-- ACCOUNT OVERVIEW -->
+    <!-- OVERVIEW -->
     <!-- =================================================== -->
 
     <section class="overview-section">
       <div class="container">
-        <div class="section-heading">
-          <div>
-            <h2>Account Overview</h2>
-
-            <p>Quick summary of your shopping activity.</p>
-          </div>
-        </div>
-
-        <div class="row g-4">
-          <!-- CART -->
-
-          <div class="col-6 col-lg-3">
-            <div class="overview-card" routerLink="/cart">
-              <div class="overview-icon cart-icon">
-                <i class="bi bi-cart3"></i>
-              </div>
-
-              <div class="overview-info">
-                <span> Cart </span>
-
-                <strong>
-                  {{ cartItemCount }}
-                </strong>
-
-                <small> Items </small>
-              </div>
-
-              <i class="bi bi-arrow-right overview-arrow"></i>
-            </div>
-          </div>
-
+        <div class="row g-3">
           <!-- WISHLIST -->
 
           <div class="col-6 col-lg-3">
@@ -256,7 +155,29 @@
                   {{ wishlistCount }}
                 </strong>
 
-                <small> Saved Items </small>
+                <small> Saved Products </small>
+              </div>
+
+              <i class="bi bi-arrow-right overview-arrow"></i>
+            </div>
+          </div>
+
+          <!-- CART -->
+
+          <div class="col-6 col-lg-3">
+            <div class="overview-card" routerLink="/cart">
+              <div class="overview-icon cart-icon">
+                <i class="bi bi-cart3"></i>
+              </div>
+
+              <div class="overview-info">
+                <span> Cart </span>
+
+                <strong>
+                  {{ cartItemCount }}
+                </strong>
+
+                <small> Items in Cart </small>
               </div>
 
               <i class="bi bi-arrow-right overview-arrow"></i>
@@ -348,6 +269,8 @@
 
     <section class="products-section">
       <div class="container">
+        <!-- SECTION HEADER -->
+
         <div class="section-heading">
           <div>
             <span class="section-label"> SHOP NOW </span>
@@ -357,6 +280,8 @@
             <p>Discover some of our latest products.</p>
           </div>
 
+          <!-- VIEW ALL -->
+
           <a routerLink="/products" class="view-all-link">
             View All
 
@@ -364,43 +289,31 @@
           </a>
         </div>
 
+        <!-- =================================================
+             PRODUCTS
+        ================================================== -->
+
         @if (featuredProducts.length > 0) {
-          <div class="row g-4">
+          <div class="row g-3 home-product-grid">
             @for (product of featuredProducts; track product.productId) {
-              <div class="col-sm-6 col-lg-4 col-xl-3">
+              <div class="col-6 col-lg-4 col-xl-3">
                 <div class="home-product-card">
-                  <!-- IMAGE -->
+                  <!-- =================================================
+                       IMAGE
+                  ================================================= -->
 
                   <div class="home-product-image">
-                    @if (isImageLoading(product)) {
-                      <div class="image-loader">
-                        <div class="spinner-border spinner-border-sm text-primary"></div>
-                      </div>
-                    }
-
-                    @if (!isImageLoading(product) && getCurrentImageUrl(product)) {
-                      <img
-                        [src]="getCurrentImageUrl(product)"
-                        [alt]="product.productName"
-                        loading="lazy"
-                      />
-                    } @else if (!isImageLoading(product)) {
-                      <div class="home-no-image">
-                        <i class="bi bi-image"></i>
-
-                        <span> No Image </span>
-                      </div>
-                    }
-
                     <!-- WISHLIST -->
 
                     <button
                       type="button"
                       class="wishlist-button"
                       [class.active]="isInWishlist(product.productId)"
-                      [disabled]="wishlistActionProductId === product.productId"
+                      [disabled]="
+                        isWishlistLoading && wishlistActionProductId === product.productId
+                      "
                       (click)="toggleWishlist(product); $event.stopPropagation()"
-                      [title]="
+                      [attr.aria-label]="
                         isInWishlist(product.productId) ? 'Remove from wishlist' : 'Add to wishlist'
                       "
                     >
@@ -423,6 +336,31 @@
                       <span class="home-stock-badge out-of-stock"> Out of Stock </span>
                     }
 
+                    <!-- IMAGE LOADING -->
+
+                    @if (isImageLoading(product)) {
+                      <div class="image-loader">
+                        <div class="spinner-border spinner-border-sm text-primary"></div>
+                      </div>
+                    }
+
+                    <!-- IMAGE -->
+
+                    @if (!isImageLoading(product) && getCurrentImageUrl(product)) {
+                      <img
+                        [src]="getCurrentImageUrl(product)"
+                        [alt]="product.productName"
+                        class="home-product-main-image"
+                        loading="lazy"
+                      />
+                    } @else if (!isImageLoading(product)) {
+                      <div class="home-no-image">
+                        <i class="bi bi-image"></i>
+
+                        <span> No Image </span>
+                      </div>
+                    }
+
                     <!-- PREVIOUS -->
 
                     @if (getImages(product).length > 1) {
@@ -430,6 +368,7 @@
                         type="button"
                         class="home-carousel-button previous"
                         (click)="previousImage(product); $event.stopPropagation()"
+                        aria-label="Previous image"
                       >
                         <i class="bi bi-chevron-left"></i>
                       </button>
@@ -442,6 +381,7 @@
                         type="button"
                         class="home-carousel-button next"
                         (click)="nextImage(product); $event.stopPropagation()"
+                        aria-label="Next image"
                       >
                         <i class="bi bi-chevron-right"></i>
                       </button>
@@ -460,7 +400,9 @@
                     }
                   </div>
 
-                  <!-- THUMBNAILS -->
+                  <!-- =================================================
+                       THUMBNAILS
+                  ================================================== -->
 
                   @if (getImages(product).length > 1) {
                     <div class="home-thumbnails">
@@ -477,84 +419,116 @@
                           "
                           (click)="selectImage(product, imageIndex); $event.stopPropagation()"
                         >
-                          <img [src]="getImageUrl(image.imageUrl)" [alt]="product.productName" />
+                          <img
+                            [src]="getImageUrl(image.imageUrl)"
+                            [alt]="product.productName"
+                            loading="lazy"
+                          />
                         </button>
                       }
                     </div>
                   }
 
-                  <!-- CONTENT -->
+                  <!-- =================================================
+                       CONTENT
+                  ================================================== -->
 
                   <div class="home-product-content">
+                    <!-- CATEGORY -->
+
                     <span class="home-product-category">
                       {{ product.categoryName }}
                     </span>
+
+                    <!-- PRODUCT NAME -->
 
                     <h5 class="home-product-name" [title]="product.productName">
                       {{ product.productName }}
                     </h5>
 
-                    <!-- RATING -->
-                    <div class="home-product-rating">
-                      @if (isReviewLoading(product)) {
-                        <span class="rating-loading">
-                          <span class="spinner-border spinner-border-sm"></span>
-                        </span>
-                      } @else if (getReviewCount(product.productId) > 0) {
-                        <span class="rating-stars">
-                          @for (star of [1, 2, 3, 4, 5]; track star) {
-                            <i
-                              class="bi"
-                              [class.bi-star-fill]="star <= getRoundedRating(product.productId)"
-                              [class.bi-star]="star > getRoundedRating(product.productId)"
-                            ></i>
-                          }
-                        </span>
+                    <!-- =================================================
+                         PRICE + RATING
+                    ================================================== -->
 
-                        <span class="rating-value">
-                          {{ getAverageRating(product.productId) | number: '1.1-1' }}
-                        </span>
+                    <div class="home-product-price-rating">
+                      <!-- PRICE -->
 
-                        <span class="rating-count">
-                          ({{ getReviewCount(product.productId) }} Reviews)
-                        </span>
-                      } @else {
-                        <span class="no-rating">
-                          <i class="bi bi-star"></i>
-                          No Reviews
-                        </span>
-                      }
-                    </div>
+                      <div class="home-price-block">
+                        <div class="home-product-price">
+                          ₹{{ product.retailPrice | number: '1.2-2' }}
 
-                    <p class="home-product-description" [title]="product.description">
-                      {{ product.description }}
-                    </p>
-
-                    <!-- PRICE -->
-
-                    <div class="home-price-row">
-                      <div>
-                        <span class="home-price-label"> Price </span>
-
-                        <div class="home-product-price">₹{{ product.wholesalePrice }}</div>
-
-                        <div class="home-product-mrp">
-                          MRP:
-
-                          <del> ₹{{ product.mrp }} </del>
+                          <span class="home-price-unit"> / unit </span>
                         </div>
+
+                        <div class="home-price-label">Retail Price</div>
+
+                        @if (product.mrp > product.retailPrice) {
+                          <div class="home-product-mrp">
+                            <del> ₹{{ product.mrp | number: '1.2-2' }} </del>
+                          </div>
+                        }
                       </div>
 
-                      <span class="home-stock-count" [class.low-stock]="product.stock <= 10">
-                        {{ product.stock }} left
-                      </span>
+                      <!-- RATING -->
+
+                      <div class="home-product-rating">
+                        @if (isReviewLoading(product)) {
+                          <span class="rating-loading">
+                            <span class="spinner-border spinner-border-sm"></span>
+                          </span>
+                        } @else if (getReviewCount(product.productId) > 0) {
+                          <span class="rating-stars">
+                            @for (star of [1, 2, 3, 4, 5]; track star) {
+                              <i
+                                class="bi"
+                                [class.bi-star-fill]="star <= getRoundedRating(product.productId)"
+                                [class.bi-star]="star > getRoundedRating(product.productId)"
+                              ></i>
+                            }
+                          </span>
+
+                          <span class="rating-value">
+                            {{ getAverageRating(product.productId) | number: '1.1-1' }}
+                          </span>
+
+                          <span class="review-count">
+                            ({{ getReviewCount(product.productId) }})
+                          </span>
+                        } @else {
+                          <span class="no-reviews">
+                            <i class="bi bi-star"></i>
+
+                            No reviews
+                          </span>
+                        }
+                      </div>
                     </div>
 
-                    <!-- ADD CART -->
+                    <!-- =================================================
+                         WHOLESALE PRICE TIER
+                    ================================================== -->
 
-                    <!-- =====================================================
-     PRODUCT ACTIONS
-===================================================== -->
+                    @if (getDisplayPriceTier(product); as displayTier) {
+                      <div class="wholesale-box">
+                        <span class="wholesale-min">
+                          {{ getPriceTierRangeLabel(displayTier) }}
+                        </span>
+
+                        <div class="wholesale-price-content">
+                          <div>
+                            <strong> ₹{{ displayTier.price | number: '1.2-2' }} </strong>
+
+                            <span> / unit </span>
+                          </div>
+
+                          <small> Wholesale Price </small>
+                        </div>
+                      </div>
+                    }
+
+                    <!-- =================================================
+                         ACTIONS
+                    ================================================== -->
 
                     <div class="home-product-actions">
                       <!-- ADD TO CART -->
@@ -566,11 +540,11 @@
                         (click)="addToCart(product)"
                       >
                         @if (isAddingToCart && addingProductId === product.productId) {
-                          <span class="spinner-border spinner-border-sm me-2"></span>
+                          <span class="spinner-border spinner-border-sm me-1"></span>
 
                           Adding...
                         } @else {
-                          <i class="bi bi-cart-plus me-2"></i>
+                          <i class="bi bi-cart-plus me-1"></i>
 
                           @if (product.stock > 0) {
                             Add to Cart
@@ -580,14 +554,14 @@
                         }
                       </button>
 
-                      <!-- VIEW PRODUCT -->
+                      <!-- VIEW -->
 
                       <button
                         type="button"
                         class="home-view-product-button"
+                        (click)="viewProduct(product.productId)"
                         title="View Product"
                         aria-label="View Product"
-                        (click)="viewProduct(product.productId)"
                       >
                         <i class="bi bi-eye"></i>
                       </button>
@@ -598,6 +572,10 @@
             }
           </div>
         } @else {
+          <!-- =================================================
+               NO PRODUCTS
+          ================================================== -->
+
           <div class="home-empty">
             <i class="bi bi-box-seam"></i>
 
@@ -612,271 +590,51 @@
     </section>
 
     <!-- =================================================== -->
-    <!-- WISHLIST PREVIEW -->
+    <!-- RECENT ORDERS -->
     <!-- =================================================== -->
 
-    @if (wishlistItems.length > 0) {
-      <section class="wishlist-section">
+    @if (recentOrders.length > 0) {
+      <section class="recent-orders-section">
         <div class="container">
           <div class="section-heading">
             <div>
-              <span class="section-label"> SAVED FOR LATER </span>
+              <span class="section-label"> YOUR ACTIVITY </span>
 
-              <h2>My Wishlist</h2>
+              <h2>Recent Orders</h2>
 
-              <p>Products you have saved for later.</p>
+              <p>Track your latest orders.</p>
             </div>
 
-            <a routerLink="/wishlist" class="view-all-link">
-              View Wishlist
+            <a routerLink="/orders" class="view-all-link">
+              View All
 
               <i class="bi bi-arrow-right ms-1"></i>
             </a>
           </div>
 
-          <div class="row g-4">
-            @for (item of wishlistItems.slice(0, 4); track item.wishlistItemId) {
-              <div class="col-6 col-lg-3">
-                <div class="wishlist-preview-card">
-                  <div class="wishlist-preview-image">
-                    @if (item.imageUrl) {
-                      <img
-                        [src]="getImageUrl(item.imageUrl)"
-                        [alt]="item.productName"
-                        loading="lazy"
-                      />
-                    } @else {
-                      <div class="home-no-image">
-                        <i class="bi bi-image"></i>
-                      </div>
-                    }
-                  </div>
-
-                  <div class="wishlist-preview-content">
-                    <span class="home-product-category">
-                      {{ item.sku }}
-                    </span>
-
-                    <h5>
-                      {{ item.productName }}
-                    </h5>
-
-                    <strong> ₹{{ item.unitPrice }} </strong>
-                  </div>
+          <div class="recent-orders-list">
+            @for (order of recentOrders; track order.orderId) {
+              <div class="recent-order-card" [routerLink]="['/orders', order.orderId]">
+                <div class="recent-order-icon">
+                  <i class="bi bi-box-seam"></i>
                 </div>
+
+                <div class="recent-order-info">
+                  <strong> Order #{{ order.orderId }} </strong>
+
+                  <span> View order details </span>
+                </div>
+
+                <div class="recent-order-status">
+                  <span class="badge"> {{ order.orderStatus }} </span>
+                </div>
+
+                <i class="bi bi-chevron-right recent-order-arrow"></i>
               </div>
             }
           </div>
         </div>
       </section>
     }
-
-    <!-- =================================================== -->
-    <!-- RECENT ORDERS -->
-    <!-- =================================================== -->
-
-    <section class="orders-section">
-      <div class="container">
-        <div class="section-heading">
-          <div>
-            <span class="section-label"> YOUR ACTIVITY </span>
-
-            <h2>Recent Orders</h2>
-
-            <p>Check the latest status of your purchases.</p>
-          </div>
-
-          <a routerLink="/orders" class="view-all-link">
-            View All
-
-            <i class="bi bi-arrow-right ms-1"></i>
-          </a>
-        </div>
-
-        @if (recentOrders.length > 0) {
-          <div class="orders-list">
-            @for (order of recentOrders; track order.orderId) {
-              <div class="order-card">
-                <div class="order-main">
-                  <div class="order-icon">
-                    <i class="bi bi-box-seam"></i>
-                  </div>
-
-                  <div>
-                    <span class="order-number">
-                      {{ order.orderNumber }}
-                    </span>
-
-                    <span class="order-date">
-                      {{ formatDate(order.createdDate) }}
-                    </span>
-                  </div>
-                </div>
-
-                <div class="order-items">
-                  <strong>
-                    {{ order.items.length }}
-                  </strong>
-
-                  <span> Items </span>
-                </div>
-
-                <div class="order-total">
-                  <span> Total </span>
-
-                  <strong> ₹{{ order.grandTotal }} </strong>
-                </div>
-
-                <div class="order-status">
-                  <span class="status-badge" [ngClass]="getOrderStatusClass(order.orderStatus)">
-                    {{ order.orderStatus }}
-                  </span>
-
-                  <small>
-                    {{ order.paymentStatus }}
-                  </small>
-                </div>
-
-                <button type="button" class="order-view-button" (click)="viewOrder(order.orderId)">
-                  <i class="bi bi-eye me-1"></i>
-
-                  View
-                </button>
-              </div>
-            }
-          </div>
-        } @else {
-          <div class="no-orders">
-            <div class="no-orders-icon">
-              <i class="bi bi-box-seam"></i>
-            </div>
-
-            <h4>No Orders Yet</h4>
-
-            <p>Your recent orders will appear here.</p>
-
-            <a routerLink="/products" class="btn btn-primary"> Start Shopping </a>
-          </div>
-        }
-      </div>
-    </section>
-
-    <!-- =================================================== -->
-    <!-- QUICK ACCESS -->
-    <!-- =================================================== -->
-
-    <section class="quick-access-section">
-      <div class="container">
-        <div class="text-center section-title-center">
-          <span class="section-label"> QUICK ACCESS </span>
-
-          <h2>Manage Your Account</h2>
-
-          <p>Everything you need in one place.</p>
-        </div>
-
-        <div class="row g-4">
-          <!-- PRODUCTS -->
-
-          <div class="col-6 col-md-4 col-lg-3">
-            <div class="quick-card" routerLink="/products">
-              <div class="quick-icon">
-                <i class="bi bi-grid"></i>
-              </div>
-
-              <h5>Products</h5>
-
-              <p>Browse all available products.</p>
-
-              <span>
-                Browse
-
-                <i class="bi bi-arrow-right"></i>
-              </span>
-            </div>
-          </div>
-
-          <!-- WISHLIST -->
-
-          <div class="col-6 col-md-4 col-lg-3">
-            <div class="quick-card" routerLink="/wishlist">
-              <div class="quick-icon">
-                <i class="bi bi-heart"></i>
-              </div>
-
-              <h5>Wishlist</h5>
-
-              <p>View your saved products.</p>
-
-              <span>
-                View Wishlist
-
-                <i class="bi bi-arrow-right"></i>
-              </span>
-            </div>
-          </div>
-
-          <!-- CART -->
-
-          <div class="col-6 col-md-4 col-lg-3">
-            <div class="quick-card" routerLink="/cart">
-              <div class="quick-icon">
-                <i class="bi bi-cart3"></i>
-              </div>
-
-              <h5>Shopping Cart</h5>
-
-              <p>Review your cart and checkout.</p>
-
-              <span>
-                View Cart
-
-                <i class="bi bi-arrow-right"></i>
-              </span>
-            </div>
-          </div>
-
-          <!-- ORDERS -->
-
-          <div class="col-6 col-md-4 col-lg-3">
-            <div class="quick-card" routerLink="/orders">
-              <div class="quick-icon">
-                <i class="bi bi-box-seam"></i>
-              </div>
-
-              <h5>My Orders</h5>
-
-              <p>Track your purchases.</p>
-
-              <span>
-                View Orders
-
-                <i class="bi bi-arrow-right"></i>
-              </span>
-            </div>
-          </div>
-
-          <!-- ADDRESSES -->
-
-          <div class="col-6 col-md-4 col-lg-3">
-            <div class="quick-card" routerLink="/addresses">
-              <div class="quick-icon">
-                <i class="bi bi-geo-alt"></i>
-              </div>
-
-              <h5>Addresses</h5>
-
-              <p>Manage your delivery addresses.</p>
-
-              <span>
-                Manage
-
-                <i class="bi bi-arrow-right"></i>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
   }
 </div>

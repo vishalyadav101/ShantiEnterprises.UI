@@ -6,6 +6,18 @@ import { environment } from '../../../environments/environment';
 import { Product } from '../models/product.model';
 
 // =========================================================
+// PRICE TIER
+// =========================================================
+
+export interface ProductPriceTier {
+  productPriceTierId?: number;
+  productId?: number;
+  minQuantity: number;
+  maxQuantity: number | null;
+  price: number;
+}
+
+// =========================================================
 // PRODUCT CREATE
 // Backend: ProductCreateDto
 //
@@ -17,10 +29,19 @@ export interface ProductCreate {
   productName: string;
   description: string;
   categoryId: number;
+
   mrp: number;
+
+  retailPrice: number;
+
   wholesalePrice: number;
+
+  shippingCharge: number;
+
   stock: number;
+
   gstPercentage: number;
+
   sku: string;
 }
 
@@ -37,11 +58,21 @@ export interface ProductUpdate {
   productName: string;
   description: string;
   categoryId: number;
+
   mrp: number;
+
+  retailPrice: number;
+
   wholesalePrice: number;
+
+  shippingCharge: number;
+
   stock: number;
+
   gstPercentage: number;
+
   sku: string;
+
   isActive: boolean;
 }
 
@@ -116,6 +147,8 @@ export class ProductService {
   // =======================================================
 
   delete(id: number): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`);
+    return this.http.delete<{
+      message: string;
+    }>(`${this.apiUrl}/${id}`);
   }
 }

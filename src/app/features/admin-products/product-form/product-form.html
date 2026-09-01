@@ -134,12 +134,14 @@
           <div>
             <h2>Pricing & Stock</h2>
 
-            <p>Enter pricing and inventory information.</p>
+            <p>Enter pricing, shipping and inventory information.</p>
           </div>
         </div>
 
         <div class="form-grid">
-          <!-- MRP -->
+          <!-- =================================================
+               MRP
+          ================================================== -->
 
           <div class="form-group">
             <label for="mrp">
@@ -164,7 +166,38 @@
             </div>
           </div>
 
-          <!-- WHOLESALE PRICE -->
+          <!-- =================================================
+               RETAIL PRICE
+          ================================================== -->
+
+          <div class="form-group">
+            <label for="retailPrice">
+              Retail Price
+
+              <span>*</span>
+            </label>
+
+            <div class="input-prefix">
+              <span> ₹ </span>
+
+              <input
+                id="retailPrice"
+                type="number"
+                name="retailPrice"
+                [(ngModel)]="form.retailPrice"
+                placeholder="999"
+                min="0.01"
+                step="0.01"
+                required
+              />
+            </div>
+
+            <small class="helper-text"> Normal customer selling price. </small>
+          </div>
+
+          <!-- =================================================
+               WHOLESALE PRICE
+          ================================================== -->
 
           <div class="form-group">
             <label for="wholesalePrice">
@@ -187,9 +220,42 @@
                 required
               />
             </div>
+
+            <small class="helper-text"> Base wholesale price. </small>
           </div>
 
-          <!-- STOCK -->
+          <!-- =================================================
+               SHIPPING CHARGE
+          ================================================== -->
+
+          <div class="form-group">
+            <label for="shippingCharge">
+              Shipping Charge
+
+              <span>*</span>
+            </label>
+
+            <div class="input-prefix">
+              <span> ₹ </span>
+
+              <input
+                id="shippingCharge"
+                type="number"
+                name="shippingCharge"
+                [(ngModel)]="form.shippingCharge"
+                placeholder="40"
+                min="0"
+                step="0.01"
+                required
+              />
+            </div>
+
+            <small class="helper-text"> Shipping charge for this product. </small>
+          </div>
+
+          <!-- =================================================
+               STOCK
+          ================================================== -->
 
           <div class="form-group">
             <label for="stock">
@@ -209,7 +275,9 @@
             />
           </div>
 
-          <!-- GST -->
+          <!-- =================================================
+               GST
+          ================================================== -->
 
           <div class="form-group">
             <label for="gstPercentage"> GST Percentage </label>
@@ -232,6 +300,188 @@
       </section>
 
       <!-- =================================================
+           WHOLESALE PRICE TIERS
+      ================================================== -->
+
+      <section class="form-card">
+        <div class="section-header tier-section-header">
+          <div>
+            <h2>Wholesale Price Tiers</h2>
+
+            <p>Set different prices according to purchase quantity.</p>
+          </div>
+
+          <!-- ADD TIER BUTTON -->
+
+          <button type="button" class="add-tier-btn" (click)="addPriceTier()">
+            <span> + </span>
+
+            Add Price Tier
+          </button>
+        </div>
+
+        <!-- =================================================
+             TIER INFO
+        ================================================== -->
+
+        <div class="tier-info-box">
+          <i class="bi bi-info-circle"></i>
+
+          <div>
+            <strong> How price tiers work </strong>
+
+            <p>
+              Customer ko quantity ke according matching tier price milega. Agar kisi quantity ke
+              liye tier nahi hai, to Retail Price apply hoga.
+            </p>
+          </div>
+        </div>
+
+        <!-- =================================================
+             NO TIERS
+        ================================================== -->
+
+        <div class="tier-empty" *ngIf="priceTiers.length === 0">
+          <div class="tier-empty-icon">
+            <i class="bi bi-tags"></i>
+          </div>
+
+          <h3>No Price Tiers Added</h3>
+
+          <p>Add quantity-based wholesale prices for this product.</p>
+
+          <button type="button" class="add-tier-empty-btn" (click)="addPriceTier()">
+            + Add First Price Tier
+          </button>
+        </div>
+
+        <!-- =================================================
+             PRICE TIER LIST
+        ================================================== -->
+
+        <div class="tier-list" *ngIf="priceTiers.length > 0">
+          <!-- =================================================
+               TABLE HEADER
+          ================================================== -->
+
+          <div class="tier-header">
+            <div>Minimum Qty</div>
+
+            <div>Maximum Qty</div>
+
+            <div>Price / Unit</div>
+
+            <div>Action</div>
+          </div>
+
+          <!-- =================================================
+               TIER ROWS
+          ================================================== -->
+
+          <div class="tier-row" *ngFor="let tier of priceTiers; let i = index">
+            <!-- MINIMUM -->
+
+            <div class="tier-field">
+              <label> Minimum Qty </label>
+
+              <input
+                type="number"
+                [name]="'tierMin' + i"
+                [(ngModel)]="tier.minQuantity"
+                min="1"
+                step="1"
+                placeholder="50"
+                required
+              />
+            </div>
+
+            <!-- MAXIMUM -->
+
+            <div class="tier-field">
+              <label> Maximum Qty </label>
+
+              <input
+                type="number"
+                [name]="'tierMax' + i"
+                [(ngModel)]="tier.maxQuantity"
+                min="1"
+                step="1"
+                placeholder="99"
+              />
+
+              <small> Blank = Unlimited </small>
+            </div>
+
+            <!-- PRICE -->
+
+            <div class="tier-field">
+              <label> Price / Unit </label>
+
+              <div class="input-prefix">
+                <span> ₹ </span>
+
+                <input
+                  type="number"
+                  [name]="'tierPrice' + i"
+                  [(ngModel)]="tier.price"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="249"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- DELETE -->
+
+            <div class="tier-action">
+              <button
+                type="button"
+                class="remove-tier-btn"
+                (click)="removePriceTier(i)"
+                title="Remove Price Tier"
+                aria-label="Remove Price Tier"
+              >
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- =================================================
+               ADD MORE TIER
+          ================================================== -->
+
+          <button type="button" class="add-more-tier-btn" (click)="addPriceTier()">
+            <i class="bi bi-plus-circle"></i>
+
+            Add Another Price Tier
+          </button>
+        </div>
+
+        <!-- =================================================
+             EXAMPLE
+        ================================================== -->
+
+        <div class="tier-example" *ngIf="priceTiers.length > 0">
+          <div class="tier-example-title">
+            <i class="bi bi-lightbulb"></i>
+
+            Example
+          </div>
+
+          <div class="tier-example-content">
+            <span> 1–9 → Retail Price </span>
+
+            <span> 10–49 → ₹280 </span>
+
+            <span> 50–99 → ₹250 </span>
+
+            <span> 100+ → ₹220 </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================
            PRODUCT IDENTIFICATION
       ================================================== -->
 
@@ -244,7 +494,9 @@
           </div>
         </div>
 
-        <!-- SKU -->
+        <!-- =================================================
+             SKU
+        ================================================== -->
 
         <div class="form-group">
           <label for="sku">

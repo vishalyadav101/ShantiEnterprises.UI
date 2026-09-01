@@ -6,13 +6,10 @@ import { FormsModule } from '@angular/forms';
 
 import { ProductService } from '../../../core/services/product';
 import { ProductImageService, ProductImage } from '../../../core/services/product-image';
-
 import { WishlistService } from '../../../core/services/wishlist';
 import { CartService } from '../../../core/services/cart';
 import { AuthService } from '../../../core/services/auth';
-
 import { ReviewService } from '../../../core/services/review';
-
 import { BulkEnquiryService } from '../../../core/services/bulk-enquiry';
 
 import {
@@ -24,7 +21,7 @@ import {
 
 import { CreateBulkEnquiry } from '../../../core/models/bulk-enquiry.model';
 
-import { Product } from '../../../core/models/product.model';
+import { Product, ProductPriceTier } from '../../../core/models/product.model';
 
 @Component({
   selector: 'app-product-detail',
@@ -39,29 +36,26 @@ export class ProductDetail implements OnInit {
   // =========================================================
 
   private readonly productService = inject(ProductService);
-
   private readonly productImageService = inject(ProductImageService);
-
   private readonly wishlistService = inject(WishlistService);
-
   private readonly cartService = inject(CartService);
-
   private readonly authService = inject(AuthService);
-
   private readonly reviewService = inject(ReviewService);
-
   private readonly bulkEnquiryService = inject(BulkEnquiryService);
-
   private readonly route = inject(ActivatedRoute);
-
   private readonly router = inject(Router);
+
+  // =========================================================
+  // TEMPLATE SUPPORT
+  // =========================================================
+
+  readonly Math = Math;
 
   // =========================================================
   // PRODUCT
   // =========================================================
 
   product: Product | null = null;
-
   productId = 0;
 
   // =========================================================
@@ -69,35 +63,29 @@ export class ProductDetail implements OnInit {
   // =========================================================
 
   images: ProductImage[] = [];
-
   currentImageIndex = 0;
+
+  // =========================================================
+  // QUANTITY
+  // =========================================================
+
+  quantity = 1;
 
   // =========================================================
   // REVIEWS
   // =========================================================
 
   reviews: Review[] = [];
-
   reviewSummary: ReviewSummary | null = null;
 
   isLoadingReviews = false;
-
   isLoadingReviewSummary = false;
-
   isSubmittingReview = false;
-
   isEditingReview = false;
-
   editingReviewId: number | null = null;
 
-  // =========================================================
-  // REVIEW FORM
-  // =========================================================
-
   reviewRating = 5;
-
   reviewTitle = '';
-
   reviewComment = '';
 
   // =========================================================
@@ -105,21 +93,15 @@ export class ProductDetail implements OnInit {
   // =========================================================
 
   isBulkEnquiryOpen = false;
-
   isSubmittingBulkEnquiry = false;
 
   bulkEnquirySuccessMessage = '';
-
   bulkEnquiryErrorMessage = '';
 
   bulkCustomerName = '';
-
   bulkMobile = '';
-
   bulkEmail = '';
-
   bulkQuantity = 1;
-
   bulkMessage = '';
 
   // =========================================================
@@ -127,21 +109,14 @@ export class ProductDetail implements OnInit {
   // =========================================================
 
   isLoading = false;
-
   isLoadingImages = false;
-
   isAddingToWishlist = false;
-
   isAddingToCart = false;
-
   isInWishlist = false;
 
   errorMessage = '';
-
   successMessage = '';
-
   reviewErrorMessage = '';
-
   reviewSuccessMessage = '';
 
   // =========================================================
@@ -159,13 +134,9 @@ export class ProductDetail implements OnInit {
     this.productId = id;
 
     this.loadProduct();
-
     this.loadProductImages();
-
     this.checkWishlist();
-
     this.loadReviews();
-
     this.loadReviewSummary();
   }
 
@@ -175,11 +146,10 @@ export class ProductDetail implements OnInit {
 
   private loadProduct(): void {
     this.isLoading = true;
-
     this.errorMessage = '';
 
     this.productService
-      .getById(this.productId)
+      .getDetails(this.productId)
       .pipe(
         finalize(() => {
           this.isLoading = false;
@@ -188,14 +158,19 @@ export class ProductDetail implements OnInit {
       .subscribe({
         next: (product) => {
           console.log('Customer Product Detail:', product);
-
           this.product = product;
+
+          // Make sure selected quantity is always valid.
+          if (product.stock <= 0) {
+            this.quantity = 1;
+          } else if (this.quantity > product.stock) {
+            this.quantity = product.stock;
+          }
         },
 
-        error: (error) => {
+        error: (error: unknown) => {
           console.error('Product Detail Error:', error);
-
-          this.errorMessage = error?.error?.message || 'Unable to load product details.';
+          this.errorMessage = this.getErrorMessage(error, 'Unable to load product details.');
         },
       });
   }
@@ -216,8 +191,6 @@ export class ProductDetail implements OnInit {
       )
       .subscribe({
         next: (images) => {
-          console.log('Product Images:', images);
-
           this.images = [...images].sort((a, b) => {
             if (a.isPrimary && !b.isPrimary) {
               return -1;
@@ -232,8 +205,6 @@ export class ProductDetail implements OnInit {
 
           this.currentImageIndex = 0;
 
-          // FALLBACK TO PRODUCT IMAGE
-
           if (this.images.length === 0 && this.product?.imageUrl) {
             this.images = [
               {
@@ -246,10 +217,8 @@ export class ProductDetail implements OnInit {
           }
         },
 
-        error: (error) => {
+        error: (error: unknown) => {
           console.error('Product Images Error:', error);
-
-          // FALLBACK
 
           if (this.product?.imageUrl) {
             this.images = [
@@ -331,6 +300,34 @@ export class ProductDetail implements OnInit {
   }
 
   // =========================================================
+  // QUANTITY - INCREASE
+  // =========================================================
+
+  increaseQuantity(): void {
+    if (!this.product || this.product.stock <= 0) {
+      return;
+    }
+
+    if (this.quantity >= this.product.stock) {
+      return;
+    }
+
+    this.quantity += 1;
+  }
+
+  // =========================================================
+  // QUANTITY - DECREASE
+  // =========================================================
+
+  decreaseQuantity(): void {
+    if (this.quantity <= 1) {
+      return;
+    }
+
+    this.quantity -= 1;
+  }
+
+  // =========================================================
   // CHECK WISHLIST
   // =========================================================
 
@@ -340,7 +337,7 @@ export class ProductDetail implements OnInit {
         this.isInWishlist = wishlist.items.some((item) => item.productId === this.productId);
       },
 
-      error: (error) => {
+      error: (error: unknown) => {
         console.error('Wishlist Check Error:', error);
       },
     });
@@ -356,7 +353,6 @@ export class ProductDetail implements OnInit {
     }
 
     this.isAddingToWishlist = true;
-
     this.errorMessage = '';
 
     const request$ = this.isInWishlist
@@ -382,12 +378,138 @@ export class ProductDetail implements OnInit {
           }, 2500);
         },
 
-        error: (error) => {
+        error: (error: unknown) => {
           console.error('Wishlist Error:', error);
-
-          this.errorMessage = error?.error?.message || 'Unable to update wishlist.';
+          this.errorMessage = this.getErrorMessage(error, 'Unable to update wishlist.');
         },
       });
+  }
+
+  // =========================================================
+  // CURRENT PRICE TIER
+  // =========================================================
+
+  getCurrentPriceTier(): ProductPriceTier | null {
+    if (!this.product?.priceTiers?.length) {
+      return null;
+    }
+
+    const currentQuantity = this.quantity;
+
+    return (
+      this.product.priceTiers
+        .filter(
+          (tier) =>
+            currentQuantity >= tier.minQuantity &&
+            (tier.maxQuantity == null || currentQuantity <= tier.maxQuantity),
+        )
+        .sort((a, b) => b.minQuantity - a.minQuantity)[0] ?? null
+    );
+  }
+
+  // =========================================================
+  // NEXT PRICE TIER
+  // =========================================================
+
+  getNextPriceTier(): ProductPriceTier | null {
+    if (!this.product?.priceTiers?.length) {
+      return null;
+    }
+
+    return (
+      this.product.priceTiers
+        .filter((tier) => tier.minQuantity > this.quantity)
+        .sort((a, b) => a.minQuantity - b.minQuantity)[0] ?? null
+    );
+  }
+
+  // =========================================================
+  // CURRENT UNIT PRICE
+  // =========================================================
+
+  getCurrentUnitPrice(): number {
+    if (!this.product) {
+      return 0;
+    }
+
+    const tier = this.getCurrentPriceTier();
+
+    return tier?.price ?? this.product.retailPrice;
+  }
+
+  // =========================================================
+  // RETAIL PRICE
+  // =========================================================
+
+  getRetailPrice(): number {
+    return this.product?.retailPrice ?? 0;
+  }
+
+  // =========================================================
+  // SAVING PER UNIT
+  // =========================================================
+
+  getSavingPerUnit(): number {
+    return Math.max(0, this.getRetailPrice() - this.getCurrentUnitPrice());
+  }
+
+  // =========================================================
+  // QUANTITY TO NEXT TIER
+  // =========================================================
+
+  getQuantityToNextTier(): number {
+    const nextTier = this.getNextPriceTier();
+
+    if (!nextTier) {
+      return 0;
+    }
+
+    return Math.max(0, nextTier.minQuantity - this.quantity);
+  }
+
+  // =========================================================
+  // NEXT TIER LABEL
+  // =========================================================
+
+  getNextTierLabel(tier: ProductPriceTier): string {
+    if (tier.maxQuantity == null) {
+      return `${tier.minQuantity}+`;
+    }
+
+    return `${tier.minQuantity}-${tier.maxQuantity}`;
+  }
+
+  // =========================================================
+  // TIER RANGE LABEL
+  // =========================================================
+
+  getTierRangeLabel(tier: ProductPriceTier): string {
+    return this.getNextTierLabel(tier);
+  }
+
+  // =========================================================
+  // TIER SAVING
+  // =========================================================
+
+  getTierSaving(tier: ProductPriceTier): number {
+    return Math.max(0, this.getRetailPrice() - tier.price);
+  }
+
+  // =========================================================
+  // BEST PRICE
+  // =========================================================
+
+  isBestPrice(): boolean {
+    if (!this.product?.priceTiers?.length) {
+      return false;
+    }
+
+    const bestTier = Math.min(...this.product.priceTiers.map((tier) => tier.price));
+
+    return (
+      this.getCurrentUnitPrice() === bestTier &&
+      this.quantity >= Math.min(...this.product.priceTiers.map((tier) => tier.minQuantity))
+    );
   }
 
   // =========================================================
@@ -395,11 +517,7 @@ export class ProductDetail implements OnInit {
   // =========================================================
 
   addToCart(): void {
-    if (!this.product) {
-      return;
-    }
-
-    if (this.product.stock <= 0) {
+    if (!this.product || this.product.stock <= 0) {
       return;
     }
 
@@ -407,14 +525,15 @@ export class ProductDetail implements OnInit {
       return;
     }
 
-    this.isAddingToCart = true;
+    const safeQuantity = Math.min(Math.max(1, this.quantity), this.product.stock);
 
+    this.isAddingToCart = true;
     this.errorMessage = '';
 
     this.cartService
       .addItem({
         productId: this.product.productId,
-        quantity: 1,
+        quantity: safeQuantity,
       })
       .pipe(
         finalize(() => {
@@ -430,10 +549,45 @@ export class ProductDetail implements OnInit {
           }, 2500);
         },
 
-        error: (error) => {
+        error: (error: unknown) => {
           console.error('Add To Cart Error:', error);
+          this.errorMessage = this.getErrorMessage(error, 'Unable to add product to cart.');
+        },
+      });
+  }
 
-          this.errorMessage = error?.error?.message || 'Unable to add product to cart.';
+  // =========================================================
+  // BUY NOW
+  // =========================================================
+
+  buyNow(): void {
+    if (!this.product || this.product.stock <= 0 || this.isAddingToCart) {
+      return;
+    }
+
+    const safeQuantity = Math.min(Math.max(1, this.quantity), this.product.stock);
+
+    this.isAddingToCart = true;
+    this.errorMessage = '';
+
+    this.cartService
+      .addItem({
+        productId: this.product.productId,
+        quantity: safeQuantity,
+      })
+      .pipe(
+        finalize(() => {
+          this.isAddingToCart = false;
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/cart']);
+        },
+
+        error: (error: unknown) => {
+          console.error('Buy Now Error:', error);
+          this.errorMessage = this.getErrorMessage(error, 'Unable to continue to checkout.');
         },
       });
   }
@@ -444,15 +598,11 @@ export class ProductDetail implements OnInit {
 
   openBulkEnquiry(): void {
     this.isBulkEnquiryOpen = true;
-
     this.bulkEnquirySuccessMessage = '';
-
     this.bulkEnquiryErrorMessage = '';
 
     setTimeout(() => {
-      const element = document.getElementById('bulk-enquiry-form');
-
-      element?.scrollIntoView({
+      document.getElementById('bulk-enquiry-form')?.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
       });
@@ -469,15 +619,12 @@ export class ProductDetail implements OnInit {
     }
 
     this.isBulkEnquiryOpen = false;
-
     this.bulkEnquiryErrorMessage = '';
-
     this.bulkEnquirySuccessMessage = '';
   }
 
   // =========================================================
   // SUBMIT BULK ENQUIRY
-  // POST /api/BulkEnquiry
   // =========================================================
 
   submitBulkEnquiry(): void {
@@ -486,12 +633,7 @@ export class ProductDetail implements OnInit {
     }
 
     this.bulkEnquiryErrorMessage = '';
-
     this.bulkEnquirySuccessMessage = '';
-
-    // =======================================================
-    // VALIDATION
-    // =======================================================
 
     if (!this.bulkCustomerName.trim()) {
       this.bulkEnquiryErrorMessage = 'Customer name is required.';
@@ -533,33 +675,17 @@ export class ProductDetail implements OnInit {
       return;
     }
 
-    // =======================================================
-    // REQUEST DATA
-    // =======================================================
-
     const currentUser = this.authService.getCurrentUser();
 
     const data: CreateBulkEnquiry = {
       userId: currentUser ? Number(currentUser.id) : null,
-
       customerName: this.bulkCustomerName.trim(),
-
       mobile: this.bulkMobile.trim(),
-
       email: this.bulkEmail.trim(),
-
       productId: this.product.productId,
-
       quantity: Number(this.bulkQuantity),
-
       message: this.bulkMessage.trim(),
     };
-
-    console.log('Bulk Enquiry Request:', data);
-
-    // =======================================================
-    // API CALL
-    // =======================================================
 
     this.isSubmittingBulkEnquiry = true;
 
@@ -571,9 +697,7 @@ export class ProductDetail implements OnInit {
         }),
       )
       .subscribe({
-        next: (response) => {
-          console.log('Bulk Enquiry Created:', response);
-
+        next: () => {
           this.bulkEnquirySuccessMessage =
             'Your bulk enquiry has been submitted successfully. We will contact you shortly.';
 
@@ -584,39 +708,35 @@ export class ProductDetail implements OnInit {
           }, 5000);
         },
 
-        error: (error) => {
+        error: (error: unknown) => {
           console.error('Bulk Enquiry Error:', error);
 
-          this.bulkEnquiryErrorMessage =
-            error?.error?.message || 'Unable to submit bulk enquiry. Please try again.';
+          this.bulkEnquiryErrorMessage = this.getErrorMessage(
+            error,
+            'Unable to submit bulk enquiry. Please try again.',
+          );
         },
       });
   }
 
   // =========================================================
-  // RESET BULK ENQUIRY FORM
+  // RESET BULK ENQUIRY
   // =========================================================
 
   resetBulkEnquiryForm(): void {
     this.bulkCustomerName = '';
-
     this.bulkMobile = '';
-
     this.bulkEmail = '';
-
     this.bulkQuantity = 1;
-
     this.bulkMessage = '';
   }
 
   // =========================================================
   // LOAD REVIEWS
-  // GET /api/Review/product/{productId}
   // =========================================================
 
   loadReviews(): void {
     this.isLoadingReviews = true;
-
     this.reviewErrorMessage = '';
 
     this.reviewService
@@ -628,24 +748,19 @@ export class ProductDetail implements OnInit {
       )
       .subscribe({
         next: (reviews) => {
-          console.log('Product Reviews:', reviews);
-
           this.reviews = reviews;
         },
 
-        error: (error) => {
+        error: (error: unknown) => {
           console.error('Reviews Error:', error);
-
           this.reviews = [];
-
-          this.reviewErrorMessage = error?.error?.message || 'Unable to load reviews.';
+          this.reviewErrorMessage = this.getErrorMessage(error, 'Unable to load reviews.');
         },
       });
   }
 
   // =========================================================
   // LOAD REVIEW SUMMARY
-  // GET /api/Review/product/{productId}/summary
   // =========================================================
 
   loadReviewSummary(): void {
@@ -660,12 +775,10 @@ export class ProductDetail implements OnInit {
       )
       .subscribe({
         next: (summary) => {
-          console.log('Review Summary:', summary);
-
           this.reviewSummary = summary;
         },
 
-        error: (error) => {
+        error: (error: unknown) => {
           console.error('Review Summary Error:', error);
 
           this.reviewSummary = {
@@ -678,7 +791,7 @@ export class ProductDetail implements OnInit {
   }
 
   // =========================================================
-  // SELECT RATING
+  // RATING
   // =========================================================
 
   setReviewRating(rating: number): void {
@@ -689,25 +802,13 @@ export class ProductDetail implements OnInit {
     this.reviewRating = rating;
   }
 
-  // =========================================================
-  // STAR ARRAY
-  // =========================================================
-
   get ratingStars(): number[] {
     return [1, 2, 3, 4, 5];
   }
 
-  // =========================================================
-  // CHECK FORM STAR
-  // =========================================================
-
   isRatingStarFilled(star: number): boolean {
     return star <= this.reviewRating;
   }
-
-  // =========================================================
-  // CHECK SUMMARY STAR
-  // =========================================================
 
   isSummaryStarFilled(star: number): boolean {
     if (!this.reviewSummary) {
@@ -733,7 +834,6 @@ export class ProductDetail implements OnInit {
 
   // =========================================================
   // CREATE REVIEW
-  // POST /api/Review
   // =========================================================
 
   submitReview(): void {
@@ -742,22 +842,17 @@ export class ProductDetail implements OnInit {
     }
 
     this.reviewErrorMessage = '';
-
     this.reviewSuccessMessage = '';
 
     if (this.reviewRating < 1 || this.reviewRating > 5) {
       this.reviewErrorMessage = 'Please select a rating between 1 and 5.';
-
       return;
     }
 
     const data: CreateReview = {
       productId: this.productId,
-
       rating: this.reviewRating,
-
       reviewTitle: this.reviewTitle.trim() || null,
-
       reviewComment: this.reviewComment.trim() || null,
     };
 
@@ -771,15 +866,10 @@ export class ProductDetail implements OnInit {
         }),
       )
       .subscribe({
-        next: (review) => {
-          console.log('Review Created:', review);
-
+        next: () => {
           this.reviewSuccessMessage = 'Review submitted successfully.';
-
           this.resetReviewForm();
-
           this.loadReviews();
-
           this.loadReviewSummary();
 
           setTimeout(() => {
@@ -787,16 +877,15 @@ export class ProductDetail implements OnInit {
           }, 3000);
         },
 
-        error: (error) => {
+        error: (error: unknown) => {
           console.error('Create Review Error:', error);
-
-          this.reviewErrorMessage = error?.error?.message || 'Unable to submit review.';
+          this.reviewErrorMessage = this.getErrorMessage(error, 'Unable to submit review.');
         },
       });
   }
 
   // =========================================================
-  // START EDIT REVIEW
+  // EDIT REVIEW
   // =========================================================
 
   editReview(review: Review): void {
@@ -805,17 +894,11 @@ export class ProductDetail implements OnInit {
     }
 
     this.isEditingReview = true;
-
     this.editingReviewId = review.reviewId;
-
     this.reviewRating = review.rating;
-
     this.reviewTitle = review.reviewTitle || '';
-
     this.reviewComment = review.reviewComment || '';
-
     this.reviewErrorMessage = '';
-
     this.reviewSuccessMessage = '';
 
     window.scrollTo({
@@ -826,7 +909,6 @@ export class ProductDetail implements OnInit {
 
   // =========================================================
   // UPDATE REVIEW
-  // PUT /api/Review/{id}
   // =========================================================
 
   updateReview(): void {
@@ -839,20 +921,16 @@ export class ProductDetail implements OnInit {
     }
 
     this.reviewErrorMessage = '';
-
     this.reviewSuccessMessage = '';
 
     if (this.reviewRating < 1 || this.reviewRating > 5) {
       this.reviewErrorMessage = 'Please select a rating between 1 and 5.';
-
       return;
     }
 
     const data: UpdateReview = {
       rating: this.reviewRating,
-
       reviewTitle: this.reviewTitle.trim() || null,
-
       reviewComment: this.reviewComment.trim() || null,
     };
 
@@ -866,15 +944,10 @@ export class ProductDetail implements OnInit {
         }),
       )
       .subscribe({
-        next: (review) => {
-          console.log('Review Updated:', review);
-
+        next: () => {
           this.reviewSuccessMessage = 'Review updated successfully.';
-
           this.resetReviewForm();
-
           this.loadReviews();
-
           this.loadReviewSummary();
 
           setTimeout(() => {
@@ -882,17 +955,15 @@ export class ProductDetail implements OnInit {
           }, 3000);
         },
 
-        error: (error) => {
+        error: (error: unknown) => {
           console.error('Update Review Error:', error);
-
-          this.reviewErrorMessage = error?.error?.message || 'Unable to update review.';
+          this.reviewErrorMessage = this.getErrorMessage(error, 'Unable to update review.');
         },
       });
   }
 
   // =========================================================
   // DELETE REVIEW
-  // DELETE /api/Review/{id}
   // =========================================================
 
   deleteReview(review: Review): void {
@@ -900,20 +971,17 @@ export class ProductDetail implements OnInit {
       return;
     }
 
-    const confirmed = confirm('Are you sure you want to delete your review?');
+    const confirmed = window.confirm('Are you sure you want to delete your review?');
 
     if (!confirmed) {
       return;
     }
 
     this.reviewErrorMessage = '';
-
     this.reviewSuccessMessage = '';
 
     this.reviewService.delete(review.reviewId).subscribe({
       next: () => {
-        console.log('Review Deleted:', review.reviewId);
-
         this.reviewSuccessMessage = 'Review deleted successfully.';
 
         if (this.editingReviewId === review.reviewId) {
@@ -921,7 +989,6 @@ export class ProductDetail implements OnInit {
         }
 
         this.loadReviews();
-
         this.loadReviewSummary();
 
         setTimeout(() => {
@@ -929,23 +996,20 @@ export class ProductDetail implements OnInit {
         }, 3000);
       },
 
-      error: (error) => {
+      error: (error: unknown) => {
         console.error('Delete Review Error:', error);
-
-        this.reviewErrorMessage = error?.error?.message || 'Unable to delete review.';
+        this.reviewErrorMessage = this.getErrorMessage(error, 'Unable to delete review.');
       },
     });
   }
 
   // =========================================================
-  // CANCEL EDIT
+  // CANCEL REVIEW EDIT
   // =========================================================
 
   cancelEditReview(): void {
     this.resetReviewForm();
-
     this.reviewErrorMessage = '';
-
     this.reviewSuccessMessage = '';
   }
 
@@ -955,37 +1019,45 @@ export class ProductDetail implements OnInit {
 
   resetReviewForm(): void {
     this.reviewRating = 5;
-
     this.reviewTitle = '';
-
     this.reviewComment = '';
-
     this.isEditingReview = false;
-
     this.editingReviewId = null;
   }
 
   // =========================================================
-  // BACK TO PRODUCTS
+  // NAVIGATION
   // =========================================================
 
   backToProducts(): void {
     this.router.navigate(['/products']);
   }
 
-  // =========================================================
-  // GO TO CART
-  // =========================================================
-
   goToCart(): void {
     this.router.navigate(['/cart']);
   }
 
-  // =========================================================
-  // GO TO WISHLIST
-  // =========================================================
-
   goToWishlist(): void {
     this.router.navigate(['/wishlist']);
+  }
+
+  // =========================================================
+  // ERROR MESSAGE
+  // =========================================================
+
+  private getErrorMessage(error: unknown, fallback: string): string {
+    if (typeof error === 'object' && error !== null) {
+      const apiError = error as {
+        error?: {
+          message?: string;
+          title?: string;
+        };
+        message?: string;
+      };
+
+      return apiError.error?.message || apiError.error?.title || apiError.message || fallback;
+    }
+
+    return fallback;
   }
 }

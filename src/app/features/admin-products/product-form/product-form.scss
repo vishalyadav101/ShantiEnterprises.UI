@@ -147,6 +147,14 @@
   padding-bottom: 18px;
 
   margin-bottom: 24px;
+
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 20px;
 }
 
 .section-header h2 {
@@ -230,7 +238,8 @@
 
   transition:
     border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    background 0.2s ease;
 }
 
 .form-group input {
@@ -270,6 +279,20 @@
 .form-group input::placeholder,
 .form-group textarea::placeholder {
   color: #94a3b8;
+}
+
+// =========================================================
+// DISABLED
+// =========================================================
+
+.form-group input:disabled,
+.form-group textarea:disabled,
+.form-group select:disabled {
+  background: #f8fafc;
+
+  color: #94a3b8;
+
+  cursor: not-allowed;
 }
 
 // =========================================================
@@ -408,6 +431,624 @@
 }
 
 // =========================================================
+// PRICE TIER HEADER
+// =========================================================
+
+.tier-section-header {
+  align-items: center;
+}
+
+.add-tier-btn {
+  flex-shrink: 0;
+
+  min-height: 42px;
+
+  padding: 0 16px;
+
+  border: 1px solid #1267e8;
+
+  border-radius: 7px;
+
+  background: #1267e8;
+
+  color: #ffffff;
+
+  font-family: inherit;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+}
+
+.add-tier-btn:hover {
+  background: #0f5dcc;
+
+  border-color: #0f5dcc;
+
+  box-shadow: 0 4px 12px rgba(18, 103, 232, 0.18);
+
+  transform: translateY(-1px);
+}
+
+.add-tier-btn:active {
+  transform: translateY(0);
+}
+
+// =========================================================
+// PRICE TIER INFO BOX
+// =========================================================
+
+.tier-info-box {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 12px;
+
+  padding: 14px 16px;
+
+  margin-bottom: 22px;
+
+  border: 1px solid #d5e5ff;
+
+  border-radius: 8px;
+
+  background: #f6faff;
+
+  box-sizing: border-box;
+}
+
+.tier-info-icon {
+  width: 28px;
+  height: 28px;
+
+  min-width: 28px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #e5efff;
+
+  color: #1267e8;
+
+  font-size: 13px;
+
+  font-weight: 700;
+}
+
+.tier-info-box strong {
+  display: block;
+
+  color: #1e3a5f;
+
+  font-size: 13px;
+}
+
+.tier-info-box p {
+  margin: 4px 0 0;
+
+  color: #64748b;
+
+  font-size: 12px;
+
+  line-height: 1.55;
+}
+
+// =========================================================
+// TIER EMPTY STATE
+// =========================================================
+
+.tier-empty {
+  padding: 40px 24px;
+
+  border: 1px dashed #cbd5e1;
+
+  border-radius: 9px;
+
+  background: #fafcff;
+
+  text-align: center;
+}
+
+.tier-empty-icon {
+  width: 52px;
+  height: 52px;
+
+  margin: 0 auto;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #eef5ff;
+
+  color: #1267e8;
+
+  font-size: 22px;
+
+  font-weight: 700;
+}
+
+.tier-empty h3 {
+  margin: 14px 0 6px;
+
+  color: #1e293b;
+
+  font-size: 16px;
+}
+
+.tier-empty p {
+  margin: 0 0 16px;
+
+  color: #64748b;
+
+  font-size: 13px;
+}
+
+.add-tier-empty-btn {
+  min-height: 40px;
+
+  padding: 0 15px;
+
+  border: 1px solid #1267e8;
+
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #1267e8;
+
+  font-family: inherit;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.add-tier-empty-btn:hover {
+  background: #1267e8;
+
+  color: #ffffff;
+}
+
+// =========================================================
+// TIER LIST
+// =========================================================
+
+.tier-list {
+  width: 100%;
+
+  border: 1px solid #dbe3ed;
+
+  border-radius: 9px;
+
+  overflow: hidden;
+
+  background: #ffffff;
+}
+
+// =========================================================
+// TIER HEADER
+// =========================================================
+
+.tier-header {
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    1fr
+    1fr
+    74px;
+
+  background: #f8fafc;
+
+  border-bottom: 1px solid #dbe3ed;
+
+  color: #475569;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+.tier-header > div {
+  padding: 12px 14px;
+}
+
+// =========================================================
+// TIER ROW
+// =========================================================
+
+.tier-row {
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    1fr
+    1fr
+    74px;
+
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 14px;
+
+  border-bottom: 1px solid #e8edf3;
+
+  background: #ffffff;
+
+  transition: background 0.2s ease;
+}
+
+.tier-row:hover {
+  background: #fcfdff;
+}
+
+.tier-row:last-child {
+  border-bottom: 0;
+}
+
+// =========================================================
+// TIER FIELD
+// =========================================================
+
+.tier-field {
+  min-width: 0;
+}
+
+.tier-field > label {
+  display: none;
+}
+
+.tier-field > small {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #94a3b8;
+
+  font-size: 11px;
+}
+
+// =========================================================
+// TIER INPUT
+// =========================================================
+
+.tier-field input {
+  width: 100%;
+
+  height: 42px;
+
+  padding: 0 12px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #cbd5e1;
+
+  border-radius: 7px;
+
+  outline: none;
+
+  background: #ffffff;
+
+  color: #1e293b;
+
+  font-family: inherit;
+
+  font-size: 13px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.tier-field input:focus {
+  border-color: #1267e8;
+
+  box-shadow: 0 0 0 3px rgba(18, 103, 232, 0.08);
+}
+
+.tier-field input:disabled {
+  background: #f8fafc;
+
+  color: #94a3b8;
+
+  cursor: not-allowed;
+}
+
+// =========================================================
+// TIER PRICE PREFIX
+// =========================================================
+
+.tier-field .input-prefix {
+  width: 100%;
+}
+
+.tier-field .input-prefix span {
+  width: 40px;
+
+  min-width: 40px;
+
+  height: 42px;
+
+  font-size: 13px;
+}
+
+.tier-field .input-prefix input {
+  height: 42px;
+}
+
+// =========================================================
+// TIER ACTION
+// =========================================================
+
+.tier-action {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+}
+
+.remove-tier-btn {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #fecaca;
+
+  border-radius: 7px;
+
+  background: #fff5f5;
+
+  color: #dc2626;
+
+  font-size: 15px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.remove-tier-btn:hover {
+  background: #dc2626;
+
+  border-color: #dc2626;
+
+  color: #ffffff;
+
+  transform: translateY(-1px);
+}
+
+.remove-tier-btn:active {
+  transform: translateY(0);
+}
+
+// =========================================================
+// ADD MORE TIER
+// =========================================================
+
+.add-more-tier-btn {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: calc(100% - 28px);
+
+  margin: 14px;
+
+  min-height: 40px;
+
+  border: 1px dashed #b8cdf1;
+
+  border-radius: 7px;
+
+  background: #f9fbff;
+
+  color: #1267e8;
+
+  font-family: inherit;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.add-more-tier-btn:hover {
+  background: #f0f6ff;
+
+  border-color: #1267e8;
+}
+
+// =========================================================
+// TIER EXAMPLE
+// =========================================================
+
+.tier-example {
+  margin-top: 20px;
+
+  padding: 14px 16px;
+
+  border: 1px solid #e5eaf0;
+
+  border-radius: 8px;
+
+  background: #fafbfc;
+}
+
+.tier-example-title {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin-bottom: 11px;
+
+  color: #334155;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+.tier-example-content {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+}
+
+.tier-example-content span {
+  padding: 7px 10px;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 6px;
+
+  background: #ffffff;
+
+  color: #64748b;
+
+  font-size: 11px;
+}
+
+// =========================================================
+// SELECTED FILE
+// =========================================================
+
+.selected-file {
+  margin-top: 10px;
+
+  padding: 12px 14px;
+
+  border: 1px solid #dbe3ef;
+
+  border-radius: 8px;
+
+  background: #f8fafc;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  flex-wrap: wrap;
+
+  font-size: 13px;
+}
+
+.selected-file strong {
+  color: #334155;
+}
+
+.selected-file span {
+  color: #1267e8;
+
+  font-weight: 600;
+}
+
+.selected-file small {
+  margin: 0;
+
+  color: #64748b;
+}
+
+// =========================================================
+// PRIMARY IMAGE
+// =========================================================
+
+.primary-image-option {
+  margin-top: 14px;
+
+  padding: 12px 14px;
+
+  border: 1px solid #e5eaf0;
+
+  border-radius: 8px;
+
+  background: #fafbfc;
+}
+
+.checkbox-label {
+  display: flex !important;
+
+  align-items: center;
+
+  gap: 9px;
+
+  margin-bottom: 0 !important;
+
+  cursor: pointer;
+}
+
+.checkbox-label input {
+  width: 16px !important;
+  height: 16px !important;
+
+  padding: 0 !important;
+
+  accent-color: #1267e8;
+
+  cursor: pointer;
+}
+
+.checkbox-label span {
+  margin: 0 !important;
+
+  color: #334155 !important;
+
+  font-size: 13px !important;
+
+  font-weight: 600;
+}
+
+// =========================================================
 // ACTIONS
 // =========================================================
 
@@ -446,7 +1087,8 @@
   transition:
     background 0.2s ease,
     border-color 0.2s ease,
-    opacity 0.2s ease;
+    opacity 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 // =========================================================
@@ -483,6 +1125,8 @@
   background: #0f5dcc;
 
   border-color: #0f5dcc;
+
+  box-shadow: 0 4px 12px rgba(18, 103, 232, 0.18);
 }
 
 // =========================================================
@@ -490,7 +1134,11 @@
 // =========================================================
 
 .cancel-btn:disabled,
-.save-btn:disabled {
+.save-btn:disabled,
+.add-tier-btn:disabled,
+.add-tier-empty-btn:disabled,
+.add-more-tier-btn:disabled,
+.remove-tier-btn:disabled {
   opacity: 0.6;
 
   cursor: not-allowed;
@@ -533,6 +1181,104 @@
     gap: 0;
   }
 
+  .section-header {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .add-tier-btn {
+    width: 100%;
+  }
+
+  .tier-info-box {
+    margin-bottom: 18px;
+  }
+
+  .tier-header {
+    display: none;
+  }
+
+  .tier-list {
+    border: 0;
+
+    overflow: visible;
+  }
+
+  .tier-row {
+    grid-template-columns:
+      1fr
+      1fr
+      52px;
+
+    grid-template-areas:
+      'min max action'
+      'price price action';
+
+    gap: 12px;
+
+    margin-bottom: 12px;
+
+    padding: 14px;
+
+    border: 1px solid #dbe3ed;
+
+    border-radius: 9px;
+
+    box-shadow: 0 2px 8px rgba(17, 42, 78, 0.035);
+  }
+
+  .tier-row:last-child {
+    border-bottom: 1px solid #dbe3ed;
+  }
+
+  .tier-field:nth-child(1) {
+    grid-area: min;
+  }
+
+  .tier-field:nth-child(2) {
+    grid-area: max;
+  }
+
+  .tier-field:nth-child(3) {
+    grid-area: price;
+  }
+
+  .tier-field > label {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #475569;
+
+    font-size: 11px;
+
+    font-weight: 600;
+  }
+
+  .tier-action {
+    grid-area: action;
+
+    align-self: center;
+  }
+
+  .remove-tier-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .add-more-tier-btn {
+    width: 100%;
+
+    margin: 4px 0 0;
+  }
+
+  .tier-example-content {
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .form-actions {
     flex-direction: column-reverse;
 
@@ -542,6 +1288,12 @@
   .cancel-btn,
   .save-btn {
     width: 100%;
+  }
+
+  .selected-file {
+    flex-direction: column;
+
+    align-items: flex-start;
   }
 }
 
@@ -564,5 +1316,71 @@
 
   .section-header h2 {
     font-size: 18px;
+  }
+
+  .section-header p {
+    font-size: 12px;
+  }
+
+  .tier-info-box {
+    padding: 12px;
+  }
+
+  .tier-info-box p {
+    font-size: 11px;
+  }
+
+  .tier-empty {
+    padding: 30px 15px;
+  }
+
+  .tier-row {
+    grid-template-columns:
+      1fr
+      1fr
+      42px;
+
+    gap: 9px;
+
+    padding: 11px;
+  }
+
+  .tier-field input {
+    height: 40px;
+
+    padding: 0 9px;
+
+    font-size: 12px;
+  }
+
+  .tier-field .input-prefix span {
+    width: 32px;
+
+    min-width: 32px;
+
+    height: 40px;
+
+    font-size: 12px;
+  }
+
+  .tier-field .input-prefix input {
+    height: 40px;
+  }
+
+  .remove-tier-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .tier-example {
+    padding: 12px;
+  }
+
+  .tier-example-content {
+    grid-template-columns: 1fr;
+  }
+
+  .tier-example-content span {
+    text-align: center;
   }
 }

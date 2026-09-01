@@ -181,7 +181,7 @@
               <div class="wishlist-image-wrapper">
                 @if (item.imageUrl) {
                   <img
-                    [src]="item.imageUrl"
+                    [src]="getImageUrl(item.imageUrl)"
                     [alt]="item.productName"
                     class="wishlist-image"
                     loading="lazy"
