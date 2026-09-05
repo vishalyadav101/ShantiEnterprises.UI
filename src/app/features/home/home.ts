@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { forkJoin, finalize } from 'rxjs';
 
 import { AuthService } from '../../core/services/auth';
@@ -11,7 +12,6 @@ import { ProductImageService, ProductImage } from '../../core/services/product-i
 import { OrderService } from '../../core/services/order';
 import { BannerService, Banner } from '../../core/services/banner';
 import { ReviewService } from '../../core/services/review';
-
 import { ProductPriceTierService, ProductPriceTier } from '../../core/services/product-price-tier';
 
 import { Product } from '../../core/models/product.model';
@@ -22,7 +22,7 @@ import { ReviewSummary } from '../../core/models/review.model';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
@@ -74,6 +74,16 @@ export class Home implements OnInit, OnDestroy {
   products: Product[] = [];
 
   featuredProducts: Product[] = [];
+
+  // =========================================================
+  // HOME SEARCH & CATEGORY FILTER
+  // =========================================================
+
+  searchTerm = '';
+
+  selectedCategory = '';
+
+  categories: string[] = [];
 
   // =========================================================
   // PRODUCT IMAGES
@@ -221,23 +231,29 @@ export class Home implements OnInit, OnDestroy {
 
           this.products = response.products.filter((product) => product.isActive);
 
-          /*
-           * Show maximum 8 products on Home page.
-           */
+          // =================================================
+          // BUILD CATEGORY LIST
+          // =================================================
+
+          this.categories = Array.from(
+            new Set(
+              this.products
+                .map((product) => product.categoryName)
+                .filter((category): category is string => !!category),
+            ),
+          ).sort((a, b) => a.localeCompare(b));
+
+          // =================================================
+          // DEFAULT HOME PRODUCTS
+          // =================================================
 
           this.featuredProducts = this.products.slice(0, 12);
 
-          /*
-           * Load data for featured products.
-           */
+          // =================================================
+          // LOAD SUPPORTING DATA
+          // =================================================
 
-          this.featuredProducts.forEach((product) => {
-            this.loadProductImages(product);
-
-            this.loadReviewSummary(product);
-
-            this.loadProductPriceTiers(product);
-          });
+          this.loadSupportingProductData(this.featuredProducts);
 
           // =================================================
           // WISHLIST
@@ -269,9 +285,7 @@ export class Home implements OnInit, OnDestroy {
 
           this.orderCount = this.orders.length;
 
-          /*
-           * Latest 3 orders.
-           */
+          // Latest 3 orders
 
           this.recentOrders = [...this.orders]
             .sort((a, b) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime())
@@ -286,6 +300,112 @@ export class Home implements OnInit, OnDestroy {
           this.errorMessage = error?.error?.message || 'Unable to load home page data.';
         },
       });
+  }
+
+  // =========================================================
+  // HOME SEARCH
+  // =========================================================
+
+  onSearchChange(): void {
+    this.applyHomeFilters();
+  }
+
+  // =========================================================
+  // CATEGORY FILTER
+  // =========================================================
+
+  onCategoryChange(): void {
+    this.applyHomeFilters();
+  }
+
+  // =========================================================
+  // APPLY SEARCH + CATEGORY FILTER
+  // =========================================================
+
+  applyHomeFilters(): void {
+    const search = this.searchTerm.trim().toLowerCase();
+
+    let filteredProducts = this.products.filter((product) => {
+      const productName = product.productName?.toLowerCase() || '';
+
+      const description = product.description?.toLowerCase() || '';
+
+      const sku = product.sku?.toLowerCase() || '';
+
+      const category = product.categoryName?.toLowerCase() || '';
+
+      const matchesSearch =
+        !search ||
+        productName.includes(search) ||
+        description.includes(search) ||
+        sku.includes(search) ||
+        category.includes(search);
+
+      const matchesCategory =
+        !this.selectedCategory || product.categoryName === this.selectedCategory;
+
+      return matchesSearch && matchesCategory;
+    });
+
+    // =======================================================
+    // NO SEARCH / NO FILTER
+    // SHOW ONLY FIRST 12 PRODUCTS
+    // =======================================================
+
+    if (!search && !this.selectedCategory) {
+      filteredProducts = filteredProducts.slice(0, 12);
+    }
+
+    // =======================================================
+    // SEARCH / FILTER ACTIVE
+    // SHOW ALL MATCHING PRODUCTS
+    // =======================================================
+
+    this.featuredProducts = filteredProducts;
+
+    this.loadSupportingProductData(this.featuredProducts);
+  }
+
+  // =========================================================
+  // CLEAR SEARCH + FILTERS
+  // =========================================================
+
+  clearHomeFilters(): void {
+    this.searchTerm = '';
+
+    this.selectedCategory = '';
+
+    this.featuredProducts = this.products.slice(0, 12);
+
+    this.loadSupportingProductData(this.featuredProducts);
+  }
+
+  // =========================================================
+  // CHECK ACTIVE FILTERS
+  // =========================================================
+
+  hasHomeFilters(): boolean {
+    return this.searchTerm.trim().length > 0 || this.selectedCategory !== '';
+  }
+
+  // =========================================================
+  // LOAD SUPPORTING PRODUCT DATA
+  // =========================================================
+
+  private loadSupportingProductData(products: Product[]): void {
+    products.forEach((product) => {
+      if (!this.productImages[product.productId]) {
+        this.loadProductImages(product);
+      }
+
+      if (!this.reviewSummaries[product.productId]) {
+        this.loadReviewSummary(product);
+      }
+
+      if (!this.productPriceTiers[product.productId]) {
+        this.loadProductPriceTiers(product);
+      }
+    });
   }
 
   // =========================================================
@@ -403,9 +523,7 @@ export class Home implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (images) => {
-          /*
-           * Primary image always comes first.
-           */
+          // Primary image always comes first.
 
           const sortedImages = [...images].sort((a, b) => {
             if (a.isPrimary && !b.isPrimary) {
@@ -419,17 +537,13 @@ export class Home implements OnInit, OnDestroy {
             return a.productImageId - b.productImageId;
           });
 
-          /*
-           * If ProductImage API returns images.
-           */
+          // If ProductImage API returns images.
 
           if (sortedImages.length > 0) {
             this.productImages[product.productId] = sortedImages;
           }
 
-          /*
-           * Fallback to Product.imageUrl.
-           */
+          // Fallback to Product.imageUrl.
           else if (product.imageUrl) {
             this.productImages[product.productId] = [
               {

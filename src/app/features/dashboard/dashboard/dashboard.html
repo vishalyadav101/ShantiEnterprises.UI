@@ -1,417 +1,273 @@
-<div class="admin-layout" [class.sidebar-open]="isSidebarOpen">
+<section class="dashboard-content">
   <!-- =====================================================
-       MOBILE OVERLAY
+       DASHBOARD HEADER
   ====================================================== -->
 
-  @if (isSidebarOpen) {
-    <div class="sidebar-overlay" (click)="closeSidebar()"></div>
+  <div class="dashboard-header">
+    <div>
+      <span class="dashboard-label"> Overview </span>
+
+      <h1>Dashboard</h1>
+
+      <p>Manage your Shanti Enterprises application from one place.</p>
+    </div>
+
+    <div class="dashboard-badge">
+      <i class="bi bi-shield-check"></i>
+
+      Administrator
+    </div>
+  </div>
+
+  <!-- =====================================================
+       LOADING
+  ====================================================== -->
+
+  @if (isLoading) {
+    <div class="dashboard-loading">
+      <div class="spinner-border text-primary" role="status"></div>
+
+      <p>Loading dashboard...</p>
+    </div>
   }
 
   <!-- =====================================================
-       ADMIN SIDEBAR
+       ERROR
   ====================================================== -->
 
-  <aside class="admin-sidebar">
-    <!-- BRAND -->
+  @if (!isLoading && errorMessage) {
+    <div class="alert alert-danger dashboard-error" role="alert">
+      <div>
+        <i class="bi bi-exclamation-circle me-2"></i>
 
-    <div class="sidebar-brand">
-      <a routerLink="/admin" class="brand-link" (click)="closeSidebar()">
-        <div class="brand-logo">
-          <i class="bi bi-shop"></i>
-        </div>
-
-        <div class="brand-text">
-          <strong>Shanti</strong>
-          <span>Enterprises</span>
-        </div>
-      </a>
-
-      <!-- MOBILE CLOSE -->
-
-      <button
-        type="button"
-        class="sidebar-close"
-        (click)="closeSidebar()"
-        aria-label="Close sidebar"
-      >
-        <i class="bi bi-x-lg"></i>
-      </button>
-    </div>
-
-    <!-- ===================================================
-         NAVIGATION
-    ==================================================== -->
-
-    <div class="sidebar-section-title">MAIN MENU</div>
-
-    <nav class="sidebar-nav">
-      @for (item of adminMenu; track item.route) {
-        <a
-          [routerLink]="item.route"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{
-            exact: item.route === '/admin',
-          }"
-          class="sidebar-link"
-          (click)="closeSidebar()"
-        >
-          <span class="sidebar-icon">
-            <i class="bi" [ngClass]="item.icon"></i>
-          </span>
-
-          <span class="sidebar-label">
-            {{ item.title }}
-          </span>
-
-          @if (item.route === '/admin') {
-            <span class="sidebar-arrow">
-              <i class="bi bi-chevron-right"></i>
-            </span>
-          }
-        </a>
-      }
-    </nav>
-
-    <!-- ===================================================
-         SIDEBAR BOTTOM
-    ==================================================== -->
-
-    <div class="sidebar-bottom">
-      <div class="admin-profile">
-        <div class="profile-avatar">
-          <i class="bi bi-person-fill"></i>
-        </div>
-
-        <div class="profile-info">
-          <strong>Administrator</strong>
-          <span>Admin Account</span>
-        </div>
+        {{ errorMessage }}
       </div>
 
-      <button type="button" class="logout-link" (click)="logout()">
-        <span class="sidebar-icon">
-          <i class="bi bi-box-arrow-right"></i>
-        </span>
-
-        <span> Logout </span>
+      <button type="button" class="btn btn-sm btn-outline-danger" (click)="loadDashboard()">
+        Retry
       </button>
     </div>
-  </aside>
+  }
 
   <!-- =====================================================
-       MAIN AREA
+       DASHBOARD DATA
   ====================================================== -->
 
-  <main class="admin-main">
+  @if (!isLoading && !errorMessage && dashboard) {
     <!-- ===================================================
-         TOP HEADER
+         MAIN STATISTICS
     ==================================================== -->
 
-    <header class="admin-topbar">
-      <div class="topbar-left">
-        <!-- MOBILE MENU -->
+    <div class="stats-grid">
+      @for (stat of stats; track stat.title) {
+        <a class="stat-card" [routerLink]="stat.route">
+          <div
+            class="stat-icon"
+            [class.products]="stat.title === 'Products'"
+            [class.orders]="stat.title === 'Orders'"
+            [class.customers]="stat.title === 'Customers'"
+            [class.payments]="stat.title === 'Payments'"
+          >
+            <i class="bi" [ngClass]="stat.icon"> </i>
+          </div>
 
-        <button
-          type="button"
-          class="menu-toggle"
-          (click)="toggleSidebar()"
-          aria-label="Open sidebar"
-        >
-          <i class="bi bi-list"></i>
-        </button>
+          <div class="stat-content">
+            <span class="stat-title">
+              {{ stat.title }}
+            </span>
 
-        <div>
-          <span class="topbar-label"> Admin Panel </span>
+            <h2>
+              {{ stat.value }}
+            </h2>
+          </div>
 
-          <h2>Dashboard</h2>
-        </div>
-      </div>
-
-      <div class="topbar-right">
-        <div class="admin-status">
-          <span class="status-dot"></span>
-
-          <span> Administrator </span>
-        </div>
-      </div>
-    </header>
+          <i class="bi bi-arrow-right stat-arrow"></i>
+        </a>
+      }
+    </div>
 
     <!-- ===================================================
-         DASHBOARD CONTENT
+         ADDITIONAL STATISTICS
     ==================================================== -->
 
-    <section class="dashboard-content">
-      <!-- =================================================
-           DASHBOARD HEADER
-      ================================================== -->
+    <div class="secondary-grid">
+      <!-- ACTIVE PRODUCTS -->
 
-      <div class="dashboard-header">
-        <div>
-          <span class="dashboard-label"> Overview </span>
-
-          <h1>Dashboard</h1>
-
-          <p>Manage your Shanti Enterprises application from one place.</p>
+      <div class="mini-stat-card">
+        <div class="mini-stat-icon">
+          <i class="bi bi-box-seam"></i>
         </div>
 
-        <div class="dashboard-badge">
-          <i class="bi bi-shield-check"></i>
+        <div>
+          <span> Active Products </span>
 
-          Administrator
+          <h4>
+            {{ dashboard.activeProducts }}
+          </h4>
         </div>
       </div>
 
-      <!-- =================================================
-           LOADING
-      ================================================== -->
+      <!-- PENDING ORDERS -->
 
-      @if (isLoading) {
-        <div class="dashboard-loading">
-          <div class="spinner-border text-primary" role="status"></div>
-
-          <p>Loading dashboard...</p>
-        </div>
-      }
-
-      <!-- =================================================
-           ERROR
-      ================================================== -->
-
-      @if (!isLoading && errorMessage) {
-        <div class="alert alert-danger dashboard-error" role="alert">
-          <div>
-            <i class="bi bi-exclamation-circle me-2"></i>
-
-            {{ errorMessage }}
-          </div>
-
-          <button type="button" class="btn btn-sm btn-outline-danger" (click)="loadDashboard()">
-            Retry
-          </button>
-        </div>
-      }
-
-      <!-- =================================================
-           DASHBOARD DATA
-      ================================================== -->
-
-      @if (!isLoading && !errorMessage && dashboard) {
-        <!-- ===============================================
-             MAIN STATISTICS
-        ================================================ -->
-
-        <div class="stats-grid">
-          @for (stat of stats; track stat.title) {
-            <a class="stat-card" [routerLink]="stat.route">
-              <div
-                class="stat-icon"
-                [class.products]="stat.title === 'Products'"
-                [class.orders]="stat.title === 'Orders'"
-                [class.customers]="stat.title === 'Customers'"
-                [class.payments]="stat.title === 'Payments'"
-              >
-                <i class="bi" [ngClass]="stat.icon"></i>
-              </div>
-
-              <div class="stat-content">
-                <span class="stat-title">
-                  {{ stat.title }}
-                </span>
-
-                <h2>
-                  {{ stat.value }}
-                </h2>
-              </div>
-
-              <i class="bi bi-arrow-right stat-arrow"></i>
-            </a>
-          }
+      <div class="mini-stat-card">
+        <div class="mini-stat-icon">
+          <i class="bi bi-clock-history"></i>
         </div>
 
-        <!-- ===============================================
-             ADDITIONAL STATISTICS
-        ================================================ -->
+        <div>
+          <span> Pending Orders </span>
 
-        <div class="secondary-grid">
-          <!-- ACTIVE PRODUCTS -->
+          <h4>
+            {{ dashboard.pendingOrders }}
+          </h4>
+        </div>
+      </div>
 
-          <div class="mini-stat-card">
-            <div class="mini-stat-icon">
-              <i class="bi bi-box-seam"></i>
-            </div>
+      <!-- PENDING PAYMENTS -->
 
-            <div>
-              <span> Active Products </span>
-
-              <h4>
-                {{ dashboard.activeProducts }}
-              </h4>
-            </div>
-          </div>
-
-          <!-- PENDING ORDERS -->
-
-          <div class="mini-stat-card">
-            <div class="mini-stat-icon">
-              <i class="bi bi-clock-history"></i>
-            </div>
-
-            <div>
-              <span> Pending Orders </span>
-
-              <h4>
-                {{ dashboard.pendingOrders }}
-              </h4>
-            </div>
-          </div>
-
-          <!-- PENDING PAYMENTS -->
-
-          <div class="mini-stat-card">
-            <div class="mini-stat-icon">
-              <i class="bi bi-hourglass-split"></i>
-            </div>
-
-            <div>
-              <span> Pending Payments </span>
-
-              <h4>
-                {{ dashboard.pendingPayments }}
-              </h4>
-            </div>
-          </div>
+      <div class="mini-stat-card">
+        <div class="mini-stat-icon">
+          <i class="bi bi-hourglass-split"></i>
         </div>
 
-        <!-- ===============================================
-             REVENUE
-        ================================================ -->
+        <div>
+          <span> Pending Payments </span>
 
-        <div class="revenue-grid">
-          <!-- TODAY -->
+          <h4>
+            {{ dashboard.pendingPayments }}
+          </h4>
+        </div>
+      </div>
+    </div>
 
-          <div class="revenue-card">
-            <div class="revenue-icon">
-              <i class="bi bi-currency-rupee"></i>
-            </div>
+    <!-- ===================================================
+         REVENUE
+    ==================================================== -->
 
-            <div>
-              <span> Today's Revenue </span>
+    <div class="revenue-grid">
+      <!-- TODAY -->
 
-              <h3>₹{{ dashboard.todayRevenue }}</h3>
-            </div>
-          </div>
-
-          <!-- MONTHLY -->
-
-          <div class="revenue-card">
-            <div class="revenue-icon">
-              <i class="bi bi-graph-up-arrow"></i>
-            </div>
-
-            <div>
-              <span> Monthly Revenue </span>
-
-              <h3>₹{{ dashboard.monthlyRevenue }}</h3>
-            </div>
-          </div>
+      <div class="revenue-card">
+        <div class="revenue-icon">
+          <i class="bi bi-currency-rupee"></i>
         </div>
 
-        <!-- ===============================================
-             QUICK ACTIONS
-        ================================================ -->
+        <div>
+          <span> Today's Revenue </span>
 
-        <section class="quick-section">
-          <div class="section-heading">
-            <div>
-              <h3>Quick Actions</h3>
+          <h3>₹{{ dashboard.todayRevenue }}</h3>
+        </div>
+      </div>
 
-              <p>Quickly access important sections.</p>
-            </div>
+      <!-- MONTHLY -->
+
+      <div class="revenue-card">
+        <div class="revenue-icon">
+          <i class="bi bi-graph-up-arrow"></i>
+        </div>
+
+        <div>
+          <span> Monthly Revenue </span>
+
+          <h3>₹{{ dashboard.monthlyRevenue }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================
+         QUICK ACTIONS
+    ==================================================== -->
+
+    <section class="quick-section">
+      <div class="section-heading">
+        <div>
+          <h3>Quick Actions</h3>
+
+          <p>Quickly access important sections.</p>
+        </div>
+      </div>
+
+      <div class="quick-grid">
+        <!-- PRODUCTS -->
+
+        <a routerLink="/admin/products" class="action-card">
+          <div class="action-icon">
+            <i class="bi bi-box-seam"></i>
           </div>
 
-          <div class="quick-grid">
-            <!-- PRODUCTS -->
+          <div class="action-content">
+            <h5>Manage Products</h5>
 
-            <a routerLink="/admin/products" class="action-card">
-              <div class="action-icon">
-                <i class="bi bi-box-seam"></i>
-              </div>
-
-              <div class="action-content">
-                <h5>Manage Products</h5>
-
-                <p>View and manage products.</p>
-              </div>
-
-              <i class="bi bi-arrow-right action-arrow"></i>
-            </a>
-
-            <!-- ORDERS -->
-
-            <a routerLink="/admin/orders" class="action-card">
-              <div class="action-icon">
-                <i class="bi bi-cart-check"></i>
-              </div>
-
-              <div class="action-content">
-                <h5>Manage Orders</h5>
-
-                <p>View and manage customer orders.</p>
-              </div>
-
-              <i class="bi bi-arrow-right action-arrow"></i>
-            </a>
-
-            <!-- USERS -->
-
-            <a routerLink="/admin/users" class="action-card">
-              <div class="action-icon">
-                <i class="bi bi-people"></i>
-              </div>
-
-              <div class="action-content">
-                <h5>Manage Users</h5>
-
-                <p>View and manage customers.</p>
-              </div>
-
-              <i class="bi bi-arrow-right action-arrow"></i>
-            </a>
-
-            <!-- CATEGORIES -->
-
-            <a routerLink="/admin/categories" class="action-card">
-              <div class="action-icon">
-                <i class="bi bi-folder"></i>
-              </div>
-
-              <div class="action-content">
-                <h5>Manage Categories</h5>
-
-                <p>Organize product categories.</p>
-              </div>
-
-              <i class="bi bi-arrow-right action-arrow"></i>
-            </a>
-
-            <!-- BANNERS -->
-
-            <a routerLink="/admin/banners" class="action-card">
-              <div class="action-icon">
-                <i class="bi bi-images"></i>
-              </div>
-
-              <div class="action-content">
-                <h5>Manage Banners</h5>
-
-                <p>Manage promotional banners.</p>
-              </div>
-
-              <i class="bi bi-arrow-right action-arrow"></i>
-            </a>
+            <p>View and manage products.</p>
           </div>
-        </section>
-      }
+
+          <i class="bi bi-arrow-right action-arrow"></i>
+        </a>
+
+        <!-- ORDERS -->
+
+        <a routerLink="/admin/orders" class="action-card">
+          <div class="action-icon">
+            <i class="bi bi-cart-check"></i>
+          </div>
+
+          <div class="action-content">
+            <h5>Manage Orders</h5>
+
+            <p>View and manage customer orders.</p>
+          </div>
+
+          <i class="bi bi-arrow-right action-arrow"></i>
+        </a>
+
+        <!-- USERS -->
+
+        <a routerLink="/admin/users" class="action-card">
+          <div class="action-icon">
+            <i class="bi bi-people"></i>
+          </div>
+
+          <div class="action-content">
+            <h5>Manage Users</h5>
+
+            <p>View and manage customers.</p>
+          </div>
+
+          <i class="bi bi-arrow-right action-arrow"></i>
+        </a>
+
+        <!-- CATEGORIES -->
+
+        <a routerLink="/admin/categories" class="action-card">
+          <div class="action-icon">
+            <i class="bi bi-folder"></i>
+          </div>
+
+          <div class="action-content">
+            <h5>Manage Categories</h5>
+
+            <p>Organize product categories.</p>
+          </div>
+
+          <i class="bi bi-arrow-right action-arrow"></i>
+        </a>
+
+        <!-- BANNERS -->
+
+        <a routerLink="/admin/banners" class="action-card">
+          <div class="action-icon">
+            <i class="bi bi-images"></i>
+          </div>
+
+          <div class="action-content">
+            <h5>Manage Banners</h5>
+
+            <p>Manage promotional banners.</p>
+          </div>
+
+          <i class="bi bi-arrow-right action-arrow"></i>
+        </a>
+      </div>
     </section>
-  </main>
-</div>
+  }
+</section>

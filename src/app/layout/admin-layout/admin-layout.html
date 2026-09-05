@@ -1,0 +1,151 @@
+<div class="admin-layout" [class.sidebar-open]="isSidebarOpen">
+  <!-- =====================================================
+       MOBILE OVERLAY
+  ====================================================== -->
+
+  @if (isSidebarOpen) {
+    <div class="sidebar-overlay" (click)="closeSidebar()"></div>
+  }
+
+  <!-- =====================================================
+       ADMIN SIDEBAR
+  ====================================================== -->
+
+  <aside class="admin-sidebar">
+    <!-- BRAND -->
+
+    <div class="sidebar-brand">
+      <a routerLink="/admin" class="brand-link" (click)="closeSidebar()">
+        <div class="brand-logo">
+          <i class="bi bi-shop"></i>
+        </div>
+
+        <div class="brand-text">
+          <strong>Shanti</strong>
+          <span>Enterprises</span>
+        </div>
+      </a>
+
+      <!-- MOBILE CLOSE -->
+
+      <button
+        type="button"
+        class="sidebar-close"
+        (click)="closeSidebar()"
+        aria-label="Close sidebar"
+      >
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <!-- ===================================================
+         NAVIGATION
+    ==================================================== -->
+
+    <div class="sidebar-section-title">MAIN MENU</div>
+
+    <nav class="sidebar-nav">
+      @for (item of adminMenu; track item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{
+            exact: item.route === '/admin',
+          }"
+          class="sidebar-link"
+          (click)="closeSidebar()"
+        >
+          <span class="sidebar-icon">
+            <i class="bi" [ngClass]="item.icon"> </i>
+          </span>
+
+          <span class="sidebar-label">
+            {{ item.title }}
+          </span>
+
+          @if (item.route === '/admin') {
+            <span class="sidebar-arrow">
+              <i class="bi bi-chevron-right"></i>
+            </span>
+          }
+        </a>
+      }
+    </nav>
+
+    <!-- ===================================================
+         SIDEBAR BOTTOM
+    ==================================================== -->
+
+    <div class="sidebar-bottom">
+      <div class="admin-profile">
+        <div class="profile-avatar">
+          <i class="bi bi-person-fill"></i>
+        </div>
+
+        <div class="profile-info">
+          <strong> Administrator </strong>
+
+          <span> Admin Account </span>
+        </div>
+      </div>
+
+      <button type="button" class="logout-link" (click)="logout()">
+        <span class="sidebar-icon">
+          <i class="bi bi-box-arrow-right"></i>
+        </span>
+
+        <span> Logout </span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- =====================================================
+       MAIN AREA
+  ====================================================== -->
+
+  <main class="admin-main">
+    <!-- ===================================================
+         TOP HEADER
+    ==================================================== -->
+
+    <header class="admin-topbar">
+      <div class="topbar-left">
+        <!-- MOBILE MENU -->
+
+        <button
+          type="button"
+          class="menu-toggle"
+          (click)="toggleSidebar()"
+          aria-label="Open sidebar"
+        >
+          <i class="bi bi-list"></i>
+        </button>
+
+        <div>
+          <span class="topbar-label"> Admin Panel </span>
+
+          <h2>Dashboard</h2>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <div class="admin-status">
+          <span class="status-dot"></span>
+
+          <span> Administrator </span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===================================================
+         ADMIN PAGE CONTENT
+         
+         Dashboard / Products / Orders / Users etc.
+         will load here.
+    ==================================================== -->
+
+    <div class="admin-page-content">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

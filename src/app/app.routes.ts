@@ -11,6 +11,13 @@ import { adminGuard } from './core/guards/admin-guard';
 // =========================================================
 
 import { CustomerLayout } from './layout/customer-layout/customer-layout/customer-layout';
+
+// =========================================================
+// ADMIN LAYOUT
+// =========================================================
+
+import { AdminLayout } from './layout/admin-layout/admin-layout';
+
 // =========================================================
 // CUSTOMER
 // =========================================================
@@ -80,20 +87,58 @@ import { ProductDetail } from './features/admin-products/product-detail/product-
 import { ProductForm } from './features/admin-products/product-form/product-form';
 
 import { ProductEdit } from './features/admin-products/product-edit/product-edit';
+
+// =========================================================
+// ADMIN BANNERS
+// =========================================================
+
 import { BannerList } from './features/banners/banner-list/banner-list';
+
 import { BannerForm } from './features/banners/banner-form/banner-form';
+
 import { BannerDetail } from './features/banners/banner-detail/banner-detail';
+
+// =========================================================
+// ADMIN REVIEWS
+// =========================================================
+
 import { AdminReviewList } from './features/admin-reviews/admin-review-list/admin-review-list';
+
+// =========================================================
+// ADMIN CONTACT ENQUIRIES
+// =========================================================
+
 import { ContactEnquiryList } from './features/contact-enquiries/contact-enquiry-list/contact-enquiry-list';
 
 import { ContactEnquiryDetail } from './features/contact-enquiries/contact-enquiry-detail/contact-enquiry-detail';
+
 import { ContactEnquiryForm } from './features/contact-enquiry/contact-enquiry-form/contact-enquiry-form';
+
+// =========================================================
+// ADMIN BULK ENQUIRIES
+// =========================================================
+
 import { BulkEnquiryList } from './features/bulk-enquiries/bulk-enquiry-list/bulk-enquiry-list';
+
 import { BulkEnquiryDetail } from './features/bulk-enquiries/bulk-enquiry-detail/bulk-enquiry-detail';
+
+// =========================================================
+// ADMIN SHIPMENTS
+// =========================================================
+
 import { AdminShipmentsComponent } from './features/admin-shipments/admin-shipments';
+
+// =========================================================
+// ADMIN RETURNS
+// =========================================================
+
 import { ReturnList } from './features/returns/return-list/return-list';
+
 import { ReturnDetail } from './features/returns/return-detail/return-detail';
-import { AdminReturns } from './features/admin-returns/admin-returns/admin-returns'; // =========================================================
+
+import { AdminReturns } from './features/admin-returns/admin-returns/admin-returns';
+
+// =========================================================
 // ROUTES
 // =========================================================
 
@@ -113,191 +158,191 @@ export const routes: Routes = [
   },
 
   // =========================================================
-  // ADMIN DASHBOARD
+  // ADMIN LAYOUT
+  // =========================================================
+  //
+  // Sidebar + Topbar common rahega.
+  // Child route router-outlet ke andar load hoga.
+  //
   // =========================================================
 
   {
     path: 'admin',
-    component: Dashboard,
+    component: AdminLayout,
     canActivate: [adminGuard],
+
+    children: [
+      // =======================================================
+      // DASHBOARD
+      // =======================================================
+
+      {
+        path: '',
+        component: Dashboard,
+      },
+
+      // =======================================================
+      // ORDERS
+      // =======================================================
+
+      {
+        path: 'orders',
+        component: AdminOrderListComponent,
+      },
+
+      {
+        path: 'orders/:id',
+        component: AdminOrderDetailComponent,
+      },
+
+      // =======================================================
+      // USERS
+      // =======================================================
+
+      {
+        path: 'users',
+        component: UserList,
+      },
+
+      {
+        path: 'users/:id/edit',
+        component: UserEdit,
+      },
+
+      {
+        path: 'users/:id',
+        component: UserDetail,
+      },
+
+      // =======================================================
+      // CATEGORIES
+      // =======================================================
+
+      {
+        path: 'categories',
+        component: CategoryList,
+      },
+
+      {
+        path: 'categories/new',
+        component: CategoryForm,
+      },
+
+      {
+        path: 'categories/:id/edit',
+        component: CategoryForm,
+      },
+
+      {
+        path: 'categories/:id',
+        component: CategoryDetail,
+      },
+
+      // =======================================================
+      // PRODUCTS
+      // =======================================================
+
+      {
+        path: 'products',
+        component: AdminProductList,
+      },
+
+      {
+        path: 'products/new',
+        component: ProductForm,
+      },
+
+      {
+        path: 'products/:id/edit',
+        component: ProductEdit,
+      },
+
+      {
+        path: 'products/:id',
+        component: ProductDetail,
+      },
+
+      // =======================================================
+      // REVIEWS
+      // =======================================================
+
+      {
+        path: 'reviews',
+        component: AdminReviewList,
+      },
+
+      // =======================================================
+      // CONTACT ENQUIRIES
+      // =======================================================
+
+      {
+        path: 'contact-enquiries',
+        component: ContactEnquiryList,
+      },
+
+      {
+        path: 'contact-enquiries/:id',
+        component: ContactEnquiryDetail,
+      },
+
+      // =======================================================
+      // BULK ENQUIRIES
+      // =======================================================
+
+      {
+        path: 'bulk-enquiries',
+        component: BulkEnquiryList,
+      },
+
+      {
+        path: 'bulk-enquiries/:id',
+        component: BulkEnquiryDetail,
+      },
+
+      // =======================================================
+      // SHIPMENTS
+      // =======================================================
+
+      {
+        path: 'shipments',
+        component: AdminShipmentsComponent,
+      },
+
+      // =======================================================
+      // RETURNS
+      // =======================================================
+
+      {
+        path: 'returns',
+        component: AdminReturns,
+      },
+
+      // =======================================================
+      // BANNERS
+      // =======================================================
+
+      {
+        path: 'banners',
+        component: BannerList,
+      },
+
+      {
+        path: 'banners/new',
+        component: BannerForm,
+      },
+
+      {
+        path: 'banners/:id/edit',
+        component: BannerForm,
+      },
+
+      {
+        path: 'banners/:id',
+        component: BannerDetail,
+      },
+    ],
   },
 
-  // =========================================================
-  // ADMIN ORDERS
-  // =========================================================
-
-  {
-    path: 'admin/orders',
-    component: AdminOrderListComponent,
-    canActivate: [adminGuard],
-  },
-
-  {
-    path: 'admin/orders/:id',
-    component: AdminOrderDetailComponent,
-    canActivate: [adminGuard],
-  },
-
-  // =========================================================
-  // ADMIN USERS
-  // =========================================================
-
-  {
-    path: 'admin/users',
-    component: UserList,
-    canActivate: [adminGuard],
-  },
-
-  {
-    path: 'admin/users/:id',
-    component: UserDetail,
-    canActivate: [adminGuard],
-  },
-
-  {
-    path: 'admin/users/:id/edit',
-    component: UserEdit,
-    canActivate: [adminGuard],
-  },
-
-  // =========================================================
-  // ADMIN CATEGORIES
-  // =========================================================
-
-  {
-    path: 'admin/categories',
-    component: CategoryList,
-    canActivate: [adminGuard],
-  },
-
-  {
-    path: 'admin/categories/new',
-    component: CategoryForm,
-    canActivate: [adminGuard],
-  },
-
-  {
-    path: 'admin/categories/:id/edit',
-    component: CategoryForm,
-    canActivate: [adminGuard],
-  },
-
-  {
-    path: 'admin/categories/:id',
-    component: CategoryDetail,
-    canActivate: [adminGuard],
-  },
-
-  // =========================================================
-  // ADMIN PRODUCTS
-  // =========================================================
-
-  {
-    path: 'admin/products',
-    component: AdminProductList,
-    canActivate: [adminGuard],
-  },
-
-  {
-    path: 'admin/products/new',
-    component: ProductForm,
-    canActivate: [adminGuard],
-  },
-
-  {
-    path: 'admin/products/:id/edit',
-    component: ProductEdit,
-    canActivate: [adminGuard],
-  },
-
-  {
-    path: 'admin/products/:id',
-    component: ProductDetail,
-    canActivate: [adminGuard],
-  },
-  // =========================================================
-  // ADMIN REVIEWS
-  // =========================================================
-
-  {
-    path: 'admin/reviews',
-    component: AdminReviewList,
-    canActivate: [adminGuard],
-  },
-  // =========================================================
-  // ADMIN CONTACT ENQUIRIES
-  // =========================================================
-
-  {
-    path: 'admin/contact-enquiries',
-    component: ContactEnquiryList,
-    canActivate: [adminGuard],
-  },
-
-  {
-    path: 'admin/contact-enquiries/:id',
-    component: ContactEnquiryDetail,
-    canActivate: [adminGuard],
-  },
-  // =========================================================
-  // ADMIN BULK ENQUIRIES
-  //==========================================================
-  {
-    path: 'admin/bulk-enquiries',
-    component: BulkEnquiryList,
-    canActivate: [adminGuard],
-  },
-
-  {
-    path: 'admin/bulk-enquiries/:id',
-    component: BulkEnquiryDetail,
-    canActivate: [adminGuard],
-  },
-  // =========================================================
-  // ADMIN SHIPMENTS
-  // =========================================================
-
-  {
-    path: 'admin/shipments',
-    component: AdminShipmentsComponent,
-    canActivate: [adminGuard],
-  },
-  // =========================================================
-  // ADMIN RETURNS
-  // =========================================================
-
-  {
-    path: 'admin/returns',
-    component: AdminReturns,
-    canActivate: [adminGuard],
-  },
-  // =========================================================
-  // ADMIN BANNERS
-  // =========================================================
-
-  {
-    path: 'admin/banners',
-    component: BannerList,
-    canActivate: [adminGuard],
-  },
-
-  {
-    path: 'admin/banners/new',
-    component: BannerForm,
-    canActivate: [adminGuard],
-  },
-
-  {
-    path: 'admin/banners/:id/edit',
-    component: BannerForm,
-    canActivate: [adminGuard],
-  },
-
-  {
-    path: 'admin/banners/:id',
-    component: BannerDetail,
-    canActivate: [adminGuard],
-  },
   // =========================================================
   // CUSTOMER LAYOUT
   // =========================================================
@@ -376,6 +421,7 @@ export const routes: Routes = [
         path: 'checkout',
         component: CheckoutComponent,
       },
+
       // =======================================================
       // CONTACT US
       // =======================================================
@@ -384,6 +430,7 @@ export const routes: Routes = [
         path: 'contact',
         component: ContactEnquiryForm,
       },
+
       // =======================================================
       // ORDERS
       // =======================================================
@@ -397,6 +444,7 @@ export const routes: Routes = [
         path: 'orders/:id',
         component: OrderDetailComponent,
       },
+
       // =======================================================
       // RETURNS & REFUNDS
       // =======================================================
@@ -405,6 +453,7 @@ export const routes: Routes = [
         path: 'returns',
         component: ReturnList,
       },
+
       {
         path: 'returns/:id',
         component: ReturnDetail,

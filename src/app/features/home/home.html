@@ -36,6 +36,119 @@
 
   @if (!isLoading) {
     <!-- =================================================== -->
+    <!-- HOME SEARCH & CATEGORY FILTER -->
+    <!-- =================================================== -->
+
+    <section class="home-search-section">
+      <div class="container">
+        <div class="home-search-bar">
+          <!-- =================================================
+               SEARCH
+          ================================================== -->
+
+          <div class="home-search-input-wrapper">
+            <i class="bi bi-search"></i>
+
+            <input
+              type="text"
+              class="home-search-input"
+              [(ngModel)]="searchTerm"
+              (input)="onSearchChange()"
+              placeholder="Search products..."
+              aria-label="Search products"
+            />
+
+            @if (searchTerm) {
+              <button
+                type="button"
+                class="home-search-clear"
+                (click)="searchTerm = ''; onSearchChange()"
+                aria-label="Clear search"
+              >
+                <i class="bi bi-x"></i>
+              </button>
+            }
+          </div>
+
+          <!-- =================================================
+               CATEGORY + CLEAR FILTER
+          ================================================== -->
+
+          <div class="home-search-filter-row">
+            <!-- CATEGORY -->
+
+            <div class="home-category-wrapper">
+              <i class="bi bi-grid"></i>
+
+              <select
+                class="home-category-select"
+                [(ngModel)]="selectedCategory"
+                (change)="onCategoryChange()"
+              >
+                <option value="">All Categories</option>
+
+                @for (category of categories; track category) {
+                  <option [value]="category">
+                    {{ category }}
+                  </option>
+                }
+              </select>
+            </div>
+
+            <!-- CLEAR FILTER -->
+
+            <button
+              type="button"
+              class="home-clear-filter"
+              (click)="clearHomeFilters()"
+              [disabled]="!hasHomeFilters()"
+            >
+              <i class="bi bi-x-circle"></i>
+
+              Clear Filters
+            </button>
+          </div>
+        </div>
+
+        <!-- =================================================
+             SEARCH RESULT
+        ================================================== -->
+
+        @if (hasHomeFilters()) {
+          <div class="home-search-result">
+            <span>
+              <strong>
+                {{ featuredProducts.length }}
+              </strong>
+
+              {{ featuredProducts.length === 1 ? 'Product' : 'Products' }}
+
+              found
+            </span>
+
+            @if (searchTerm) {
+              <span>
+                for
+
+                <strong> "{{ searchTerm }}" </strong>
+              </span>
+            }
+
+            @if (selectedCategory) {
+              <span>
+                in
+
+                <strong>
+                  {{ selectedCategory }}
+                </strong>
+              </span>
+            }
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- =================================================== -->
     <!-- HOME BANNER -->
     <!-- =================================================== -->
 
@@ -43,7 +156,9 @@
       <section class="home-banner-section">
         <div class="container">
           <div class="home-banner">
-            <!-- BANNER IMAGE -->
+            <!-- =================================================
+                 BANNER IMAGE
+            ================================================== -->
 
             <div class="home-banner-image">
               @for (banner of banners; track banner.bannerId; let bannerIndex = $index) {
@@ -54,7 +169,9 @@
                     class="home-banner-img"
                   />
 
-                  <!-- OVERLAY -->
+                  <!-- =================================================
+                       OVERLAY
+                  ================================================== -->
 
                   <div class="home-banner-overlay">
                     <div class="home-banner-content">
@@ -87,7 +204,9 @@
               }
             </div>
 
-            <!-- PREVIOUS -->
+            <!-- =================================================
+                 PREVIOUS
+            ================================================== -->
 
             @if (banners.length > 1) {
               <button
@@ -100,7 +219,9 @@
               </button>
             }
 
-            <!-- NEXT -->
+            <!-- =================================================
+                 NEXT
+            ================================================== -->
 
             @if (banners.length > 1) {
               <button
@@ -113,7 +234,9 @@
               </button>
             }
 
-            <!-- DOTS -->
+            <!-- =================================================
+                 DOTS
+            ================================================== -->
 
             @if (banners.length > 1) {
               <div class="home-banner-dots">
@@ -140,7 +263,9 @@
     <section class="overview-section">
       <div class="container">
         <div class="row g-3">
-          <!-- WISHLIST -->
+          <!-- =================================================
+               WISHLIST
+          ================================================== -->
 
           <div class="col-6 col-lg-3">
             <div class="overview-card" routerLink="/wishlist">
@@ -162,7 +287,9 @@
             </div>
           </div>
 
-          <!-- CART -->
+          <!-- =================================================
+               CART
+          ================================================== -->
 
           <div class="col-6 col-lg-3">
             <div class="overview-card" routerLink="/cart">
@@ -184,7 +311,9 @@
             </div>
           </div>
 
-          <!-- ORDERS -->
+          <!-- =================================================
+               ORDERS
+          ================================================== -->
 
           <div class="col-6 col-lg-3">
             <div class="overview-card" routerLink="/orders">
@@ -206,7 +335,9 @@
             </div>
           </div>
 
-          <!-- ADDRESS -->
+          <!-- =================================================
+               ADDRESS
+          ================================================== -->
 
           <div class="col-6 col-lg-3">
             <div class="overview-card" routerLink="/addresses">
@@ -269,15 +400,37 @@
 
     <section class="products-section">
       <div class="container">
-        <!-- SECTION HEADER -->
+        <!-- =================================================
+             SECTION HEADER
+        ================================================== -->
 
         <div class="section-heading">
           <div>
             <span class="section-label"> SHOP NOW </span>
 
-            <h2>Featured Products</h2>
+            <h2>
+              @if (hasHomeFilters()) {
+                Search Results
+              } @else {
+                Featured Products
+              }
+            </h2>
 
-            <p>Discover some of our latest products.</p>
+            <p>
+              @if (hasHomeFilters()) {
+                Showing
+
+                <strong>
+                  {{ featuredProducts.length }}
+                </strong>
+
+                matching
+
+                {{ featuredProducts.length === 1 ? 'product' : 'products' }}.
+              } @else {
+                Discover some of our latest products.
+              }
+            </p>
           </div>
 
           <!-- VIEW ALL -->
@@ -300,7 +453,7 @@
                 <div class="home-product-card">
                   <!-- =================================================
                        IMAGE
-                  ================================================= -->
+                  ================================================== -->
 
                   <div class="home-product-image">
                     <!-- WISHLIST -->
@@ -577,13 +730,25 @@
           ================================================== -->
 
           <div class="home-empty">
-            <i class="bi bi-box-seam"></i>
+            @if (hasHomeFilters()) {
+              <i class="bi bi-search"></i>
 
-            <h4>No Products Available</h4>
+              <h4>No Products Found</h4>
 
-            <p>There are currently no active products.</p>
+              <p>No products match your search or selected category.</p>
 
-            <a routerLink="/products" class="btn btn-primary"> Browse Products </a>
+              <button type="button" class="btn btn-primary" (click)="clearHomeFilters()">
+                Clear Filters
+              </button>
+            } @else {
+              <i class="bi bi-box-seam"></i>
+
+              <h4>No Products Available</h4>
+
+              <p>There are currently no active products.</p>
+
+              <a routerLink="/products" class="btn btn-primary"> Browse Products </a>
+            }
           </div>
         }
       </div>
@@ -626,7 +791,9 @@
                 </div>
 
                 <div class="recent-order-status">
-                  <span class="badge"> {{ order.orderStatus }} </span>
+                  <span class="badge">
+                    {{ order.orderStatus }}
+                  </span>
                 </div>
 
                 <i class="bi bi-chevron-right recent-order-arrow"></i>
