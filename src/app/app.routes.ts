@@ -129,7 +129,7 @@ import { BulkEnquiryDetail } from './features/bulk-enquiries/bulk-enquiry-detail
 import { AdminShipmentsComponent } from './features/admin-shipments/admin-shipments';
 
 // =========================================================
-// ADMIN RETURNS
+// RETURNS
 // =========================================================
 
 import { ReturnList } from './features/returns/return-list/return-list';
@@ -160,10 +160,7 @@ export const routes: Routes = [
   // =========================================================
   // ADMIN LAYOUT
   // =========================================================
-  //
-  // Sidebar + Topbar common rahega.
-  // Child route router-outlet ke andar load hoga.
-  //
+  // Admin ke saare pages adminGuard se protected hain.
   // =========================================================
 
   {
@@ -346,15 +343,31 @@ export const routes: Routes = [
   // =========================================================
   // CUSTOMER LAYOUT
   // =========================================================
+  //
+  // IMPORTANT:
+  // Yahan authGuard nahi hai.
+  // Isliye Home aur Products public hain.
+  // =========================================================
 
   {
     path: '',
     component: CustomerLayout,
-    canActivate: [authGuard],
 
     children: [
       // =======================================================
-      // HOME
+      // DEFAULT CUSTOMER PAGE
+      // /
+      // automatically /home par jayega
+      // =======================================================
+
+      {
+        path: '',
+        redirectTo: 'home',
+        pathMatch: 'full',
+      },
+
+      // =======================================================
+      // HOME - PUBLIC
       // =======================================================
 
       {
@@ -363,7 +376,7 @@ export const routes: Routes = [
       },
 
       // =======================================================
-      // PRODUCTS
+      // PRODUCTS - PUBLIC
       // =======================================================
 
       {
@@ -377,86 +390,97 @@ export const routes: Routes = [
       },
 
       // =======================================================
-      // WISHLIST
+      // WISHLIST - LOGIN REQUIRED
       // =======================================================
 
       {
         path: 'wishlist',
         component: Wishlist,
+        canActivate: [authGuard],
       },
 
       // =======================================================
-      // CART
+      // CART - LOGIN REQUIRED
       // =======================================================
 
       {
         path: 'cart',
         component: CartComponent,
+        canActivate: [authGuard],
       },
 
       // =======================================================
-      // ADDRESSES
+      // ADDRESSES - LOGIN REQUIRED
       // =======================================================
 
       {
         path: 'addresses',
         component: AddressList,
+        canActivate: [authGuard],
       },
 
       {
         path: 'addresses/new',
         component: AddressForm,
+        canActivate: [authGuard],
       },
 
       {
         path: 'addresses/edit/:id',
         component: AddressForm,
+        canActivate: [authGuard],
       },
 
       // =======================================================
-      // CHECKOUT
+      // CHECKOUT - LOGIN REQUIRED
       // =======================================================
 
       {
         path: 'checkout',
         component: CheckoutComponent,
+        canActivate: [authGuard],
       },
 
       // =======================================================
-      // CONTACT US
+      // CONTACT US - LOGIN REQUIRED
       // =======================================================
 
       {
         path: 'contact',
         component: ContactEnquiryForm,
+        canActivate: [authGuard],
       },
 
       // =======================================================
-      // ORDERS
+      // ORDERS - LOGIN REQUIRED
       // =======================================================
 
       {
         path: 'orders',
         component: OrderList,
+        canActivate: [authGuard],
       },
 
       {
         path: 'orders/:id',
         component: OrderDetailComponent,
+        canActivate: [authGuard],
       },
 
       // =======================================================
-      // RETURNS & REFUNDS
+      // RETURNS & REFUNDS - LOGIN REQUIRED
       // =======================================================
 
       {
         path: 'returns',
         component: ReturnList,
+        canActivate: [authGuard],
       },
 
       {
         path: 'returns/:id',
         component: ReturnDetail,
+        canActivate: [authGuard],
       },
     ],
   },
@@ -467,7 +491,7 @@ export const routes: Routes = [
 
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'home',
     pathMatch: 'full',
   },
 
@@ -477,6 +501,6 @@ export const routes: Routes = [
 
   {
     path: '**',
-    redirectTo: 'login',
+    redirectTo: 'home',
   },
 ];

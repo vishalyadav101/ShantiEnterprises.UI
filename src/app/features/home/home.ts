@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { forkJoin, finalize } from 'rxjs';
+import { forkJoin, finalize, of } from 'rxjs';
 
 import { AuthService } from '../../core/services/auth';
 import { ProductService } from '../../core/services/product';
@@ -193,16 +193,38 @@ export class Home implements OnInit, OnDestroy {
     // Stop previous banner timer
     this.stopBannerAutoSlide();
 
+    // =========================================================
+    // GUEST / LOGGED-IN USER
+    // =========================================================
+    //
+    // Products and banners are public APIs.
+    // Wishlist, cart and orders require login.
+    // For a guest user, use empty/default values so a 401 from
+    // a protected API does not break the complete Home page.
+    // =========================================================
+
+    const isLoggedIn = !!this.user;
+
     forkJoin({
+      // PUBLIC
       products: this.productService.getAll(),
 
-      wishlist: this.wishlistService.getWishlist(),
-
-      cart: this.cartService.getCart(),
-
-      orders: this.orderService.getMyOrders(),
-
+      // PUBLIC
       banners: this.bannerService.getAll(),
+
+      // LOGIN REQUIRED
+      wishlist: isLoggedIn
+        ? this.wishlistService.getWishlist()
+        : of({
+            items: [] as WishlistItem[],
+            totalItems: 0,
+          }),
+
+      // LOGIN REQUIRED
+      cart: isLoggedIn ? this.cartService.getCart() : of(null),
+
+      // LOGIN REQUIRED
+      orders: isLoggedIn ? this.orderService.getMyOrders() : of([] as Order[]),
     })
       .pipe(
         finalize(() => {
@@ -229,7 +251,7 @@ export class Home implements OnInit, OnDestroy {
           // PRODUCTS
           // =================================================
 
-          this.products = response.products.filter((product) => product.isActive);
+          this.products = (response.products || []).filter((product) => product.isActive);
 
           // =================================================
           // BUILD CATEGORY LIST
@@ -259,9 +281,9 @@ export class Home implements OnInit, OnDestroy {
           // WISHLIST
           // =================================================
 
-          this.wishlistItems = response.wishlist.items || [];
+          this.wishlistItems = response.wishlist?.items || [];
 
-          this.wishlistCount = response.wishlist.totalItems || 0;
+          this.wishlistCount = response.wishlist?.totalItems || 0;
 
           this.wishlistProductIds = new Set(
             this.wishlistItems.filter((item) => item.isActive).map((item) => item.productId),
@@ -286,7 +308,6 @@ export class Home implements OnInit, OnDestroy {
           this.orderCount = this.orders.length;
 
           // Latest 3 orders
-
           this.recentOrders = [...this.orders]
             .sort((a, b) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime())
             .slice(0, 3);
