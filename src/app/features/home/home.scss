@@ -324,9 +324,9 @@
   }
 
   .home-search-bar {
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 128px 34px;
     align-items: center;
-
     gap: 6px;
 
     padding: 8px;
@@ -350,21 +350,21 @@
 
   /* Category + Clear same row */
   .home-search-filter-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    width: auto;
-    flex: 0 0 auto;
+    display: contents;
   }
 
   .home-search-filter-row .home-category-wrapper {
-    flex: 0 0 120px;
+    grid-column: 2;
+    flex: none;
+    width: 128px;
     min-width: 0;
   }
 
   .home-category-wrapper {
     position: relative;
-    flex: 0 0 120px;
+    grid-column: 2;
+    flex: none;
+    width: 128px;
     min-width: 0;
     display: flex;
     align-items: center;
@@ -378,7 +378,9 @@
   }
 
   .home-clear-filter {
-    flex: 0 0 34px;
+    grid-column: 3;
+    flex: none;
+    width: 34px;
     min-width: 34px;
     height: 36px;
     padding: 0;
@@ -409,6 +411,7 @@
   }
 
   .home-search-bar {
+    grid-template-columns: minmax(0, 1fr) 120px 32px;
     gap: 5px;
     padding: 7px;
 
@@ -453,11 +456,15 @@
   }
 
   .home-search-filter-row .home-category-wrapper {
-    flex: 0 0 105px;
+    grid-column: 2;
+    flex: none;
+    width: 120px;
   }
 
   .home-category-wrapper {
-    flex: 0 0 105px;
+    grid-column: 2;
+    flex: none;
+    width: 120px;
   }
 
   .home-category-select {
@@ -467,7 +474,9 @@
   }
 
   .home-clear-filter {
-    flex: 0 0 32px;
+    grid-column: 3;
+    flex: none;
+    width: 32px;
     min-width: 32px;
 
     height: 34px;
@@ -493,24 +502,31 @@
 
 @media (max-width: 380px) {
   .home-search-bar {
+    grid-template-columns: minmax(0, 1fr) 108px 30px;
     gap: 4px;
     padding: 6px;
   }
 
   .home-search-filter-row {
-    gap: 4px;
+    display: contents;
   }
 
   .home-search-filter-row .home-category-wrapper {
-    flex: 0 0 96px;
+    grid-column: 2;
+    flex: none;
+    width: 108px;
   }
 
   .home-category-wrapper {
-    flex: 0 0 96px;
+    grid-column: 2;
+    flex: none;
+    width: 108px;
   }
 
   .home-clear-filter {
-    flex: 0 0 30px;
+    grid-column: 3;
+    flex: none;
+    width: 30px;
     min-width: 30px;
 
     height: 32px;
