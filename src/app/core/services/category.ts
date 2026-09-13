@@ -2,6 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../../environments/environment';
+
 // =========================================================
 // CATEGORY RESPONSE
 // =========================================================
@@ -46,7 +48,7 @@ export interface CategoryUpdate {
 export class CategoryService {
   private readonly http = inject(HttpClient);
 
-  private readonly apiUrl = 'https://localhost:7266/api/Category';
+  private readonly apiUrl = `${environment.apiUrl}/Category`;
 
   // =========================================================
   // GET ALL CATEGORIES
@@ -72,7 +74,6 @@ export class CategoryService {
     const formData = new FormData();
 
     formData.append('CategoryName', data.categoryName);
-
     formData.append('Description', data.description);
 
     if (data.imageFile) {
@@ -90,9 +91,7 @@ export class CategoryService {
     const formData = new FormData();
 
     formData.append('CategoryName', data.categoryName);
-
     formData.append('Description', data.description);
-
     formData.append('IsActive', String(data.isActive));
 
     if (data.imageFile) {
@@ -107,9 +106,6 @@ export class CategoryService {
   // =========================================================
 
   delete(id: number): Observable<{ message: string }> {
-    return this.http.delete<{
-      message: string;
-    }>(`${this.apiUrl}/${id}`);
+    return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`);
   }
 }
-  
