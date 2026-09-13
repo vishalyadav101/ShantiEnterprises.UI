@@ -324,12 +324,12 @@
   }
 
   .home-search-bar {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
 
-    gap: 8px;
+    gap: 6px;
 
-    padding: 9px;
+    padding: 8px;
 
     border-radius: 10px;
   }
@@ -352,19 +352,20 @@
   .home-search-filter-row {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     width: auto;
     flex: 0 0 auto;
   }
 
   .home-search-filter-row .home-category-wrapper {
-    flex: 1;
+    flex: 0 0 120px;
     min-width: 0;
   }
 
   .home-category-wrapper {
     position: relative;
-    flex: 0 0 210px;
+    flex: 0 0 120px;
+    min-width: 0;
     display: flex;
     align-items: center;
   }
@@ -377,8 +378,19 @@
   }
 
   .home-clear-filter {
-    flex: 0 0 auto;
-    height: 42px;
+    flex: 0 0 34px;
+    min-width: 34px;
+    height: 36px;
+    padding: 0;
+    gap: 0;
+  }
+
+  .home-clear-filter span {
+    display: none;
+  }
+
+  .home-clear-filter i {
+    font-size: 12px;
   }
 
   .home-search-result {
@@ -397,8 +409,8 @@
   }
 
   .home-search-bar {
-    gap: 7px;
-    padding: 8px;
+    gap: 5px;
+    padding: 7px;
 
     border-radius: 9px;
   }
@@ -440,14 +452,33 @@
     font-size: 12px;
   }
 
-  .home-clear-filter {
-    min-width: 100px;
+  .home-search-filter-row .home-category-wrapper {
+    flex: 0 0 105px;
+  }
 
-    height: 36px;
+  .home-category-wrapper {
+    flex: 0 0 105px;
+  }
 
-    padding: 0 10px;
-
+  .home-category-select {
+    padding-left: 31px;
+    padding-right: 24px;
     font-size: 10px;
+  }
+
+  .home-clear-filter {
+    flex: 0 0 32px;
+    min-width: 32px;
+
+    height: 34px;
+
+    padding: 0;
+
+    font-size: 9px;
+  }
+
+  .home-clear-filter span {
+    display: none;
   }
 
   .home-search-result {
@@ -462,19 +493,35 @@
 
 @media (max-width: 380px) {
   .home-search-bar {
-    padding: 7px;
+    gap: 4px;
+    padding: 6px;
   }
 
   .home-search-filter-row {
-    gap: 6px;
+    gap: 4px;
+  }
+
+  .home-search-filter-row .home-category-wrapper {
+    flex: 0 0 96px;
+  }
+
+  .home-category-wrapper {
+    flex: 0 0 96px;
   }
 
   .home-clear-filter {
-    min-width: 92px;
+    flex: 0 0 30px;
+    min-width: 30px;
 
-    padding: 0 8px;
+    height: 32px;
 
-    font-size: 9px;
+    padding: 0;
+
+    font-size: 8px;
+  }
+
+  .home-clear-filter span {
+    display: none;
   }
 
   .home-clear-filter i {
@@ -482,7 +529,15 @@
   }
 
   .home-category-select {
-    font-size: 10px;
+    height: 34px;
+    padding-left: 28px;
+    padding-right: 20px;
+    font-size: 9px;
+  }
+
+  .home-category-wrapper > i {
+    left: 9px;
+    font-size: 11px;
   }
 }
 
