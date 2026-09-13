@@ -1,18 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { Component, ElementRef, HostListener, OnInit, ViewChild, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../../../core/services/auth';
 import { CartService } from '../../../core/services/cart';
 import { WishlistService } from '../../../core/services/wishlist';
 import { NotificationService } from '../../../core/services/notification';
+import { CategoryService, Category } from '../../../core/services/category';
 
 import { Notification } from '../../../core/models/notification.model';
 
 @Component({
   selector: 'app-customer-layout',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterOutlet],
+  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
   templateUrl: './customer-layout.html',
   styleUrl: './customer-layout.scss',
 })
@@ -29,7 +30,23 @@ export class CustomerLayout implements OnInit {
 
   private readonly notificationService = inject(NotificationService);
 
+  private readonly categoryService = inject(CategoryService);
+
   private readonly router = inject(Router);
+
+  // =========================================================
+  // NOTIFICATION WRAPPER
+  // =========================================================
+
+  @ViewChild('notificationWrapper')
+  notificationWrapper?: ElementRef<HTMLElement>;
+
+  // =========================================================
+  // PROFILE WRAPPER
+  // =========================================================
+
+  @ViewChild('profileWrapper')
+  profileWrapper?: ElementRef<HTMLElement>;
 
   // =========================================================
   // USER
@@ -66,6 +83,23 @@ export class CustomerLayout implements OnInit {
   isProfileMenuOpen = false;
 
   // =========================================================
+  // ACTIVE NAVBAR ITEM
+  // Only one navbar item can be active at a time.
+  // =========================================================
+
+  activeNavItem: 'home' | 'wishlist' | 'cart' | 'notification' | 'profile' | null = 'home';
+
+  // =========================================================
+  // CATEGORIES
+  // =========================================================
+
+  categories: Category[] = [];
+
+  isCategoryLoading = false;
+
+  categoryError = '';
+
+  // =========================================================
   // INIT
   // =========================================================
 
@@ -75,6 +109,74 @@ export class CustomerLayout implements OnInit {
     this.loadWishlistCount();
 
     this.loadNotifications();
+
+    this.loadCategories();
+  }
+
+  // =========================================================
+  // DOCUMENT CLICK
+  // CLOSE MENUS WHEN CLICKING OUTSIDE
+  // =========================================================
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const clickedElement = event.target as HTMLElement;
+
+    // =======================================================
+    // NOTIFICATION WRAPPER
+    // =======================================================
+
+    const notificationWrapper = this.notificationWrapper?.nativeElement;
+
+    const clickedInsideNotification = notificationWrapper?.contains(clickedElement) ?? false;
+
+    // =======================================================
+    // PROFILE WRAPPER
+    // =======================================================
+
+    const profileWrapper = this.profileWrapper?.nativeElement;
+
+    const clickedInsideProfile = profileWrapper?.contains(clickedElement) ?? false;
+
+    // =======================================================
+    // CLICK INSIDE NOTIFICATION / PROFILE
+    // =======================================================
+
+    if (clickedInsideNotification || clickedInsideProfile) {
+      return;
+    }
+
+    // =======================================================
+    // CLICK ON NAVBAR ITEM
+    // =======================================================
+    //
+    // Home / Wishlist / Cart apna activeNavItem khud set
+    // karte hain. Document click unko Home par reset nahi karega.
+    // =======================================================
+
+    const clickedNavbarItem = clickedElement.closest(
+      '.nav-home-button, .nav-action, .user-profile-btn',
+    );
+
+    if (clickedNavbarItem) {
+      // Clicking another navbar item must close any open dropdown.
+      // The clicked navbar item's own click handler will set its active state.
+      this.closeNotificationMenu();
+      this.closeProfileMenu();
+      return;
+    }
+
+    // =======================================================
+    // CLICK OUTSIDE
+    // =======================================================
+    //
+    // Sirf dropdowns close honge.
+    // Active page/item ko change nahi karna hai.
+    // =======================================================
+
+    this.closeNotificationMenu();
+
+    this.closeProfileMenu();
   }
 
   // =========================================================
@@ -111,6 +213,52 @@ export class CustomerLayout implements OnInit {
         this.wishlistCount = 0;
       },
     });
+  }
+
+  // =========================================================
+  // LOAD CATEGORIES
+  // =========================================================
+
+  loadCategories(): void {
+    this.isCategoryLoading = true;
+    this.categoryError = '';
+
+    this.categoryService.getAll().subscribe({
+      next: (categories) => {
+        this.categories = (categories ?? [])
+          .filter((category) => category.isActive)
+          .sort((a, b) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime());
+
+        this.isCategoryLoading = false;
+      },
+
+      error: (error) => {
+        console.error('Category Load Error:', error);
+
+        this.categories = [];
+        this.categoryError = 'Unable to load categories.';
+        this.isCategoryLoading = false;
+      },
+    });
+  }
+
+  // =========================================================
+  // ACTIVE NAVBAR ITEM
+  // =========================================================
+
+  setActiveNavItem(item: 'home' | 'wishlist' | 'cart' | 'notification' | 'profile'): void {
+    this.activeNavItem = item;
+  }
+
+  // =========================================================
+  // CATEGORY CLICK
+  // Remove navbar active state when a category is selected.
+  // =========================================================
+
+  onCategoryClick(): void {
+    this.closeNotificationMenu();
+    this.closeProfileMenu();
+    this.activeNavItem = null;
   }
 
   // =========================================================
@@ -159,7 +307,17 @@ export class CustomerLayout implements OnInit {
     this.isNotificationMenuOpen = !this.isNotificationMenuOpen;
 
     if (this.isNotificationMenuOpen) {
+      // Notification becomes the ONLY active item.
+      this.activeNavItem = 'notification';
+
+      // Close profile menu.
+      this.closeProfileMenu();
+
+      // Fresh notifications load.
       this.loadNotifications();
+    } else {
+      // When notification closes, return to Home.
+      this.activeNavItem = 'home';
     }
   }
 
@@ -180,27 +338,23 @@ export class CustomerLayout implements OnInit {
       return;
     }
 
-    this.notificationService
-      .markAsRead(notification.notificationId)
-      .subscribe({
-        next: () => {
-          notification.isRead = true;
+    this.notificationService.markAsRead(notification.notificationId).subscribe({
+      next: () => {
+        notification.isRead = true;
 
-          notification.readDate = new Date().toISOString();
+        notification.readDate = new Date().toISOString();
 
-          this.updateNotificationCount();
+        this.updateNotificationCount();
 
-          this.handleNotificationNavigation(notification);
-        },
+        this.handleNotificationNavigation(notification);
+      },
 
-        error: (error) => {
-          console.error('Mark Notification Read Error:', error);
+      error: (error) => {
+        console.error('Mark Notification Read Error:', error);
 
-          // Notification navigation read ke bina bhi
-          // tabhi hogi jab reference available ho.
-          this.handleNotificationNavigation(notification);
-        },
-      });
+        this.handleNotificationNavigation(notification);
+      },
+    });
   }
 
   // =========================================================
@@ -208,60 +362,42 @@ export class CustomerLayout implements OnInit {
   // =========================================================
 
   markAllNotificationsAsRead(): void {
-    if (
-      this.isMarkingAllAsRead ||
-      this.notificationCount === 0
-    ) {
+    if (this.isMarkingAllAsRead || this.notificationCount === 0) {
       return;
     }
 
     this.isMarkingAllAsRead = true;
 
-    this.notificationService
-      .markAllAsRead()
-      .subscribe({
-        next: () => {
-          this.notifications.forEach((notification) => {
-            notification.isRead = true;
+    this.notificationService.markAllAsRead().subscribe({
+      next: () => {
+        this.notifications.forEach((notification) => {
+          notification.isRead = true;
 
-            notification.readDate =
-              new Date().toISOString();
-          });
+          notification.readDate = new Date().toISOString();
+        });
 
-          this.notificationCount = 0;
+        this.notificationCount = 0;
 
-          this.isMarkingAllAsRead = false;
-        },
+        this.isMarkingAllAsRead = false;
+      },
 
-        error: (error) => {
-          console.error(
-            'Mark All Notifications Read Error:',
-            error,
-          );
+      error: (error) => {
+        console.error('Mark All Notifications Read Error:', error);
 
-          this.isMarkingAllAsRead = false;
-        },
-      });
+        this.isMarkingAllAsRead = false;
+      },
+    });
   }
 
   // =========================================================
   // NOTIFICATION NAVIGATION
   // =========================================================
 
-  private handleNotificationNavigation(
-    notification: Notification,
-  ): void {
+  private handleNotificationNavigation(notification: Notification): void {
     this.closeNotificationMenu();
 
-    if (
-      notification.referenceType?.toLowerCase() ===
-        'order' &&
-      notification.referenceId
-    ) {
-      this.router.navigate([
-        '/orders',
-        notification.referenceId,
-      ]);
+    if (notification.referenceType?.toLowerCase() === 'order' && notification.referenceId) {
+      this.router.navigate(['/orders', notification.referenceId]);
 
       return;
     }
@@ -278,23 +414,18 @@ export class CustomerLayout implements OnInit {
       return '';
     }
 
-    return new Date(date).toLocaleDateString(
-      'en-IN',
-      {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-      },
-    );
+    return new Date(date).toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
   }
 
   // =========================================================
   // NOTIFICATION ICON
   // =========================================================
 
-  getNotificationIcon(
-    type: string | null | undefined,
-  ): string {
+  getNotificationIcon(type: string | null | undefined): string {
     if (!type) {
       return 'bi-bell';
     }
@@ -326,6 +457,17 @@ export class CustomerLayout implements OnInit {
 
   toggleProfileMenu(): void {
     this.isProfileMenuOpen = !this.isProfileMenuOpen;
+
+    if (this.isProfileMenuOpen) {
+      // Profile becomes the ONLY active item.
+      this.activeNavItem = 'profile';
+
+      // Close notification menu.
+      this.closeNotificationMenu();
+    } else {
+      // When profile closes, return to Home.
+      this.activeNavItem = 'home';
+    }
   }
 
   // =========================================================
@@ -354,6 +496,8 @@ export class CustomerLayout implements OnInit {
     this.closeProfileMenu();
 
     this.closeNotificationMenu();
+
+    this.activeNavItem = 'home';
 
     this.authService.logout();
 

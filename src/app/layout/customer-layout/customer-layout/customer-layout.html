@@ -12,18 +12,33 @@
       <!-- RIGHT SIDE -->
 
       <div class="d-flex align-items-center gap-2 gap-md-3">
-        <!-- WISHLIST -->
-        <a routerLink="/home" class="btn btn-light btn-sm" title="Home">
+        <!-- HOME -->
+
+        <a
+          routerLink="/home"
+          class="nav-home-button"
+          [class.active]="activeNavItem === 'home'"
+          (click)="setActiveNavItem('home')"
+          title="Home"
+          aria-label="Home"
+        >
           <i class="bi bi-house-door me-1"></i>
           Home
         </a>
-        <!-- NOTIFICATIONS -->
 
-        <div class="notification-wrapper">
+        <!-- ================================================= -->
+        <!-- NOTIFICATIONS -->
+        <!-- ================================================= -->
+
+        <div class="notification-wrapper" #notificationWrapper>
+          <!-- NOTIFICATION BUTTON -->
+
           <button
             type="button"
             class="nav-action notification-button"
+            [class.active]="activeNavItem === 'notification'"
             title="Notifications"
+            aria-label="Notifications"
             aria-label="Notifications"
             [attr.aria-expanded]="isNotificationMenuOpen"
             (click)="toggleNotificationMenu()"
@@ -37,11 +52,17 @@
             }
           </button>
 
+          <!-- ================================================= -->
+          <!-- NOTIFICATION DROPDOWN -->
+          <!-- ================================================= -->
+
           @if (isNotificationMenuOpen) {
             <div class="notification-dropdown">
+              <!-- HEADER -->
+
               <div class="notification-header">
                 <div>
-                  <strong>Notifications</strong>
+                  <strong> Notifications </strong>
 
                   <span> {{ notificationCount }} unread </span>
                 </div>
@@ -64,20 +85,37 @@
 
               <div class="notification-divider"></div>
 
+              <!-- ================================================= -->
+              <!-- LOADING -->
+              <!-- ================================================= -->
+
               @if (isNotificationLoading) {
                 <div class="notification-loading">
                   <span class="spinner-border spinner-border-sm"></span>
+
                   Loading notifications...
                 </div>
-              } @else if (notifications.length === 0) {
+              }
+
+              <!-- ================================================= -->
+              <!-- EMPTY -->
+              <!-- ================================================= -->
+
+              @else if (notifications.length === 0) {
                 <div class="notification-empty">
                   <i class="bi bi-bell-slash"></i>
 
-                  <strong>No Notifications</strong>
+                  <strong> No Notifications </strong>
 
-                  <span>You are all caught up.</span>
+                  <span> You are all caught up. </span>
                 </div>
-              } @else {
+              }
+
+              <!-- ================================================= -->
+              <!-- NOTIFICATION LIST -->
+              <!-- ================================================= -->
+
+              @else {
                 <div class="notification-list">
                   @for (
                     notification of notifications.slice(0, 8);
@@ -89,9 +127,13 @@
                       [class.unread]="!notification.isRead"
                       (click)="markNotificationAsRead(notification)"
                     >
+                      <!-- ICON -->
+
                       <div class="notification-icon">
                         <i class="bi" [class]="getNotificationIcon(notification.type)"></i>
                       </div>
+
+                      <!-- CONTENT -->
 
                       <div class="notification-content">
                         <div class="notification-title-row">
@@ -119,7 +161,18 @@
             </div>
           }
         </div>
-        <a routerLink="/wishlist" class="nav-action" title="Wishlist">
+
+        <!-- ================================================= -->
+        <!-- WISHLIST -->
+        <!-- ================================================= -->
+
+        <a
+          routerLink="/wishlist"
+          class="nav-action"
+          [class.active]="activeNavItem === 'wishlist'"
+          (click)="setActiveNavItem('wishlist')"
+          title="Wishlist"
+        >
           <i class="bi bi-heart"></i>
 
           @if (wishlistCount > 0) {
@@ -129,9 +182,17 @@
           }
         </a>
 
+        <!-- ================================================= -->
         <!-- CART -->
+        <!-- ================================================= -->
 
-        <a routerLink="/cart" class="nav-action" title="Cart">
+        <a
+          routerLink="/cart"
+          class="nav-action"
+          [class.active]="activeNavItem === 'cart'"
+          (click)="setActiveNavItem('cart')"
+          title="Cart"
+        >
           <i class="bi bi-cart3"></i>
 
           @if (cartItemCount > 0) {
@@ -140,12 +201,16 @@
             </span>
           }
         </a>
-        <!-- USER PROFILE -->
 
-        <div class="user-profile-wrapper">
+        <!-- ================================================= -->
+        <!-- USER PROFILE -->
+        <!-- ================================================= -->
+
+        <div class="user-profile-wrapper" #profileWrapper>
           <button
             type="button"
             class="user-profile-btn"
+            [class.active]="activeNavItem === 'profile'"
             (click)="toggleProfileMenu()"
             [attr.aria-expanded]="isProfileMenuOpen"
             title="My Account"
@@ -180,7 +245,7 @@
               <a routerLink="/profile" class="profile-menu-item" (click)="closeProfileMenu()">
                 <i class="bi bi-person"></i>
 
-                <span>My Profile</span>
+                <span> My Profile </span>
               </a>
 
               <!-- MY ORDERS -->
@@ -188,7 +253,7 @@
               <a routerLink="/orders" class="profile-menu-item" (click)="closeProfileMenu()">
                 <i class="bi bi-box-seam"></i>
 
-                <span>My Orders</span>
+                <span> My Orders </span>
               </a>
 
               <!-- WISHLIST -->
@@ -196,21 +261,23 @@
               <a routerLink="/wishlist" class="profile-menu-item" (click)="closeProfileMenu()">
                 <i class="bi bi-heart"></i>
 
-                <span>My Wishlist</span>
+                <span> My Wishlist </span>
               </a>
+
               <!-- CONTACT US -->
 
               <a routerLink="/contact" class="profile-menu-item" (click)="closeProfileMenu()">
                 <i class="bi bi-envelope"></i>
 
-                <span>Contact Us</span>
+                <span> Contact Us </span>
               </a>
+
               <!-- ADDRESSES -->
 
               <a routerLink="/addresses" class="profile-menu-item" (click)="closeProfileMenu()">
                 <i class="bi bi-geo-alt"></i>
 
-                <span>My Addresses</span>
+                <span> My Addresses </span>
               </a>
 
               <div class="profile-divider"></div>
@@ -220,7 +287,7 @@
               <a routerLink="/settings" class="profile-menu-item" (click)="closeProfileMenu()">
                 <i class="bi bi-gear"></i>
 
-                <span>Account Settings</span>
+                <span> Account Settings </span>
               </a>
 
               <!-- LOGOUT -->
@@ -232,18 +299,55 @@
               >
                 <i class="bi bi-box-arrow-right"></i>
 
-                <span>Logout</span>
+                <span> Logout </span>
               </button>
             </div>
           }
         </div>
-
-        <!-- MY ORDERS -->
-
-        <!-- LOGOUT -->
       </div>
     </div>
   </nav>
+
+  <!-- ===================================================== -->
+  <!-- CATEGORY HORIZONTAL SCROLL -->
+  <!-- ===================================================== -->
+
+  <section class="customer-category-section">
+    <div class="container">
+      @if (isCategoryLoading) {
+        <div class="category-scroll-loading">
+          <span class="spinner-border spinner-border-sm"></span>
+          Loading categories...
+        </div>
+      } @else if (categories.length > 0) {
+        <div class="category-scroll-wrapper">
+          <div class="category-scroll" aria-label="Categories">
+            @for (category of categories; track category.categoryId) {
+              <a
+                class="category-card"
+                [routerLink]="['/products']"
+                [queryParams]="{ categoryId: category.categoryId }"
+                [title]="category.categoryName"
+                (click)="onCategoryClick()"
+              >
+                <div class="category-card-icon">
+                  <i class="bi bi-grid-3x3-gap"></i>
+                </div>
+
+                <span class="category-card-name">
+                  {{ category.categoryName }}
+                </span>
+              </a>
+            }
+          </div>
+        </div>
+      } @else if (categoryError) {
+        <div class="category-scroll-empty">
+          {{ categoryError }}
+        </div>
+      }
+    </div>
+  </section>
 
   <!-- ===================================================== -->
   <!-- CUSTOMER PAGE CONTENT -->
@@ -254,22 +358,21 @@
   </main>
 
   <!-- ===================================================== -->
-  <!-- FOOTER -->
-  <!-- ===================================================== -->
-
-  <!-- ===================================================== -->
   <!-- CUSTOMER FOOTER -->
   <!-- ===================================================== -->
 
   <footer class="customer-footer">
     <div class="container">
       <!-- TOP FOOTER -->
+
       <div class="row g-4 py-5">
         <!-- BRAND -->
+
         <div class="col-lg-4 col-md-6">
           <div class="footer-brand">
             <h4>
               <i class="bi bi-shop me-2"></i>
+
               Shanti Enterprises
             </h4>
 
@@ -281,11 +384,13 @@
             <div class="footer-trust">
               <span>
                 <i class="bi bi-shield-check"></i>
+
                 Secure Shopping
               </span>
 
               <span>
                 <i class="bi bi-truck"></i>
+
                 Fast Delivery
               </span>
             </div>
@@ -293,6 +398,7 @@
         </div>
 
         <!-- QUICK LINKS -->
+
         <div class="col-6 col-lg-2 col-md-3">
           <h6 class="footer-title">Quick Links</h6>
 
@@ -300,6 +406,7 @@
             <li>
               <a routerLink="/home">
                 <i class="bi bi-chevron-right"></i>
+
                 Home
               </a>
             </li>
@@ -307,12 +414,15 @@
             <li>
               <a routerLink="/products">
                 <i class="bi bi-chevron-right"></i>
+
                 Products
               </a>
             </li>
+
             <li>
               <a routerLink="/contact">
                 <i class="bi bi-chevron-right"></i>
+
                 Contact Us
               </a>
             </li>
@@ -320,6 +430,7 @@
             <li>
               <a routerLink="/wishlist">
                 <i class="bi bi-chevron-right"></i>
+
                 Wishlist
               </a>
             </li>
@@ -327,6 +438,7 @@
             <li>
               <a routerLink="/cart">
                 <i class="bi bi-chevron-right"></i>
+
                 Shopping Cart
               </a>
             </li>
@@ -334,6 +446,7 @@
         </div>
 
         <!-- MY ACCOUNT -->
+
         <div class="col-6 col-lg-2 col-md-3">
           <h6 class="footer-title">My Account</h6>
 
@@ -341,6 +454,7 @@
             <li>
               <a routerLink="/orders">
                 <i class="bi bi-chevron-right"></i>
+
                 My Orders
               </a>
             </li>
@@ -348,6 +462,7 @@
             <li>
               <a routerLink="/addresses">
                 <i class="bi bi-chevron-right"></i>
+
                 My Addresses
               </a>
             </li>
@@ -355,6 +470,7 @@
             <li>
               <a routerLink="/wishlist">
                 <i class="bi bi-chevron-right"></i>
+
                 My Wishlist
               </a>
             </li>
@@ -362,6 +478,7 @@
             <li>
               <a routerLink="/cart">
                 <i class="bi bi-chevron-right"></i>
+
                 My Cart
               </a>
             </li>
@@ -369,6 +486,7 @@
         </div>
 
         <!-- CUSTOMER SUPPORT -->
+
         <div class="col-lg-4 col-md-6">
           <h6 class="footer-title">Customer Support</h6>
 
@@ -382,8 +500,9 @@
             </div>
 
             <div>
-              <span>Customer Support</span>
-              <strong>Mon - Sat, 9:00 AM - 6:00 PM</strong>
+              <span> Customer Support </span>
+
+              <strong> Mon - Sat, 9:00 AM - 6:00 PM </strong>
             </div>
           </div>
 
@@ -393,28 +512,36 @@
             </div>
 
             <div>
-              <span>Safe & Secure</span>
-              <strong>Trusted Shopping Experience</strong>
+              <span> Safe & Secure </span>
+
+              <strong> Trusted Shopping Experience </strong>
             </div>
           </div>
         </div>
       </div>
 
       <!-- DIVIDER -->
+
       <div class="footer-divider"></div>
 
       <!-- BOTTOM FOOTER -->
+
       <div class="footer-bottom">
-        <p class="mb-0">© 2026 <strong>Shanti Enterprises</strong>. All rights reserved.</p>
+        <p class="mb-0">
+          © 2026
+          <strong>Shanti Enterprises</strong>. All rights reserved.
+        </p>
 
         <div class="footer-bottom-links">
           <span>
             <i class="bi bi-lock-fill"></i>
+
             Secure Payments
           </span>
 
           <span>
             <i class="bi bi-heart-fill"></i>
+
             Made for Customers
           </span>
         </div>
