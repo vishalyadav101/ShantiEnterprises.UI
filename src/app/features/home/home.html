@@ -257,110 +257,6 @@
     }
 
     <!-- =================================================== -->
-    <!-- OVERVIEW -->
-    <!-- =================================================== -->
-
-    <section class="overview-section">
-      <div class="container">
-        <div class="row g-3">
-          <!-- =================================================
-               WISHLIST
-          ================================================== -->
-
-          <div class="col-6 col-lg-3">
-            <div class="overview-card" routerLink="/wishlist">
-              <div class="overview-icon wishlist-icon">
-                <i class="bi bi-heart"></i>
-              </div>
-
-              <div class="overview-info">
-                <span> Wishlist </span>
-
-                <strong>
-                  {{ wishlistCount }}
-                </strong>
-
-                <small> Saved Products </small>
-              </div>
-
-              <i class="bi bi-arrow-right overview-arrow"></i>
-            </div>
-          </div>
-
-          <!-- =================================================
-               CART
-          ================================================== -->
-
-          <div class="col-6 col-lg-3">
-            <div class="overview-card" routerLink="/cart">
-              <div class="overview-icon cart-icon">
-                <i class="bi bi-cart3"></i>
-              </div>
-
-              <div class="overview-info">
-                <span> Cart </span>
-
-                <strong>
-                  {{ cartItemCount }}
-                </strong>
-
-                <small> Items in Cart </small>
-              </div>
-
-              <i class="bi bi-arrow-right overview-arrow"></i>
-            </div>
-          </div>
-
-          <!-- =================================================
-               ORDERS
-          ================================================== -->
-
-          <div class="col-6 col-lg-3">
-            <div class="overview-card" routerLink="/orders">
-              <div class="overview-icon order-icon">
-                <i class="bi bi-box-seam"></i>
-              </div>
-
-              <div class="overview-info">
-                <span> Orders </span>
-
-                <strong>
-                  {{ orderCount }}
-                </strong>
-
-                <small> Total Orders </small>
-              </div>
-
-              <i class="bi bi-arrow-right overview-arrow"></i>
-            </div>
-          </div>
-
-          <!-- =================================================
-               ADDRESS
-          ================================================== -->
-
-          <div class="col-6 col-lg-3">
-            <div class="overview-card" routerLink="/addresses">
-              <div class="overview-icon address-icon">
-                <i class="bi bi-geo-alt"></i>
-              </div>
-
-              <div class="overview-info">
-                <span> Addresses </span>
-
-                <strong> Manage </strong>
-
-                <small> Saved Addresses </small>
-              </div>
-
-              <i class="bi bi-arrow-right overview-arrow"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =================================================== -->
     <!-- CART MESSAGE -->
     <!-- =================================================== -->
 
@@ -405,39 +301,15 @@
         ================================================== -->
 
         <div class="section-heading">
-          <div>
-            <span class="section-label"> SHOP NOW </span>
+          <span class="section-label"> SHOP NOW </span>
 
-            <h2>
-              @if (hasHomeFilters()) {
-                Search Results
-              } @else {
-                Featured Products
-              }
-            </h2>
-
-            <p>
-              @if (hasHomeFilters()) {
-                Showing
-
-                <strong>
-                  {{ featuredProducts.length }}
-                </strong>
-
-                matching
-
-                {{ featuredProducts.length === 1 ? 'product' : 'products' }}.
-              } @else {
-                Discover some of our latest products.
-              }
-            </p>
-          </div>
-
-          <!-- VIEW ALL -->
+          <span class="product-count">
+            {{ featuredProducts.length }}
+            {{ featuredProducts.length === 1 ? 'Product' : 'Products' }}
+          </span>
 
           <a routerLink="/products" class="view-all-link">
             View All
-
             <i class="bi bi-arrow-right ms-1"></i>
           </a>
         </div>

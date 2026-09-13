@@ -675,116 +675,6 @@
 }
 
 /* =========================================================
-   OVERVIEW
-========================================================= */
-
-.overview-section {
-  padding: 25px 0;
-}
-
-.overview-card {
-  position: relative;
-
-  min-height: 105px;
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 14px;
-
-  padding: 18px;
-
-  border: 1px solid #e5e9ef;
-  border-radius: 14px;
-
-  background: #ffffff;
-
-  cursor: pointer;
-
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.035);
-
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.overview-card:hover {
-  transform: translateY(-3px);
-
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
-}
-
-.overview-icon {
-  width: 45px;
-  height: 45px;
-
-  flex-shrink: 0;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 12px;
-
-  font-size: 1.2rem;
-}
-
-.wishlist-icon {
-  background: #fff0f2;
-  color: #dc3545;
-}
-
-.cart-icon {
-  background: #eef5ff;
-  color: #0d6efd;
-}
-
-.order-icon {
-  background: #eefaf2;
-  color: #198754;
-}
-
-.address-icon {
-  background: #fff8e8;
-  color: #b58105;
-}
-
-.overview-info {
-  min-width: 0;
-
-  display: flex;
-  flex-direction: column;
-}
-
-.overview-info span {
-  color: #6c757d;
-
-  font-size: 0.75rem;
-}
-
-.overview-info strong {
-  margin-top: 2px;
-
-  color: #172033;
-
-  font-size: 1.1rem;
-}
-
-.overview-info small {
-  color: #8a94a6;
-
-  font-size: 0.65rem;
-}
-
-.overview-arrow {
-  margin-left: auto;
-
-  color: #adb5bd;
-}
-
-/* =========================================================
    PRODUCTS SECTION
 ========================================================= */
 
@@ -793,60 +683,47 @@
 }
 
 .section-heading {
-  display: flex;
-
-  align-items: flex-end;
-  justify-content: space-between;
-
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
   gap: 20px;
-
+  width: 100%;
   margin-bottom: 28px;
 }
 
 .section-label {
+  justify-self: start;
   display: inline-block;
-
-  margin-bottom: 5px;
-
   color: #0d6efd;
-
   font-size: 0.7rem;
   font-weight: 800;
-
   letter-spacing: 1.3px;
-
   text-transform: uppercase;
 }
 
-.section-heading h2 {
-  margin: 0;
-
-  color: #172033;
-
-  font-size: 1.9rem;
-  font-weight: 800;
-}
-
-.section-heading p {
-  margin: 6px 0 0;
-
-  color: #7a8494;
-
-  font-size: 0.85rem;
+.product-count {
+  justify-self: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 90px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #eef5ff;
+  color: #0d6efd;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .view-all-link {
+  justify-self: end;
   display: inline-flex;
-
   align-items: center;
-
   color: #0d6efd;
-
   font-size: 0.82rem;
   font-weight: 700;
-
   text-decoration: none;
-
   white-space: nowrap;
 }
 
@@ -1809,41 +1686,6 @@
     font-size: 13px;
   }
 
-  .overview-section {
-    padding: 15px 0;
-  }
-
-  .overview-card {
-    min-height: 88px;
-
-    padding: 12px;
-
-    gap: 9px;
-
-    border-radius: 11px;
-  }
-
-  .overview-icon {
-    width: 37px;
-    height: 37px;
-
-    border-radius: 9px;
-
-    font-size: 0.95rem;
-  }
-
-  .overview-info strong {
-    font-size: 0.9rem;
-  }
-
-  .overview-info span {
-    font-size: 0.65rem;
-  }
-
-  .overview-info small {
-    font-size: 0.55rem;
-  }
-
   .products-section {
     padding: 35px 0 50px;
   }
@@ -1852,14 +1694,6 @@
     align-items: flex-start;
 
     margin-bottom: 20px;
-  }
-
-  .section-heading h2 {
-    font-size: 1.45rem;
-  }
-
-  .section-heading p {
-    font-size: 0.72rem;
   }
 
   .view-all-link {
@@ -1920,35 +1754,6 @@
     padding: 6px 10px;
 
     font-size: 0.62rem;
-  }
-
-  .overview-card {
-    min-height: 78px;
-
-    padding: 9px;
-  }
-
-  .overview-icon {
-    width: 32px;
-    height: 32px;
-
-    font-size: 0.8rem;
-  }
-
-  .overview-info strong {
-    font-size: 0.78rem;
-  }
-
-  .overview-info span {
-    font-size: 0.57rem;
-  }
-
-  .overview-info small {
-    display: none;
-  }
-
-  .overview-arrow {
-    display: none;
   }
 
   /* =====================================================
@@ -2505,5 +2310,36 @@
     padding: 6px 11px;
 
     font-size: 0.62rem;
+  }
+}
+
+/* =========================================================
+   PRODUCTS HEADER - MOBILE
+========================================================= */
+
+@media (max-width: 575.98px) {
+  .products-section {
+    padding: 30px 0 50px;
+  }
+
+  .section-heading {
+    grid-template-columns: 1fr auto 1fr;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .section-label {
+    font-size: 0.62rem;
+    letter-spacing: 1px;
+  }
+
+  .product-count {
+    min-width: 72px;
+    padding: 6px 9px;
+    font-size: 0.68rem;
+  }
+
+  .view-all-link {
+    font-size: 0.7rem;
   }
 }
