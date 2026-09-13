@@ -345,7 +345,11 @@
     width: 100%;
     height: 40px;
 
+    padding-left: 34px;
+    padding-right: 10px;
+
     font-size: 12px;
+    box-sizing: border-box;
   }
 
   /* Category + Clear same row */
@@ -431,13 +435,15 @@
   .home-search-input {
     height: 38px;
 
-    padding-left: 37px;
+    padding-left: 32px;
+    padding-right: 8px;
 
     font-size: 11px;
+    box-sizing: border-box;
   }
 
   .home-search-input-wrapper > i {
-    left: 12px;
+    left: 10px;
     font-size: 13px;
   }
 
@@ -552,6 +558,12 @@
 
   .home-clear-filter i {
     font-size: 11px;
+  }
+
+  .home-search-input {
+    padding-left: 30px;
+    padding-right: 6px;
+    font-size: 10px;
   }
 
   .home-category-select {
