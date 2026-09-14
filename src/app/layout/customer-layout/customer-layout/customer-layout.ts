@@ -87,7 +87,9 @@ export class CustomerLayout implements OnInit {
   // Only one navbar item can be active at a time.
   // =========================================================
 
-  activeNavItem: 'home' | 'wishlist' | 'cart' | 'notification' | 'profile' | null = 'home';
+  activeNavItem:
+    'home' | 'categories' | 'wishlist' | 'cart' | 'notification' | 'profile' | 'help' | null =
+    'home';
 
   // =========================================================
   // CATEGORIES
@@ -104,13 +106,16 @@ export class CustomerLayout implements OnInit {
   // =========================================================
 
   ngOnInit(): void {
-    this.loadCartCount();
-
-    this.loadWishlistCount();
-
-    this.loadNotifications();
-
+    // Categories are public, so load them for everyone.
     this.loadCategories();
+
+    // Cart, wishlist and notifications require authentication.
+    // Do not call these APIs for a guest user.
+    if (this.user) {
+      this.loadCartCount();
+      this.loadWishlistCount();
+      this.loadNotifications();
+    }
   }
 
   // =========================================================
@@ -246,7 +251,9 @@ export class CustomerLayout implements OnInit {
   // ACTIVE NAVBAR ITEM
   // =========================================================
 
-  setActiveNavItem(item: 'home' | 'wishlist' | 'cart' | 'notification' | 'profile'): void {
+  setActiveNavItem(
+    item: 'home' | 'categories' | 'wishlist' | 'cart' | 'notification' | 'profile' | 'help',
+  ): void {
     this.activeNavItem = item;
   }
 
@@ -304,6 +311,11 @@ export class CustomerLayout implements OnInit {
   // =========================================================
 
   toggleNotificationMenu(): void {
+    if (!this.user) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
     this.isNotificationMenuOpen = !this.isNotificationMenuOpen;
 
     if (this.isNotificationMenuOpen) {
@@ -456,6 +468,11 @@ export class CustomerLayout implements OnInit {
   // =========================================================
 
   toggleProfileMenu(): void {
+    if (!this.user) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
     this.isProfileMenuOpen = !this.isProfileMenuOpen;
 
     if (this.isProfileMenuOpen) {

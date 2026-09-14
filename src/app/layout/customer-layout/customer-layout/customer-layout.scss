@@ -1561,3 +1561,403 @@
     max-height: calc(100vh - 145px);
   }
 }
+
+/* =========================================================
+   NAVBAR LAYOUT
+   ========================================================= */
+
+.customer-navbar {
+  width: 100%;
+}
+
+.customer-navbar > .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+}
+
+.customer-navbar .navbar-brand {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.customer-navbar > .container > .d-flex {
+  margin-left: auto;
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+}
+
+/* =========================================================
+   GUEST LOGIN / SIGN UP BUTTONS
+   Same button style and size as Home
+   ========================================================= */
+
+.guest-auth-button,
+.nav-home-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 78px;
+  height: 38px;
+
+  padding: 0 10px;
+  gap: 5px;
+
+  border-radius: 8px;
+
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+
+  text-decoration: none;
+  white-space: nowrap;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* LOGIN */
+.login-button {
+  color: #ffffff;
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.login-button:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.22);
+  transform: translateY(-1px);
+}
+
+/* SIGN UP */
+.signup-button {
+  color: #0d6efd;
+  background: #ffffff;
+  border: 1px solid #ffffff;
+
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.15),
+    0 2px 7px rgba(0, 0, 0, 0.12);
+}
+
+.signup-button:hover {
+  color: #0a58ca;
+  background: #f1f5ff;
+  border-color: #f1f5ff;
+  transform: translateY(-1px);
+}
+
+/* Icons inside guest buttons */
+.guest-auth-button i {
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* =========================================================
+   MOBILE NAVBAR
+   Keep brand + Home + Login + Sign Up on one line
+   ========================================================= */
+
+@media (max-width: 767.98px) {
+  .customer-navbar {
+    min-height: 58px;
+    padding: 8px 0;
+  }
+
+  .customer-navbar > .container {
+    padding-left: 12px;
+    padding-right: 12px;
+    gap: 5px;
+  }
+
+  .customer-navbar .navbar-brand {
+    font-size: 1rem;
+    margin-right: 4px;
+  }
+
+  .customer-navbar > .container > .d-flex {
+    gap: 4px !important;
+  }
+
+  .guest-auth-button,
+  .nav-home-button {
+    width: auto;
+    min-width: 48px;
+    height: 34px;
+
+    padding: 0 8px;
+
+    font-size: 12px;
+    gap: 3px;
+  }
+
+  .guest-auth-button i,
+  .nav-home-button i {
+    font-size: 12px;
+    margin-right: 0 !important;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 400px) {
+  .customer-navbar > .container {
+    padding-left: 8px;
+    padding-right: 8px;
+    gap: 3px;
+  }
+
+  .customer-navbar .navbar-brand {
+    font-size: 0.9rem;
+    margin-right: 2px;
+  }
+
+  .customer-navbar > .container > .d-flex {
+    gap: 3px !important;
+  }
+
+  .guest-auth-button,
+  .nav-home-button {
+    min-width: 43px;
+    height: 32px;
+    padding: 0 6px;
+    font-size: 11px;
+  }
+
+  .guest-auth-button i,
+  .nav-home-button i {
+    font-size: 11px;
+  }
+}
+/* =========================================================
+   GUEST NAVBAR - ALL 3 BUTTONS SAME
+   ========================================================= */
+
+.customer-navbar .nav-home-button,
+.customer-navbar .login-button,
+.customer-navbar .signup-button {
+  width: 78px !important;
+  height: 38px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  padding: 0 10px !important;
+  gap: 5px !important;
+
+  color: #ffffff !important;
+  background: transparent !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.75) !important;
+  border-radius: 8px !important;
+
+  font-size: 14px !important;
+  font-weight: 500 !important;
+
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Hover - all same */
+.customer-navbar .nav-home-button:hover,
+.customer-navbar .login-button:hover,
+.customer-navbar .signup-button:hover {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.14) !important;
+  border-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* IMPORTANT:
+   Guest Home active class should NOT become white */
+.customer-navbar .nav-home-button.active {
+  color: #ffffff !important;
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.75) !important;
+  box-shadow: none !important;
+}
+
+/* Icons */
+.customer-navbar .nav-home-button i,
+.customer-navbar .login-button i,
+.customer-navbar .signup-button i {
+  color: #ffffff !important;
+  font-size: 14px !important;
+  transform: none !important;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 767.98px) {
+  .customer-navbar .nav-home-button,
+  .customer-navbar .login-button,
+  .customer-navbar .signup-button {
+    width: auto !important;
+    min-width: 48px !important;
+    height: 34px !important;
+
+    padding: 0 8px !important;
+
+    font-size: 12px !important;
+    gap: 3px !important;
+  }
+
+  .customer-navbar .nav-home-button i,
+  .customer-navbar .login-button i,
+  .customer-navbar .signup-button i {
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .customer-navbar .nav-home-button,
+  .customer-navbar .login-button,
+  .customer-navbar .signup-button {
+    min-width: 43px !important;
+    height: 32px !important;
+
+    padding: 0 6px !important;
+    font-size: 11px !important;
+  }
+
+  .customer-navbar .nav-home-button i,
+  .customer-navbar .login-button i,
+  .customer-navbar .signup-button i {
+    font-size: 11px !important;
+  }
+}
+
+/* =========================================================
+   MOBILE BOTTOM NAVIGATION
+   Screenshot-style mobile app navigation
+   ========================================================= */
+
+.mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 767.98px) {
+  .mobile-bottom-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 68px;
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    align-items: stretch;
+
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
+
+    box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.08);
+
+    z-index: 5000;
+
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .mobile-bottom-nav-item {
+    position: relative;
+
+    min-width: 0;
+    height: 68px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 4px;
+    padding: 6px 4px;
+
+    border: none;
+    outline: none;
+    background: transparent;
+
+    color: #7b7f86;
+    text-decoration: none;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      color 0.2s ease,
+      background 0.2s ease;
+  }
+
+  .mobile-bottom-nav-item i {
+    font-size: 24px;
+    line-height: 1;
+    transition:
+      transform 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .mobile-bottom-nav-item span {
+    display: block;
+    line-height: 1.1;
+  }
+
+  .mobile-bottom-nav-item.active {
+    color: #111111;
+    font-weight: 500;
+  }
+
+  .mobile-bottom-nav-item.active i {
+    color: #111111;
+    transform: scale(1.05);
+  }
+
+  .mobile-bottom-nav-item:active {
+    background: #f8f9fa;
+  }
+
+  /* Fixed bottom bar ke peeche page content hide na ho */
+  .customer-content {
+    padding-bottom: 78px;
+  }
+
+  .customer-footer {
+    padding-bottom: 88px;
+  }
+}
+
+@media (max-width: 400px) {
+  .mobile-bottom-nav {
+    height: 64px;
+  }
+
+  .mobile-bottom-nav-item {
+    height: 64px;
+    font-size: 12px;
+    gap: 3px;
+  }
+
+  .mobile-bottom-nav-item i {
+    font-size: 22px;
+  }
+
+  .customer-content {
+    padding-bottom: 74px;
+  }
+
+  .customer-footer {
+    padding-bottom: 84px;
+  }
+}

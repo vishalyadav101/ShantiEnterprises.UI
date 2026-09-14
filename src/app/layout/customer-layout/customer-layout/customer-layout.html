@@ -11,7 +11,7 @@
 
       <!-- RIGHT SIDE -->
 
-      <div class="d-flex align-items-center gap-2 gap-md-3">
+      <div class="d-flex align-items-center gap-2 gap-md-3 navbar-right-actions">
         <!-- HOME -->
 
         <a
@@ -27,283 +27,304 @@
         </a>
 
         <!-- ================================================= -->
-        <!-- NOTIFICATIONS -->
+        <!-- GUEST AUTH BUTTONS -->
         <!-- ================================================= -->
 
-        <div class="notification-wrapper" #notificationWrapper>
-          <!-- NOTIFICATION BUTTON -->
+        @if (!user) {
+          <a routerLink="/login" class="guest-auth-button login-button" title="Login">
+            <i class="bi bi-box-arrow-in-right me-1"></i>
+            Login
+          </a>
 
-          <button
-            type="button"
-            class="nav-action notification-button"
-            [class.active]="activeNavItem === 'notification'"
-            title="Notifications"
-            aria-label="Notifications"
-            aria-label="Notifications"
-            [attr.aria-expanded]="isNotificationMenuOpen"
-            (click)="toggleNotificationMenu()"
-          >
-            <i class="bi bi-bell"></i>
+          <a routerLink="/register" class="guest-auth-button signup-button" title="Sign Up">
+            <i class="bi bi-person-plus me-1"></i>
+            Sign Up
+          </a>
+        }
 
-            @if (notificationCount > 0) {
-              <span class="nav-badge">
-                {{ notificationCount }}
-              </span>
-            }
-          </button>
+        <!-- ================================================= -->
+        <!-- LOGGED-IN USER NAVBAR -->
+        <!-- ================================================= -->
 
+        @if (user) {
           <!-- ================================================= -->
-          <!-- NOTIFICATION DROPDOWN -->
+          <!-- NOTIFICATIONS -->
           <!-- ================================================= -->
 
-          @if (isNotificationMenuOpen) {
-            <div class="notification-dropdown">
-              <!-- HEADER -->
+          <div class="notification-wrapper" #notificationWrapper>
+            <!-- NOTIFICATION BUTTON -->
 
-              <div class="notification-header">
-                <div>
-                  <strong> Notifications </strong>
+            <button
+              type="button"
+              class="nav-action notification-button"
+              [class.active]="activeNavItem === 'notification'"
+              title="Notifications"
+              aria-label="Notifications"
+              [attr.aria-expanded]="isNotificationMenuOpen"
+              (click)="toggleNotificationMenu()"
+            >
+              <i class="bi bi-bell"></i>
 
-                  <span> {{ notificationCount }} unread </span>
-                </div>
-
-                @if (notificationCount > 0) {
-                  <button
-                    type="button"
-                    class="mark-all-button"
-                    [disabled]="isMarkingAllAsRead"
-                    (click)="markAllNotificationsAsRead()"
-                  >
-                    @if (isMarkingAllAsRead) {
-                      <span class="spinner-border spinner-border-sm"></span>
-                    } @else {
-                      Mark all as read
-                    }
-                  </button>
-                }
-              </div>
-
-              <div class="notification-divider"></div>
-
-              <!-- ================================================= -->
-              <!-- LOADING -->
-              <!-- ================================================= -->
-
-              @if (isNotificationLoading) {
-                <div class="notification-loading">
-                  <span class="spinner-border spinner-border-sm"></span>
-
-                  Loading notifications...
-                </div>
+              @if (notificationCount > 0) {
+                <span class="nav-badge">
+                  {{ notificationCount }}
+                </span>
               }
+            </button>
 
-              <!-- ================================================= -->
-              <!-- EMPTY -->
-              <!-- ================================================= -->
+            <!-- ================================================= -->
+            <!-- NOTIFICATION DROPDOWN -->
+            <!-- ================================================= -->
 
-              @else if (notifications.length === 0) {
-                <div class="notification-empty">
-                  <i class="bi bi-bell-slash"></i>
+            @if (isNotificationMenuOpen) {
+              <div class="notification-dropdown">
+                <!-- HEADER -->
 
-                  <strong> No Notifications </strong>
+                <div class="notification-header">
+                  <div>
+                    <strong> Notifications </strong>
 
-                  <span> You are all caught up. </span>
-                </div>
-              }
+                    <span> {{ notificationCount }} unread </span>
+                  </div>
 
-              <!-- ================================================= -->
-              <!-- NOTIFICATION LIST -->
-              <!-- ================================================= -->
-
-              @else {
-                <div class="notification-list">
-                  @for (
-                    notification of notifications.slice(0, 8);
-                    track notification.notificationId
-                  ) {
+                  @if (notificationCount > 0) {
                     <button
                       type="button"
-                      class="notification-item"
-                      [class.unread]="!notification.isRead"
-                      (click)="markNotificationAsRead(notification)"
+                      class="mark-all-button"
+                      [disabled]="isMarkingAllAsRead"
+                      (click)="markAllNotificationsAsRead()"
                     >
-                      <!-- ICON -->
-
-                      <div class="notification-icon">
-                        <i class="bi" [class]="getNotificationIcon(notification.type)"></i>
-                      </div>
-
-                      <!-- CONTENT -->
-
-                      <div class="notification-content">
-                        <div class="notification-title-row">
-                          <strong>
-                            {{ notification.title }}
-                          </strong>
-
-                          @if (!notification.isRead) {
-                            <span class="unread-dot"></span>
-                          }
-                        </div>
-
-                        <p>
-                          {{ notification.message }}
-                        </p>
-
-                        <small>
-                          {{ formatNotificationDate(notification.createdDate) }}
-                        </small>
-                      </div>
+                      @if (isMarkingAllAsRead) {
+                        <span class="spinner-border spinner-border-sm"></span>
+                      } @else {
+                        Mark all as read
+                      }
                     </button>
                   }
                 </div>
-              }
-            </div>
-          }
-        </div>
 
-        <!-- ================================================= -->
-        <!-- WISHLIST -->
-        <!-- ================================================= -->
+                <div class="notification-divider"></div>
 
-        <a
-          routerLink="/wishlist"
-          class="nav-action"
-          [class.active]="activeNavItem === 'wishlist'"
-          (click)="setActiveNavItem('wishlist')"
-          title="Wishlist"
-        >
-          <i class="bi bi-heart"></i>
+                <!-- ================================================= -->
+                <!-- LOADING -->
+                <!-- ================================================= -->
 
-          @if (wishlistCount > 0) {
-            <span class="nav-badge">
-              {{ wishlistCount }}
-            </span>
-          }
-        </a>
+                @if (isNotificationLoading) {
+                  <div class="notification-loading">
+                    <span class="spinner-border spinner-border-sm"></span>
 
-        <!-- ================================================= -->
-        <!-- CART -->
-        <!-- ================================================= -->
+                    Loading notifications...
+                  </div>
+                }
 
-        <a
-          routerLink="/cart"
-          class="nav-action"
-          [class.active]="activeNavItem === 'cart'"
-          (click)="setActiveNavItem('cart')"
-          title="Cart"
-        >
-          <i class="bi bi-cart3"></i>
+                <!-- ================================================= -->
+                <!-- EMPTY -->
+                <!-- ================================================= -->
 
-          @if (cartItemCount > 0) {
-            <span class="nav-badge">
-              {{ cartItemCount }}
-            </span>
-          }
-        </a>
+                @else if (notifications.length === 0) {
+                  <div class="notification-empty">
+                    <i class="bi bi-bell-slash"></i>
 
-        <!-- ================================================= -->
-        <!-- USER PROFILE -->
-        <!-- ================================================= -->
+                    <strong> No Notifications </strong>
 
-        <div class="user-profile-wrapper" #profileWrapper>
-          <button
-            type="button"
-            class="user-profile-btn"
-            [class.active]="activeNavItem === 'profile'"
-            (click)="toggleProfileMenu()"
-            [attr.aria-expanded]="isProfileMenuOpen"
-            title="My Account"
-          >
-            <i class="bi bi-person-circle"></i>
-          </button>
+                    <span> You are all caught up. </span>
+                  </div>
+                }
 
-          @if (isProfileMenuOpen) {
-            <div class="profile-dropdown">
-              <!-- PROFILE HEADER -->
+                <!-- ================================================= -->
+                <!-- NOTIFICATION LIST -->
+                <!-- ================================================= -->
 
-              <div class="profile-header">
-                <div class="profile-avatar">
-                  <i class="bi bi-person-fill"></i>
-                </div>
+                @else {
+                  <div class="notification-list">
+                    @for (
+                      notification of notifications.slice(0, 8);
+                      track notification.notificationId
+                    ) {
+                      <button
+                        type="button"
+                        class="notification-item"
+                        [class.unread]="!notification.isRead"
+                        (click)="markNotificationAsRead(notification)"
+                      >
+                        <!-- ICON -->
 
-                <div class="profile-user-info">
-                  <strong>
-                    {{ user?.name || 'User' }}
-                  </strong>
+                        <div class="notification-icon">
+                          <i class="bi" [class]="getNotificationIcon(notification.type)"></i>
+                        </div>
 
-                  <span>
-                    {{ user?.email || '' }}
-                  </span>
-                </div>
+                        <!-- CONTENT -->
+
+                        <div class="notification-content">
+                          <div class="notification-title-row">
+                            <strong>
+                              {{ notification.title }}
+                            </strong>
+
+                            @if (!notification.isRead) {
+                              <span class="unread-dot"></span>
+                            }
+                          </div>
+
+                          <p>
+                            {{ notification.message }}
+                          </p>
+
+                          <small>
+                            {{ formatNotificationDate(notification.createdDate) }}
+                          </small>
+                        </div>
+                      </button>
+                    }
+                  </div>
+                }
               </div>
+            }
+          </div>
 
-              <div class="profile-divider"></div>
+          <!-- ================================================= -->
+          <!-- WISHLIST -->
+          <!-- ================================================= -->
 
-              <!-- MY PROFILE -->
+          <a
+            routerLink="/wishlist"
+            class="nav-action"
+            [class.active]="activeNavItem === 'wishlist'"
+            (click)="setActiveNavItem('wishlist')"
+            title="Wishlist"
+          >
+            <i class="bi bi-heart"></i>
 
-              <a routerLink="/profile" class="profile-menu-item" (click)="closeProfileMenu()">
-                <i class="bi bi-person"></i>
+            @if (wishlistCount > 0) {
+              <span class="nav-badge">
+                {{ wishlistCount }}
+              </span>
+            }
+          </a>
 
-                <span> My Profile </span>
-              </a>
+          <!-- ================================================= -->
+          <!-- CART -->
+          <!-- ================================================= -->
 
-              <!-- MY ORDERS -->
+          <a
+            routerLink="/cart"
+            class="nav-action"
+            [class.active]="activeNavItem === 'cart'"
+            (click)="setActiveNavItem('cart')"
+            title="Cart"
+          >
+            <i class="bi bi-cart3"></i>
 
-              <a routerLink="/orders" class="profile-menu-item" (click)="closeProfileMenu()">
-                <i class="bi bi-box-seam"></i>
+            @if (cartItemCount > 0) {
+              <span class="nav-badge">
+                {{ cartItemCount }}
+              </span>
+            }
+          </a>
 
-                <span> My Orders </span>
-              </a>
+          <!-- ================================================= -->
+          <!-- USER PROFILE -->
+          <!-- ================================================= -->
 
-              <!-- WISHLIST -->
+          <div class="user-profile-wrapper" #profileWrapper>
+            <button
+              type="button"
+              class="user-profile-btn"
+              [class.active]="activeNavItem === 'profile'"
+              (click)="toggleProfileMenu()"
+              [attr.aria-expanded]="isProfileMenuOpen"
+              title="My Account"
+            >
+              <i class="bi bi-person-circle"></i>
+            </button>
 
-              <a routerLink="/wishlist" class="profile-menu-item" (click)="closeProfileMenu()">
-                <i class="bi bi-heart"></i>
+            @if (isProfileMenuOpen) {
+              <div class="profile-dropdown">
+                <!-- PROFILE HEADER -->
 
-                <span> My Wishlist </span>
-              </a>
+                <div class="profile-header">
+                  <div class="profile-avatar">
+                    <i class="bi bi-person-fill"></i>
+                  </div>
 
-              <!-- CONTACT US -->
+                  <div class="profile-user-info">
+                    <strong>
+                      {{ user?.name || 'User' }}
+                    </strong>
 
-              <a routerLink="/contact" class="profile-menu-item" (click)="closeProfileMenu()">
-                <i class="bi bi-envelope"></i>
+                    <span>
+                      {{ user?.email || '' }}
+                    </span>
+                  </div>
+                </div>
 
-                <span> Contact Us </span>
-              </a>
+                <div class="profile-divider"></div>
 
-              <!-- ADDRESSES -->
+                <!-- MY PROFILE -->
 
-              <a routerLink="/addresses" class="profile-menu-item" (click)="closeProfileMenu()">
-                <i class="bi bi-geo-alt"></i>
+                <a routerLink="/profile" class="profile-menu-item" (click)="closeProfileMenu()">
+                  <i class="bi bi-person"></i>
 
-                <span> My Addresses </span>
-              </a>
+                  <span> My Profile </span>
+                </a>
 
-              <div class="profile-divider"></div>
+                <!-- MY ORDERS -->
 
-              <!-- ACCOUNT SETTINGS -->
+                <a routerLink="/orders" class="profile-menu-item" (click)="closeProfileMenu()">
+                  <i class="bi bi-box-seam"></i>
 
-              <a routerLink="/settings" class="profile-menu-item" (click)="closeProfileMenu()">
-                <i class="bi bi-gear"></i>
+                  <span> My Orders </span>
+                </a>
 
-                <span> Account Settings </span>
-              </a>
+                <!-- WISHLIST -->
 
-              <!-- LOGOUT -->
+                <a routerLink="/wishlist" class="profile-menu-item" (click)="closeProfileMenu()">
+                  <i class="bi bi-heart"></i>
 
-              <button
-                type="button"
-                class="profile-menu-item logout-item"
-                (click)="logoutFromProfile()"
-              >
-                <i class="bi bi-box-arrow-right"></i>
+                  <span> My Wishlist </span>
+                </a>
 
-                <span> Logout </span>
-              </button>
-            </div>
-          }
-        </div>
+                <!-- CONTACT US -->
+
+                <a routerLink="/contact" class="profile-menu-item" (click)="closeProfileMenu()">
+                  <i class="bi bi-envelope"></i>
+
+                  <span> Contact Us </span>
+                </a>
+
+                <!-- ADDRESSES -->
+
+                <a routerLink="/addresses" class="profile-menu-item" (click)="closeProfileMenu()">
+                  <i class="bi bi-geo-alt"></i>
+
+                  <span> My Addresses </span>
+                </a>
+
+                <div class="profile-divider"></div>
+
+                <!-- ACCOUNT SETTINGS -->
+
+                <a routerLink="/settings" class="profile-menu-item" (click)="closeProfileMenu()">
+                  <i class="bi bi-gear"></i>
+
+                  <span> Account Settings </span>
+                </a>
+
+                <!-- LOGOUT -->
+
+                <button
+                  type="button"
+                  class="profile-menu-item logout-item"
+                  (click)="logoutFromProfile()"
+                >
+                  <i class="bi bi-box-arrow-right"></i>
+
+                  <span> Logout </span>
+                </button>
+              </div>
+            }
+          </div>
+        }
       </div>
     </div>
   </nav>
@@ -548,4 +569,61 @@
       </div>
     </div>
   </footer>
+
+  <!-- ===================================================== -->
+  <!-- MOBILE BOTTOM NAVIGATION -->
+  <!-- ===================================================== -->
+
+  <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+    <a
+      routerLink="/home"
+      class="mobile-bottom-nav-item"
+      [class.active]="activeNavItem === 'home'"
+      (click)="setActiveNavItem('home')"
+      aria-label="Home"
+    >
+      <i class="bi bi-house-door-fill"></i>
+      <span>Home</span>
+    </a>
+
+    <a
+      routerLink="/products"
+      class="mobile-bottom-nav-item"
+      [class.active]="activeNavItem === 'categories'"
+      (click)="setActiveNavItem('categories')"
+      aria-label="Categories"
+    >
+      <i class="bi bi-grid"></i>
+      <span>Categories</span>
+    </a>
+
+    @if (user) {
+      <button
+        type="button"
+        class="mobile-bottom-nav-item"
+        [class.active]="activeNavItem === 'profile'"
+        (click)="toggleProfileMenu()"
+        aria-label="Account"
+      >
+        <i class="bi bi-person"></i>
+        <span>Account</span>
+      </button>
+    } @else {
+      <a routerLink="/login" class="mobile-bottom-nav-item" aria-label="Account">
+        <i class="bi bi-person"></i>
+        <span>Account</span>
+      </a>
+    }
+
+    <a
+      routerLink="/contact"
+      class="mobile-bottom-nav-item"
+      [class.active]="activeNavItem === 'help'"
+      (click)="setActiveNavItem('help')"
+      aria-label="Help"
+    >
+      <i class="bi bi-chat"></i>
+      <span>Help</span>
+    </a>
+  </nav>
 </div>
