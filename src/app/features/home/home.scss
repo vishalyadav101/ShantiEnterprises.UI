@@ -2476,7 +2476,7 @@
 
 .home-top-categories-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 30px 18px;
 }
 
@@ -2570,7 +2570,7 @@
   }
 
   .home-top-categories-grid {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     column-gap: 11px;
     row-gap: 29px;
   }
