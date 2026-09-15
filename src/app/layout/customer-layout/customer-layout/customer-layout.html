@@ -545,15 +545,16 @@
       <span>Home</span>
     </a>
 
+    <!-- ALL PRODUCTS -->
     <a
       routerLink="/products"
       class="mobile-bottom-nav-item"
-      [class.active]="activeNavItem === 'categories'"
-      (click)="setActiveNavItem('categories')"
-      aria-label="Categories"
+      [class.active]="activeNavItem === 'viewall'"
+      (click)="setActiveNavItem('viewall')"
+      aria-label="All Products"
     >
-      <i class="bi bi-grid"></i>
-      <span>Categories</span>
+      <i class="bi bi-box-seam"></i>
+      <span>All Products</span>
     </a>
 
     @if (user) {
@@ -575,14 +576,14 @@
     }
 
     <a
-      routerLink="/contact"
+      href="tel:9199392833"
       class="mobile-bottom-nav-item"
-      [class.active]="activeNavItem === 'help'"
-      (click)="setActiveNavItem('help')"
-      aria-label="Help"
+      [class.active]="activeNavItem === 'callus'"
+      (click)="setActiveNavItem('callus')"
+      aria-label="Call Us"
     >
-      <i class="bi bi-chat"></i>
-      <span>Help</span>
+      <i class="bi bi-telephone"></i>
+      <span>Call Us</span>
     </a>
   </nav>
 </div>

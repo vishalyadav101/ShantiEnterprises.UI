@@ -85,7 +85,7 @@ export class CustomerLayout implements OnInit {
   // =========================================================
 
   activeNavItem:
-    'home' | 'categories' | 'wishlist' | 'cart' | 'notification' | 'profile' | 'help' | null =
+    'home' | 'viewall' | 'wishlist' | 'cart' | 'notification' | 'profile' | 'callus' | null =
     'home';
 
   // =========================================================
@@ -209,7 +209,7 @@ export class CustomerLayout implements OnInit {
   // =========================================================
 
   setActiveNavItem(
-    item: 'home' | 'categories' | 'wishlist' | 'cart' | 'notification' | 'profile' | 'help',
+    item: 'home' | 'viewall' | 'wishlist' | 'cart' | 'notification' | 'profile' | 'callus',
   ): void {
     this.activeNavItem = item;
   }
