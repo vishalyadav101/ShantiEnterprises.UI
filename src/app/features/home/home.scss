@@ -30,9 +30,18 @@
    HOME SEARCH & FILTER
 ========================================================= */
 
+/* =========================================================
+   STICKY SEARCH BAR
+   ========================================================= */
+
 .home-search-section {
+  position: sticky;
+  top: 58px;
+  z-index: 900;
+
   width: 100%;
-  padding: 18px 0 8px;
+  padding: 10px 0 8px;
+
   background: #f8fafc;
 }
 
@@ -2604,5 +2613,16 @@
 
   .home-top-category-name {
     font-size: 13.5px;
+  }
+}
+@media (max-width: 767.98px) {
+  .home-search-section {
+    position: sticky;
+    top: 56px;
+    z-index: 900;
+
+    padding: 8px 0 5px;
+
+    background: #f8fafc;
   }
 }

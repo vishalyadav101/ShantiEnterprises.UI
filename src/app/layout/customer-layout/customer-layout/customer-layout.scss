@@ -1961,3 +1961,15 @@
     padding-bottom: 84px;
   }
 }
+
+/* =========================================================
+   FIXED / STICKY TOP NAVBAR
+   ========================================================= */
+
+.customer-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  background: #ffffff;
+}
