@@ -257,6 +257,54 @@
     }
 
     <!-- =================================================== -->
+    <!-- TOP CATEGORIES -->
+    <!-- =================================================== -->
+
+    @if (categories.length > 0) {
+      <section class="home-top-categories-section">
+        <div class="container">
+          <!-- HEADING -->
+          <div class="home-top-categories-heading">
+            <span>TOP CATEGORIES</span>
+          </div>
+
+          <!-- CATEGORY GRID -->
+          <div class="home-top-categories-grid">
+            @for (category of categories; track category.categoryId) {
+              <button
+                type="button"
+                class="home-top-category-card"
+                [class.active]="selectedCategory === category.categoryName"
+                (click)="selectHomeCategory(category)"
+                [attr.aria-label]="'Show products in ' + category.categoryName"
+              >
+                <!-- CATEGORY IMAGE -->
+                <div class="home-top-category-image">
+                  @if (getCategoryImageUrl(category)) {
+                    <img
+                      [src]="getCategoryImageUrl(category)"
+                      [alt]="category.categoryName"
+                      loading="lazy"
+                    />
+                  } @else {
+                    <div class="home-top-category-placeholder">
+                      <i class="bi bi-grid"></i>
+                    </div>
+                  }
+                </div>
+
+                <!-- CATEGORY NAME -->
+                <span class="home-top-category-name">
+                  {{ category.categoryName }}
+                </span>
+              </button>
+            }
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- =================================================== -->
     <!-- CART MESSAGE -->
     <!-- =================================================== -->
 

@@ -6,7 +6,6 @@ import { AuthService } from '../../../core/services/auth';
 import { CartService } from '../../../core/services/cart';
 import { WishlistService } from '../../../core/services/wishlist';
 import { NotificationService } from '../../../core/services/notification';
-import { CategoryService, Category } from '../../../core/services/category';
 
 import { Notification } from '../../../core/models/notification.model';
 
@@ -29,8 +28,6 @@ export class CustomerLayout implements OnInit {
   private readonly wishlistService = inject(WishlistService);
 
   private readonly notificationService = inject(NotificationService);
-
-  private readonly categoryService = inject(CategoryService);
 
   private readonly router = inject(Router);
 
@@ -92,23 +89,10 @@ export class CustomerLayout implements OnInit {
     'home';
 
   // =========================================================
-  // CATEGORIES
-  // =========================================================
-
-  categories: Category[] = [];
-
-  isCategoryLoading = false;
-
-  categoryError = '';
-
-  // =========================================================
   // INIT
   // =========================================================
 
   ngOnInit(): void {
-    // Categories are public, so load them for everyone.
-    this.loadCategories();
-
     // Cart, wishlist and notifications require authentication.
     // Do not call these APIs for a guest user.
     if (this.user) {
@@ -221,33 +205,6 @@ export class CustomerLayout implements OnInit {
   }
 
   // =========================================================
-  // LOAD CATEGORIES
-  // =========================================================
-
-  loadCategories(): void {
-    this.isCategoryLoading = true;
-    this.categoryError = '';
-
-    this.categoryService.getAll().subscribe({
-      next: (categories) => {
-        this.categories = (categories ?? [])
-          .filter((category) => category.isActive)
-          .sort((a, b) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime());
-
-        this.isCategoryLoading = false;
-      },
-
-      error: (error) => {
-        console.error('Category Load Error:', error);
-
-        this.categories = [];
-        this.categoryError = 'Unable to load categories.';
-        this.isCategoryLoading = false;
-      },
-    });
-  }
-
-  // =========================================================
   // ACTIVE NAVBAR ITEM
   // =========================================================
 
@@ -255,17 +212,6 @@ export class CustomerLayout implements OnInit {
     item: 'home' | 'categories' | 'wishlist' | 'cart' | 'notification' | 'profile' | 'help',
   ): void {
     this.activeNavItem = item;
-  }
-
-  // =========================================================
-  // CATEGORY CLICK
-  // Remove navbar active state when a category is selected.
-  // =========================================================
-
-  onCategoryClick(): void {
-    this.closeNotificationMenu();
-    this.closeProfileMenu();
-    this.activeNavItem = null;
   }
 
   // =========================================================

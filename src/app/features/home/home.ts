@@ -13,6 +13,7 @@ import { OrderService } from '../../core/services/order';
 import { BannerService, Banner } from '../../core/services/banner';
 import { ReviewService } from '../../core/services/review';
 import { ProductPriceTierService, ProductPriceTier } from '../../core/services/product-price-tier';
+import { CategoryService, Category } from '../../core/services/category';
 
 import { Product } from '../../core/models/product.model';
 import { Cart } from '../../core/models/cart.model';
@@ -49,6 +50,8 @@ export class Home implements OnInit, OnDestroy {
 
   private readonly productPriceTierService = inject(ProductPriceTierService);
 
+  private readonly categoryService = inject(CategoryService);
+
   private readonly router = inject(Router);
 
   // =========================================================
@@ -83,7 +86,7 @@ export class Home implements OnInit, OnDestroy {
 
   selectedCategory = '';
 
-  categories: string[] = [];
+  categories: Category[] = [];
 
   // =========================================================
   // PRODUCT IMAGES
@@ -254,18 +257,6 @@ export class Home implements OnInit, OnDestroy {
           this.products = (response.products || []).filter((product) => product.isActive);
 
           // =================================================
-          // BUILD CATEGORY LIST
-          // =================================================
-
-          this.categories = Array.from(
-            new Set(
-              this.products
-                .map((product) => product.categoryName)
-                .filter((category): category is string => !!category),
-            ),
-          ).sort((a, b) => a.localeCompare(b));
-
-          // =================================================
           // DEFAULT HOME PRODUCTS
           // =================================================
 
@@ -276,6 +267,16 @@ export class Home implements OnInit, OnDestroy {
           // =================================================
 
           this.loadSupportingProductData(this.featuredProducts);
+
+          // =================================================
+          // CATEGORIES
+          // =================================================
+          //
+          // Categories are public. Load their images separately
+          // so the Home page does not fail if category loading fails.
+          // =================================================
+
+          this.loadCategories();
 
           // =================================================
           // WISHLIST
@@ -337,6 +338,83 @@ export class Home implements OnInit, OnDestroy {
 
   onCategoryChange(): void {
     this.applyHomeFilters();
+  }
+
+  // =========================================================
+  // LOAD TOP CATEGORIES
+  // =========================================================
+
+  loadCategories(): void {
+    this.categoryService.getAll().subscribe({
+      next: (categories) => {
+        this.categories = (categories ?? []).filter((category) => category.isActive);
+      },
+
+      error: (error) => {
+        console.error('Home Category Load Error:', error);
+
+        // Fallback: create category names from products.
+        // These fallback cards will use a product image when available.
+        this.categories = Array.from(
+          new Set(
+            this.products
+              .map((product) => product.categoryName)
+              .filter((category): category is string => !!category),
+          ),
+        ).map((categoryName, index) => ({
+          categoryId: -(index + 1),
+          categoryName,
+          description: '',
+          imageUrl: null,
+          isActive: true,
+          createdDate: new Date().toISOString(),
+        }));
+      },
+    });
+  }
+
+  // =========================================================
+  // TOP CATEGORY IMAGE
+  // =========================================================
+
+  getCategoryImageUrl(category: Category): string {
+    if (category.imageUrl) {
+      return this.getImageUrl(category.imageUrl);
+    }
+
+    // Fallback to the first product image of this category.
+    const product = this.products.find(
+      (item) => item.categoryName === category.categoryName && !!item.imageUrl,
+    );
+
+    return product?.imageUrl ? this.getImageUrl(product.imageUrl) : '';
+  }
+
+  // =========================================================
+  // TOP CATEGORY CLICK
+  // =========================================================
+
+  selectHomeCategory(category: Category): void {
+    if (!category?.categoryName) {
+      return;
+    }
+
+    // Set selected category.
+    this.selectedCategory = category.categoryName;
+
+    // Category click should not keep an old search term.
+    this.searchTerm = '';
+
+    // Show ALL active products in this category.
+    this.applyHomeFilters();
+
+    // Move user directly to the filtered product section.
+    setTimeout(() => {
+      document.querySelector('.products-section')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }, 0);
   }
 
   // =========================================================

@@ -330,47 +330,6 @@
   </nav>
 
   <!-- ===================================================== -->
-  <!-- CATEGORY HORIZONTAL SCROLL -->
-  <!-- ===================================================== -->
-
-  <section class="customer-category-section">
-    <div class="container">
-      @if (isCategoryLoading) {
-        <div class="category-scroll-loading">
-          <span class="spinner-border spinner-border-sm"></span>
-          Loading categories...
-        </div>
-      } @else if (categories.length > 0) {
-        <div class="category-scroll-wrapper">
-          <div class="category-scroll" aria-label="Categories">
-            @for (category of categories; track category.categoryId) {
-              <a
-                class="category-card"
-                [routerLink]="['/products']"
-                [queryParams]="{ categoryId: category.categoryId }"
-                [title]="category.categoryName"
-                (click)="onCategoryClick()"
-              >
-                <div class="category-card-icon">
-                  <i class="bi bi-grid-3x3-gap"></i>
-                </div>
-
-                <span class="category-card-name">
-                  {{ category.categoryName }}
-                </span>
-              </a>
-            }
-          </div>
-        </div>
-      } @else if (categoryError) {
-        <div class="category-scroll-empty">
-          {{ categoryError }}
-        </div>
-      }
-    </div>
-  </section>
-
-  <!-- ===================================================== -->
   <!-- CUSTOMER PAGE CONTENT -->
   <!-- ===================================================== -->
 
