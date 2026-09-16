@@ -144,20 +144,6 @@ import { AdminReturns } from './features/admin-returns/admin-returns/admin-retur
 
 export const routes: Routes = [
   // =========================================================
-  // AUTH
-  // =========================================================
-
-  {
-    path: 'login',
-    component: Login,
-  },
-
-  {
-    path: 'register',
-    component: Register,
-  },
-
-  // =========================================================
   // ADMIN LAYOUT
   // =========================================================
   // Admin ke saare pages adminGuard se protected hain.
@@ -364,6 +350,24 @@ export const routes: Routes = [
         path: '',
         redirectTo: 'home',
         pathMatch: 'full',
+      },
+
+      // =======================================================
+      // AUTH - PUBLIC
+      // =======================================================
+      // Login/Register CustomerLayout ke andar render honge.
+      // Isliye same top navbar aur mobile bottom navigation
+      // Login/Register pages par bhi available rahega.
+      // =======================================================
+
+      {
+        path: 'login',
+        component: Login,
+      },
+
+      {
+        path: 'register',
+        component: Register,
       },
 
       // =======================================================

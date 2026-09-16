@@ -135,7 +135,12 @@ export class ProductDetail implements OnInit {
 
     this.loadProduct();
     this.loadProductImages();
-    this.checkWishlist();
+
+    // Wishlist is protected, so only check it for logged-in users.
+    if (this.authService.getCurrentUser()) {
+      this.checkWishlist();
+    }
+
     this.loadReviews();
     this.loadReviewSummary();
   }
@@ -348,6 +353,12 @@ export class ProductDetail implements OnInit {
   // =========================================================
 
   toggleWishlist(): void {
+    // Wishlist requires authentication.
+    if (!this.authService.getCurrentUser()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
     if (this.isAddingToWishlist) {
       return;
     }
@@ -517,6 +528,12 @@ export class ProductDetail implements OnInit {
   // =========================================================
 
   addToCart(): void {
+    // Cart requires authentication.
+    if (!this.authService.getCurrentUser()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
     if (!this.product || this.product.stock <= 0) {
       return;
     }
@@ -561,6 +578,12 @@ export class ProductDetail implements OnInit {
   // =========================================================
 
   buyNow(): void {
+    // Buy Now uses the protected Cart API, so guests must login first.
+    if (!this.authService.getCurrentUser()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
     if (!this.product || this.product.stock <= 0 || this.isAddingToCart) {
       return;
     }
@@ -837,6 +860,12 @@ export class ProductDetail implements OnInit {
   // =========================================================
 
   submitReview(): void {
+    // Reviews require authentication.
+    if (!this.authService.getCurrentUser()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
     if (this.isSubmittingReview) {
       return;
     }
@@ -1034,10 +1063,20 @@ export class ProductDetail implements OnInit {
   }
 
   goToCart(): void {
+    if (!this.authService.getCurrentUser()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
     this.router.navigate(['/cart']);
   }
 
   goToWishlist(): void {
+    if (!this.authService.getCurrentUser()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
     this.router.navigate(['/wishlist']);
   }
 

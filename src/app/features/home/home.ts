@@ -936,6 +936,12 @@ export class Home implements OnInit, OnDestroy {
   // =========================================================
 
   toggleWishlist(product: Product): void {
+    // Wishlist requires login.
+    if (!this.authService.getCurrentUser()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
     if (this.wishlistActionProductId !== null) {
       return;
     }
@@ -1034,6 +1040,19 @@ export class Home implements OnInit, OnDestroy {
   // =========================================================
 
   addToCart(product: Product): void {
+    // =======================================================
+    // LOGIN REQUIRED
+    // =======================================================
+
+    if (!this.authService.getCurrentUser()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    // =======================================================
+    // STOCK CHECK
+    // =======================================================
+
     if (product.stock <= 0) {
       return;
     }
@@ -1047,6 +1066,7 @@ export class Home implements OnInit, OnDestroy {
     this.addingProductId = product.productId;
 
     this.cartMessage = '';
+    this.errorMessage = '';
 
     this.cartService
       .addItem({
@@ -1088,6 +1108,11 @@ export class Home implements OnInit, OnDestroy {
   // =========================================================
 
   goToCart(): void {
+    if (!this.authService.getCurrentUser()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
     this.router.navigate(['/cart']);
   }
 
