@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { Component, ElementRef, HostListener, OnInit, ViewChild, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
@@ -6,6 +6,8 @@ import { AuthService } from '../../../core/services/auth';
 import { CartService } from '../../../core/services/cart';
 import { WishlistService } from '../../../core/services/wishlist';
 import { NotificationService } from '../../../core/services/notification';
+import { WebsiteSettingService } from '../../../core/services/website-setting';
+import { WebsiteSetting } from '../../../core/models/website-setting.model';
 
 import { Notification } from '../../../core/models/notification.model';
 
@@ -29,6 +31,10 @@ export class CustomerLayout implements OnInit {
 
   private readonly notificationService = inject(NotificationService);
 
+  private readonly websiteSettingService = inject(WebsiteSettingService);
+
+  private readonly document = inject(DOCUMENT);
+
   private readonly router = inject(Router);
 
   // =========================================================
@@ -50,6 +56,14 @@ export class CustomerLayout implements OnInit {
   // =========================================================
 
   user = this.authService.getCurrentUser();
+
+  // =========================================================
+  // WEBSITE SETTING
+  // =========================================================
+
+  websiteSetting: WebsiteSetting | null = null;
+
+  currentYear = new Date().getFullYear();
 
   // =========================================================
   // NAVBAR COUNTS
@@ -93,6 +107,8 @@ export class CustomerLayout implements OnInit {
   // =========================================================
 
   ngOnInit(): void {
+    this.loadWebsiteSetting();
+
     // Cart, wishlist and notifications require authentication.
     // Do not call these APIs for a guest user.
     if (this.user) {
@@ -100,6 +116,47 @@ export class CustomerLayout implements OnInit {
       this.loadWishlistCount();
       this.loadNotifications();
     }
+  }
+
+  // =========================================================
+  // WEBSITE SETTING
+  // =========================================================
+
+  loadWebsiteSetting(): void {
+    this.websiteSettingService.getSettings().subscribe({
+      next: (setting) => {
+        this.websiteSetting = setting;
+        this.setFavicon(setting.faviconUrl);
+      },
+      error: (error) => {
+        console.error('Website Setting Load Error:', error);
+        this.websiteSetting = null;
+      },
+    });
+  }
+
+  setFavicon(faviconUrl: string | null): void {
+    if (!faviconUrl) {
+      return;
+    }
+
+    let faviconLink =
+      this.document.head.querySelector<HTMLLinkElement>(
+        'link[rel~="icon"]'
+      );
+
+    if (!faviconLink) {
+      faviconLink = this.document.createElement('link');
+      faviconLink.rel = 'icon';
+      this.document.head.appendChild(faviconLink);
+    }
+
+    faviconLink.href = faviconUrl;
+  }
+
+  getPhoneLink(): string {
+    const phone = this.websiteSetting?.phone?.trim();
+    return phone ? `tel:${phone}` : 'tel:9199392833';
   }
 
   // =========================================================

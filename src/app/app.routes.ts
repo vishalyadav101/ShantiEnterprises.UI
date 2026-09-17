@@ -17,6 +17,7 @@ import { CustomerLayout } from './layout/customer-layout/customer-layout/custome
 // =========================================================
 
 import { AdminLayout } from './layout/admin-layout/admin-layout';
+import { WebsiteSettingComponent } from './features/website-setting/website-setting/website-setting';
 
 // =========================================================
 // CUSTOMER
@@ -298,6 +299,15 @@ export const routes: Routes = [
       {
         path: 'returns',
         component: AdminReturns,
+      },
+
+      // =======================================================
+      // WEBSITE SETTING
+      // =======================================================
+
+      {
+        path: 'website-setting',
+        component: WebsiteSettingComponent,
       },
 
       // =======================================================

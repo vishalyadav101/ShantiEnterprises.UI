@@ -88,6 +88,12 @@ export class AdminLayout {
       icon: 'bi-star',
       route: '/admin/reviews',
     },
+
+    {
+      title: 'Website Settings',
+      icon: 'bi-gear',
+      route: '/admin/website-setting',
+    },
   ];
 
   // =========================================================

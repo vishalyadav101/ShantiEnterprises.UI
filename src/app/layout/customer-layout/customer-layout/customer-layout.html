@@ -7,7 +7,17 @@
     <div class="container">
       <!-- BRAND -->
 
-      <a class="navbar-brand fw-bold" routerLink="/home"> Shanti Enterprises </a>
+      <a class="navbar-brand fw-bold" routerLink="/home">
+        @if (websiteSetting?.logoUrl) {
+          <img
+            [src]="websiteSetting!.logoUrl!"
+            [alt]="websiteSetting?.companyName || 'Shanti Enterprises'"
+            class="customer-navbar-logo"
+          />
+        } @else {
+          {{ websiteSetting?.companyName || 'Shanti Enterprises' }}
+        }
+      </a>
 
       <!-- RIGHT SIDE -->
 
@@ -351,14 +361,21 @@
         <div class="col-lg-4 col-md-6">
           <div class="footer-brand">
             <h4>
-              <i class="bi bi-shop me-2"></i>
+              @if (websiteSetting?.logoUrl) {
+                <img
+                  [src]="websiteSetting!.logoUrl!"
+                  [alt]="websiteSetting?.companyName || 'Shanti Enterprises'"
+                  class="customer-footer-logo"
+                />
+              } @else {
+                <i class="bi bi-shop me-2"></i>
+              }
 
-              Shanti Enterprises
+              {{ websiteSetting?.companyName || 'Shanti Enterprises' }}
             </h4>
 
             <p>
-              Your trusted place for quality products, easy shopping and a smooth online shopping
-              experience.
+              {{ websiteSetting?.footerText || 'Your trusted place for quality products, easy shopping and a smooth online shopping experience.' }}
             </p>
 
             <div class="footer-trust">
@@ -474,31 +491,112 @@
             Need help with your order or shopping experience? We're here to help.
           </p>
 
-          <div class="support-item">
-            <div class="support-icon">
-              <i class="bi bi-headset"></i>
+          @if (websiteSetting?.phone) {
+            <div class="support-item">
+              <div class="support-icon">
+                <i class="bi bi-telephone"></i>
+              </div>
+
+              <div>
+                <span> Phone </span>
+                <a [href]="getPhoneLink()" class="footer-contact-link">
+                  {{ websiteSetting?.phone }}
+                </a>
+              </div>
             </div>
+          }
 
-            <div>
-              <span> Customer Support </span>
+          @if (websiteSetting?.email) {
+            <div class="support-item">
+              <div class="support-icon">
+                <i class="bi bi-envelope"></i>
+              </div>
 
-              <strong> Mon - Sat, 9:00 AM - 6:00 PM </strong>
+              <div>
+                <span> Email </span>
+                <a [href]="'mailto:' + websiteSetting!.email!" class="footer-contact-link">
+                  {{ websiteSetting?.email }}
+                </a>
+              </div>
             </div>
-          </div>
+          }
 
-          <div class="support-item">
-            <div class="support-icon">
-              <i class="bi bi-shield-check"></i>
+          @if (websiteSetting?.whatsAppNumber) {
+            <div class="support-item">
+              <div class="support-icon">
+                <i class="bi bi-whatsapp"></i>
+              </div>
+
+              <div>
+                <span> WhatsApp </span>
+                <a
+                  [href]="'https://wa.me/' + websiteSetting!.whatsAppNumber!"
+                  target="_blank"
+                  rel="noopener"
+                  class="footer-contact-link"
+                >
+                  {{ websiteSetting?.whatsAppNumber }}
+                </a>
+              </div>
             </div>
+          }
 
-            <div>
-              <span> Safe & Secure </span>
+          @if (websiteSetting?.address) {
+            <div class="support-item">
+              <div class="support-icon">
+                <i class="bi bi-geo-alt"></i>
+              </div>
 
-              <strong> Trusted Shopping Experience </strong>
+              <div>
+                <span> Address </span>
+                <strong>{{ websiteSetting?.address }}</strong>
+              </div>
             </div>
-          </div>
+          }
         </div>
       </div>
+
+      <!-- SOCIAL LINKS -->
+
+      @if (
+        websiteSetting?.facebookUrl ||
+        websiteSetting?.instagramUrl ||
+        websiteSetting?.twitterUrl ||
+        websiteSetting?.linkedInUrl ||
+        websiteSetting?.youTubeUrl
+      ) {
+        <div class="footer-social-links">
+          @if (websiteSetting?.facebookUrl) {
+            <a [href]="websiteSetting!.facebookUrl!" target="_blank" rel="noopener" aria-label="Facebook">
+              <i class="bi bi-facebook"></i>
+            </a>
+          }
+
+          @if (websiteSetting?.instagramUrl) {
+            <a [href]="websiteSetting!.instagramUrl!" target="_blank" rel="noopener" aria-label="Instagram">
+              <i class="bi bi-instagram"></i>
+            </a>
+          }
+
+          @if (websiteSetting?.twitterUrl) {
+            <a [href]="websiteSetting!.twitterUrl!" target="_blank" rel="noopener" aria-label="Twitter">
+              <i class="bi bi-twitter-x"></i>
+            </a>
+          }
+
+          @if (websiteSetting?.linkedInUrl) {
+            <a [href]="websiteSetting!.linkedInUrl!" target="_blank" rel="noopener" aria-label="LinkedIn">
+              <i class="bi bi-linkedin"></i>
+            </a>
+          }
+
+          @if (websiteSetting?.youTubeUrl) {
+            <a [href]="websiteSetting!.youTubeUrl!" target="_blank" rel="noopener" aria-label="YouTube">
+              <i class="bi bi-youtube"></i>
+            </a>
+          }
+        </div>
+      }
 
       <!-- DIVIDER -->
 
@@ -508,8 +606,8 @@
 
       <div class="footer-bottom">
         <p class="mb-0">
-          © 2026
-          <strong>Shanti Enterprises</strong>. All rights reserved.
+          © {{ currentYear }}
+          <strong>{{ websiteSetting?.companyName || 'Shanti Enterprises' }}</strong>. All rights reserved.
         </p>
 
         <div class="footer-bottom-links">
@@ -576,7 +674,7 @@
     }
 
     <a
-      href="tel:9199392833"
+      [href]="getPhoneLink()"
       class="mobile-bottom-nav-item"
       [class.active]="activeNavItem === 'callus'"
       (click)="setActiveNavItem('callus')"
