@@ -23,12 +23,17 @@ export class WebsiteSettingComponent implements OnInit {
     email: null,
     phone: null,
     whatsAppNumber: null,
+    customerCare: null,
+    gstin: null,
+    proprietor: null,
+    sinceYear: null,
     address: null,
     facebookUrl: null,
     instagramUrl: null,
     twitterUrl: null,
     linkedInUrl: null,
     youTubeUrl: null,
+    highlightText: null,
     footerText: null,
     updatedDate: null,
   };
@@ -118,14 +123,37 @@ export class WebsiteSettingComponent implements OnInit {
     formData.append('CompanyName', this.setting.companyName.trim());
 
     this.appendIfValue(formData, 'Email', this.setting.email);
+
     this.appendIfValue(formData, 'Phone', this.setting.phone);
+
     this.appendIfValue(formData, 'WhatsAppNumber', this.setting.whatsAppNumber);
+
+    this.appendIfValue(formData, 'CustomerCare', this.setting.customerCare);
+
+    this.appendIfValue(formData, 'GSTIN', this.setting.gstin);
+
+    this.appendIfValue(formData, 'Proprietor', this.setting.proprietor);
+
+    if (this.setting.sinceYear !== null && this.setting.sinceYear !== undefined) {
+      formData.append('SinceYear', this.setting.sinceYear.toString());
+    }
+
     this.appendIfValue(formData, 'Address', this.setting.address);
+
     this.appendIfValue(formData, 'FacebookUrl', this.setting.facebookUrl);
+
     this.appendIfValue(formData, 'InstagramUrl', this.setting.instagramUrl);
+
     this.appendIfValue(formData, 'TwitterUrl', this.setting.twitterUrl);
+
     this.appendIfValue(formData, 'LinkedInUrl', this.setting.linkedInUrl);
+
     this.appendIfValue(formData, 'YouTubeUrl', this.setting.youTubeUrl);
+
+    // Highlight text
+    this.appendIfValue(formData, 'HighlightText', this.setting.highlightText);
+
+    // Footer text
     this.appendIfValue(formData, 'FooterText', this.setting.footerText);
 
     if (this.logoFile) {
@@ -139,6 +167,7 @@ export class WebsiteSettingComponent implements OnInit {
     this.websiteSettingService.saveSettings(formData).subscribe({
       next: (response) => {
         this.setting = response;
+
         this.logoPreview = response.logoUrl;
         this.faviconPreview = response.faviconUrl;
 
@@ -146,8 +175,10 @@ export class WebsiteSettingComponent implements OnInit {
         this.faviconFile = null;
 
         this.successMessage = 'Website settings saved successfully.';
+
         this.saving = false;
       },
+
       error: (error) => {
         console.error('Website Setting Save Error:', error);
 

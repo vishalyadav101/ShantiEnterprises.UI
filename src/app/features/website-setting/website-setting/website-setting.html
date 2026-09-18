@@ -28,9 +28,13 @@
 
     <form (ngSubmit)="save()" #settingForm="ngForm">
       <div class="settings-grid">
+        <!-- =========================
+             BASIC INFORMATION
+        ========================== -->
         <section class="settings-card">
           <div class="card-title">
             <i class="bi bi-building"></i>
+
             <div>
               <h4>Basic Information</h4>
               <span>Website name and footer information</span>
@@ -38,7 +42,8 @@
           </div>
 
           <div class="form-group">
-            <label for="companyName">Company Name <span>*</span></label>
+            <label for="companyName"> Company Name <span>*</span> </label>
+
             <input
               id="companyName"
               name="companyName"
@@ -51,8 +56,29 @@
             />
           </div>
 
+          <!-- Highlight Text -->
           <div class="form-group">
-            <label for="footerText">Footer Text</label>
+            <label for="highlightText"> Highlight Text </label>
+
+            <input
+              id="highlightText"
+              name="highlightText"
+              type="text"
+              class="form-control"
+              [(ngModel)]="setting.highlightText"
+              maxlength="200"
+              placeholder="e.g. Trending E Commerce Supplier"
+            />
+
+            <small class="text-muted">
+              This text will be displayed as a highlighted badge on the website.
+            </small>
+          </div>
+
+          <!-- Footer Text -->
+          <div class="form-group">
+            <label for="footerText"> Footer Text </label>
+
             <textarea
               id="footerText"
               name="footerText"
@@ -65,9 +91,13 @@
           </div>
         </section>
 
+        <!-- =========================
+             BRANDING
+        ========================== -->
         <section class="settings-card">
           <div class="card-title">
             <i class="bi bi-images"></i>
+
             <div>
               <h4>Branding</h4>
               <span>Upload website logo and favicon</span>
@@ -93,7 +123,7 @@
               (change)="onLogoSelected($event)"
             />
 
-            <small>JPG, PNG or WEBP — maximum 5 MB.</small>
+            <small> JPG, PNG or WEBP — maximum 5 MB. </small>
           </div>
 
           <div class="upload-block">
@@ -115,13 +145,17 @@
               (change)="onFaviconSelected($event)"
             />
 
-            <small>ICO, JPG, PNG or WEBP — maximum 5 MB.</small>
+            <small> ICO, JPG, PNG or WEBP — maximum 5 MB. </small>
           </div>
         </section>
 
+        <!-- =========================
+             CONTACT INFORMATION
+        ========================== -->
         <section class="settings-card">
           <div class="card-title">
             <i class="bi bi-telephone"></i>
+
             <div>
               <h4>Contact Information</h4>
               <span>Customer support contact details</span>
@@ -130,6 +164,7 @@
 
           <div class="form-group">
             <label for="email">Email</label>
+
             <input
               id="email"
               name="email"
@@ -142,6 +177,7 @@
 
           <div class="form-group">
             <label for="phone">Phone</label>
+
             <input
               id="phone"
               name="phone"
@@ -153,7 +189,8 @@
           </div>
 
           <div class="form-group">
-            <label for="whatsAppNumber">WhatsApp Number</label>
+            <label for="whatsAppNumber"> WhatsApp Number </label>
+
             <input
               id="whatsAppNumber"
               name="whatsAppNumber"
@@ -165,7 +202,21 @@
           </div>
 
           <div class="form-group">
+            <label for="customerCare"> Customer Care </label>
+
+            <input
+              id="customerCare"
+              name="customerCare"
+              type="text"
+              class="form-control"
+              [(ngModel)]="setting.customerCare"
+              placeholder="+91 80482 72868"
+            />
+          </div>
+
+          <div class="form-group">
             <label for="address">Address</label>
+
             <textarea
               id="address"
               name="address"
@@ -177,9 +228,70 @@
           </div>
         </section>
 
+        <!-- =========================
+             BUSINESS INFORMATION
+        ========================== -->
+        <section class="settings-card">
+          <div class="card-title">
+            <i class="bi bi-shop"></i>
+
+            <div>
+              <h4>Business Information</h4>
+              <span>Business registration and ownership details</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="gstin">GSTIN</label>
+
+            <input
+              id="gstin"
+              name="gstin"
+              type="text"
+              class="form-control"
+              [(ngModel)]="setting.gstin"
+              maxlength="50"
+              placeholder="Enter GSTIN"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="proprietor">Proprietor</label>
+
+            <input
+              id="proprietor"
+              name="proprietor"
+              type="text"
+              class="form-control"
+              [(ngModel)]="setting.proprietor"
+              maxlength="200"
+              placeholder="Enter proprietor name"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="sinceYear">Since Year</label>
+
+            <input
+              id="sinceYear"
+              name="sinceYear"
+              type="number"
+              class="form-control"
+              [(ngModel)]="setting.sinceYear"
+              min="1900"
+              max="2100"
+              placeholder="e.g. 2024"
+            />
+          </div>
+        </section>
+
+        <!-- =========================
+             SOCIAL MEDIA
+        ========================== -->
         <section class="settings-card">
           <div class="card-title">
             <i class="bi bi-share"></i>
+
             <div>
               <h4>Social Media</h4>
               <span>Manage your social media links</span>
@@ -187,7 +299,11 @@
           </div>
 
           <div class="form-group">
-            <label for="facebookUrl"> <i class="bi bi-facebook"></i> Facebook </label>
+            <label for="facebookUrl">
+              <i class="bi bi-facebook"></i>
+              Facebook
+            </label>
+
             <input
               id="facebookUrl"
               name="facebookUrl"
@@ -199,7 +315,11 @@
           </div>
 
           <div class="form-group">
-            <label for="instagramUrl"> <i class="bi bi-instagram"></i> Instagram </label>
+            <label for="instagramUrl">
+              <i class="bi bi-instagram"></i>
+              Instagram
+            </label>
+
             <input
               id="instagramUrl"
               name="instagramUrl"
@@ -211,7 +331,11 @@
           </div>
 
           <div class="form-group">
-            <label for="twitterUrl"> <i class="bi bi-twitter-x"></i> Twitter / X </label>
+            <label for="twitterUrl">
+              <i class="bi bi-twitter-x"></i>
+              Twitter / X
+            </label>
+
             <input
               id="twitterUrl"
               name="twitterUrl"
@@ -223,7 +347,11 @@
           </div>
 
           <div class="form-group">
-            <label for="linkedInUrl"> <i class="bi bi-linkedin"></i> LinkedIn </label>
+            <label for="linkedInUrl">
+              <i class="bi bi-linkedin"></i>
+              LinkedIn
+            </label>
+
             <input
               id="linkedInUrl"
               name="linkedInUrl"
@@ -235,7 +363,11 @@
           </div>
 
           <div class="form-group">
-            <label for="youTubeUrl"> <i class="bi bi-youtube"></i> YouTube </label>
+            <label for="youTubeUrl">
+              <i class="bi bi-youtube"></i>
+              YouTube
+            </label>
+
             <input
               id="youTubeUrl"
               name="youTubeUrl"
@@ -248,6 +380,9 @@
         </section>
       </div>
 
+      <!-- =========================
+           SAVE BUTTON
+      ========================== -->
       <div class="form-actions">
         <button type="submit" class="btn btn-primary" [disabled]="saving || settingForm.invalid">
           @if (saving) {

@@ -375,8 +375,18 @@
             </h4>
 
             <p>
-              {{ websiteSetting?.footerText || 'Your trusted place for quality products, easy shopping and a smooth online shopping experience.' }}
+              {{
+                websiteSetting?.footerText ||
+                  'Your trusted place for quality products, easy shopping and a smooth online shopping experience.'
+              }}
             </p>
+
+            @if (websiteSetting?.highlightText) {
+              <div class="footer-highlight-text">
+                <i class="bi bi-stars"></i>
+                <span>{{ websiteSetting?.highlightText }}</span>
+              </div>
+            }
 
             <div class="footer-trust">
               <span>
@@ -556,6 +566,65 @@
         </div>
       </div>
 
+      <!-- BUSINESS INFORMATION -->
+
+      @if (
+        websiteSetting?.customerCare ||
+        websiteSetting?.gstin ||
+        websiteSetting?.proprietor ||
+        websiteSetting?.sinceYear
+      ) {
+        <div class="footer-business-info">
+          @if (websiteSetting?.customerCare) {
+            <div class="footer-business-item">
+              <div class="footer-business-icon">
+                <i class="bi bi-headset"></i>
+              </div>
+              <div>
+                <span>Customer Care</span>
+                <strong>{{ websiteSetting?.customerCare }}</strong>
+              </div>
+            </div>
+          }
+
+          @if (websiteSetting?.gstin) {
+            <div class="footer-business-item">
+              <div class="footer-business-icon">
+                <i class="bi bi-receipt"></i>
+              </div>
+              <div>
+                <span>GSTIN</span>
+                <strong>{{ websiteSetting?.gstin }}</strong>
+              </div>
+            </div>
+          }
+
+          @if (websiteSetting?.proprietor) {
+            <div class="footer-business-item">
+              <div class="footer-business-icon">
+                <i class="bi bi-person-badge"></i>
+              </div>
+              <div>
+                <span>Proprietor</span>
+                <strong>{{ websiteSetting?.proprietor }}</strong>
+              </div>
+            </div>
+          }
+
+          @if (websiteSetting?.sinceYear) {
+            <div class="footer-business-item">
+              <div class="footer-business-icon">
+                <i class="bi bi-calendar-check"></i>
+              </div>
+              <div>
+                <span>Since</span>
+                <strong>{{ websiteSetting?.sinceYear }}</strong>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
       <!-- SOCIAL LINKS -->
 
       @if (
@@ -567,31 +636,56 @@
       ) {
         <div class="footer-social-links">
           @if (websiteSetting?.facebookUrl) {
-            <a [href]="websiteSetting!.facebookUrl!" target="_blank" rel="noopener" aria-label="Facebook">
+            <a
+              [href]="websiteSetting!.facebookUrl!"
+              target="_blank"
+              rel="noopener"
+              aria-label="Facebook"
+            >
               <i class="bi bi-facebook"></i>
             </a>
           }
 
           @if (websiteSetting?.instagramUrl) {
-            <a [href]="websiteSetting!.instagramUrl!" target="_blank" rel="noopener" aria-label="Instagram">
+            <a
+              [href]="websiteSetting!.instagramUrl!"
+              target="_blank"
+              rel="noopener"
+              aria-label="Instagram"
+            >
               <i class="bi bi-instagram"></i>
             </a>
           }
 
           @if (websiteSetting?.twitterUrl) {
-            <a [href]="websiteSetting!.twitterUrl!" target="_blank" rel="noopener" aria-label="Twitter">
+            <a
+              [href]="websiteSetting!.twitterUrl!"
+              target="_blank"
+              rel="noopener"
+              aria-label="Twitter"
+            >
               <i class="bi bi-twitter-x"></i>
             </a>
           }
 
           @if (websiteSetting?.linkedInUrl) {
-            <a [href]="websiteSetting!.linkedInUrl!" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <a
+              [href]="websiteSetting!.linkedInUrl!"
+              target="_blank"
+              rel="noopener"
+              aria-label="LinkedIn"
+            >
               <i class="bi bi-linkedin"></i>
             </a>
           }
 
           @if (websiteSetting?.youTubeUrl) {
-            <a [href]="websiteSetting!.youTubeUrl!" target="_blank" rel="noopener" aria-label="YouTube">
+            <a
+              [href]="websiteSetting!.youTubeUrl!"
+              target="_blank"
+              rel="noopener"
+              aria-label="YouTube"
+            >
               <i class="bi bi-youtube"></i>
             </a>
           }
@@ -607,7 +701,8 @@
       <div class="footer-bottom">
         <p class="mb-0">
           © {{ currentYear }}
-          <strong>{{ websiteSetting?.companyName || 'Shanti Enterprises' }}</strong>. All rights reserved.
+          <strong>{{ websiteSetting?.companyName || 'Shanti Enterprises' }}</strong
+          >. All rights reserved.
         </p>
 
         <div class="footer-bottom-links">
