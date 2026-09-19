@@ -1,12 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <url>
     <loc>https://shanti-enterprises-ui-qf9v.vercel.app/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
   </url>
-
   <url>
     <loc>https://shanti-enterprises-ui-qf9v.vercel.app/home</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://shanti-enterprises-ui-qf9v.vercel.app/products</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://shanti-enterprises-ui-qf9v.vercel.app/products/2</loc>
+    <lastmod>2026-09-13T12:23:58.701Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://shanti-enterprises-ui-qf9v.vercel.app/products/1</loc>
+    <lastmod>2026-09-13T05:59:44.487Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 
 </urlset>

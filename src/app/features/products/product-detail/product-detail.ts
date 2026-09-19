@@ -1,6 +1,7 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Title, Meta } from '@angular/platform-browser';
 import { finalize } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 
@@ -45,6 +46,9 @@ export class ProductDetail implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
+  private readonly titleService = inject(Title);
+  private readonly metaService = inject(Meta);
+  private readonly document = inject(DOCUMENT);
   // =========================================================
   // TEMPLATE SUPPORT
   // =========================================================
@@ -164,6 +168,7 @@ export class ProductDetail implements OnInit {
         next: (product) => {
           console.log('Customer Product Detail:', product);
           this.product = product;
+          this.updateProductSeo(product);
 
           // Make sure selected quantity is always valid.
           if (product.stock <= 0) {
@@ -799,6 +804,10 @@ export class ProductDetail implements OnInit {
       .subscribe({
         next: (summary) => {
           this.reviewSummary = summary;
+
+          if (this.product) {
+            this.updateProductSeo(this.product);
+          }
         },
 
         error: (error: unknown) => {
@@ -1078,6 +1087,162 @@ export class ProductDetail implements OnInit {
     }
 
     this.router.navigate(['/wishlist']);
+  }
+
+  // =========================================================
+  // PRODUCT SEO
+  // =========================================================
+
+  private updateProductSeo(product: Product): void {
+    const productName = product.productName?.trim() || 'Product';
+
+    const description =
+      product.description?.trim() ||
+      `${productName} available from Shanti Enterprises. Explore wholesale pricing and product details online.`;
+
+    // -----------------------------------------
+    // PAGE TITLE
+    // -----------------------------------------
+
+    this.titleService.setTitle(
+      `${productName} | Shanti Enterprises`
+    );
+
+    // -----------------------------------------
+    // META DESCRIPTION
+    // -----------------------------------------
+
+    this.metaService.updateTag({
+      name: 'description',
+      content: description.substring(0, 160),
+    });
+
+    // -----------------------------------------
+    // ROBOTS
+    // -----------------------------------------
+
+    this.metaService.updateTag({
+      name: 'robots',
+      content: 'index, follow',
+    });
+
+    // -----------------------------------------
+    // CANONICAL URL
+    // -----------------------------------------
+
+    const canonicalUrl =
+      `${this.document.location.origin}/products/${product.productId}`;
+
+    let canonicalLink =
+      this.document.querySelector<HTMLLinkElement>(
+        'link[rel="canonical"]'
+      );
+
+    if (!canonicalLink) {
+      canonicalLink = this.document.createElement('link');
+      canonicalLink.setAttribute('rel', 'canonical');
+      this.document.head.appendChild(canonicalLink);
+    }
+
+    canonicalLink.setAttribute('href', canonicalUrl);
+
+    // -----------------------------------------
+    // OPEN GRAPH
+    // -----------------------------------------
+
+    this.metaService.updateTag({
+      property: 'og:title',
+      content: `${productName} | Shanti Enterprises`,
+    });
+
+    this.metaService.updateTag({
+      property: 'og:description',
+      content: description.substring(0, 160),
+    });
+
+    this.metaService.updateTag({
+      property: 'og:type',
+      content: 'product',
+    });
+
+    this.metaService.updateTag({
+      property: 'og:url',
+      content: canonicalUrl,
+    });
+
+    if (product.imageUrl) {
+      this.metaService.updateTag({
+        property: 'og:image',
+        content: this.getImageUrl(product.imageUrl),
+      });
+    }
+
+    // -----------------------------------------
+    // PRODUCT JSON-LD
+    // -----------------------------------------
+
+    const existingSchema =
+      this.document.getElementById('product-schema');
+
+    if (existingSchema) {
+      existingSchema.remove();
+    }
+
+    const schema: Record<string, unknown> = {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+
+      name: productName,
+
+      description: description,
+
+      sku: product.sku || undefined,
+
+      brand: {
+        '@type': 'Brand',
+        name: 'Shanti Enterprises',
+      },
+
+      offers: {
+        '@type': 'Offer',
+        url: canonicalUrl,
+        priceCurrency: 'INR',
+        price: this.getRetailPrice().toFixed(2),
+        availability:
+          product.stock > 0
+            ? 'https://schema.org/InStock'
+            : 'https://schema.org/OutOfStock',
+        seller: {
+          '@type': 'Organization',
+          name: 'Shanti Enterprises',
+        },
+      },
+    };
+
+    if (product.imageUrl) {
+      schema['image'] = [this.getImageUrl(product.imageUrl)];
+    }
+
+    // Add rating only when actual reviews exist.
+    if (
+      this.reviewSummary &&
+      this.reviewSummary.reviewCount > 0
+    ) {
+      schema['aggregateRating'] = {
+        '@type': 'AggregateRating',
+        ratingValue: this.reviewSummary.averageRating,
+        reviewCount: this.reviewSummary.reviewCount,
+      };
+    }
+
+    const script =
+      this.document.createElement('script');
+
+    script.id = 'product-schema';
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(schema);
+
+    this.document.head.appendChild(script);
   }
 
   // =========================================================
