@@ -87,9 +87,9 @@
               >
                 <option value="">All Categories</option>
 
-                @for (category of categories; track category) {
-                  <option [value]="category">
-                    {{ category }}
+                @for (category of categories; track category.categoryId) {
+                  <option [value]="category.categoryName">
+                    {{ category.categoryName }}
                   </option>
                 }
               </select>

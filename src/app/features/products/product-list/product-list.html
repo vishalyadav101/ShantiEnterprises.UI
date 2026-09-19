@@ -10,21 +10,20 @@
       ======================================================== -->
 
       <div class="product-filter-section">
-        <!-- SEARCH -->
-        <div class="product-search-box">
-          <i class="bi bi-search"></i>
+        <div class="product-filter-controls">
+          <!-- SEARCH -->
+          <div class="product-search-box">
+            <i class="bi bi-search"></i>
 
-          <input
-            type="text"
-            class="product-search-input"
-            [(ngModel)]="searchTerm"
-            (input)="onSearchChange()"
-            placeholder="Search for products..."
-          />
-        </div>
+            <input
+              type="text"
+              class="product-search-input"
+              [(ngModel)]="searchTerm"
+              (input)="onSearchChange()"
+              placeholder="Search products..."
+            />
+          </div>
 
-        <!-- CATEGORY + CLEAR -->
-        <div class="product-filter-row">
           <!-- CATEGORY -->
           <div class="category-filter">
             <i class="bi bi-grid"></i>
@@ -52,10 +51,10 @@
             class="clear-filter-button"
             (click)="clearFilters()"
             [disabled]="!hasActiveFilters()"
+            title="Clear Filters"
+            aria-label="Clear Filters"
           >
             <i class="bi bi-x-circle"></i>
-
-            <span> Clear Filters </span>
           </button>
         </div>
       </div>
