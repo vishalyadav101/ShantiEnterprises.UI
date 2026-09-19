@@ -225,6 +225,12 @@ export class ProductDetail implements OnInit {
               },
             ];
           }
+
+          // Refresh SEO after product images are loaded so
+          // og:image and Product JSON-LD use the actual product image.
+          if (this.product) {
+            this.updateProductSeo(this.product);
+          }
         },
 
         error: (error: unknown) => {
@@ -239,6 +245,12 @@ export class ProductDetail implements OnInit {
                 isPrimary: true,
               },
             ];
+          }
+
+          // Refresh SEO even when the image API fails but the product
+          // itself contains a fallback image URL.
+          if (this.product) {
+            this.updateProductSeo(this.product);
           }
         },
       });
@@ -1104,9 +1116,7 @@ export class ProductDetail implements OnInit {
     // PAGE TITLE
     // -----------------------------------------
 
-    this.titleService.setTitle(
-      `${productName} | Shanti Enterprises`
-    );
+    this.titleService.setTitle(`${productName} | Shanti Enterprises`);
 
     // -----------------------------------------
     // META DESCRIPTION
@@ -1130,13 +1140,9 @@ export class ProductDetail implements OnInit {
     // CANONICAL URL
     // -----------------------------------------
 
-    const canonicalUrl =
-      `${this.document.location.origin}/products/${product.productId}`;
+    const canonicalUrl = `${this.document.location.origin}/products/${product.productId}`;
 
-    let canonicalLink =
-      this.document.querySelector<HTMLLinkElement>(
-        'link[rel="canonical"]'
-      );
+    let canonicalLink = this.document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
 
     if (!canonicalLink) {
       canonicalLink = this.document.createElement('link');
@@ -1170,19 +1176,30 @@ export class ProductDetail implements OnInit {
       content: canonicalUrl,
     });
 
-    if (product.imageUrl) {
+    const seoImageUrl = this.getCurrentImage()?.imageUrl || product.imageUrl || '';
+
+    if (seoImageUrl) {
+      const fullImageUrl = this.getImageUrl(seoImageUrl);
+
       this.metaService.updateTag({
         property: 'og:image',
-        content: this.getImageUrl(product.imageUrl),
+        content: fullImageUrl,
       });
+
+      this.metaService.updateTag({
+        property: 'og:image:alt',
+        content: productName,
+      });
+    } else {
+      this.metaService.removeTag('property="og:image"');
+      this.metaService.removeTag('property="og:image:alt"');
     }
 
     // -----------------------------------------
     // PRODUCT JSON-LD
     // -----------------------------------------
 
-    const existingSchema =
-      this.document.getElementById('product-schema');
+    const existingSchema = this.document.getElementById('product-schema');
 
     if (existingSchema) {
       existingSchema.remove();
@@ -1209,9 +1226,7 @@ export class ProductDetail implements OnInit {
         priceCurrency: 'INR',
         price: this.getRetailPrice().toFixed(2),
         availability:
-          product.stock > 0
-            ? 'https://schema.org/InStock'
-            : 'https://schema.org/OutOfStock',
+          product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
         seller: {
           '@type': 'Organization',
           name: 'Shanti Enterprises',
@@ -1219,15 +1234,12 @@ export class ProductDetail implements OnInit {
       },
     };
 
-    if (product.imageUrl) {
-      schema['image'] = [this.getImageUrl(product.imageUrl)];
+    if (seoImageUrl) {
+      schema['image'] = [this.getImageUrl(seoImageUrl)];
     }
 
     // Add rating only when actual reviews exist.
-    if (
-      this.reviewSummary &&
-      this.reviewSummary.reviewCount > 0
-    ) {
+    if (this.reviewSummary && this.reviewSummary.reviewCount > 0) {
       schema['aggregateRating'] = {
         '@type': 'AggregateRating',
         ratingValue: this.reviewSummary.averageRating,
@@ -1235,8 +1247,7 @@ export class ProductDetail implements OnInit {
       };
     }
 
-    const script =
-      this.document.createElement('script');
+    const script = this.document.createElement('script');
 
     script.id = 'product-schema';
     script.type = 'application/ld+json';
