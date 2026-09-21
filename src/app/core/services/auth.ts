@@ -25,59 +25,47 @@ export interface AuthResponse {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-
   private readonly http = inject(HttpClient);
 
   private readonly apiUrl = `${environment.apiUrl}/Auth`;
+
+  private readonly isBrowser = typeof window !== 'undefined' && typeof localStorage !== 'undefined';
 
   // =========================
   // REGISTER
   // =========================
 
-  register(
-    request: RegisterRequest
-  ): Observable<AuthResponse> {
-
-    return this.http.post<AuthResponse>(
-      `${this.apiUrl}/Register`,
-      request
-    );
+  register(request: RegisterRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/Register`, request);
   }
 
   // =========================
   // LOGIN
   // =========================
 
-  login(
-    request: LoginRequest
-  ): Observable<AuthResponse> {
+  login(request: LoginRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/Login`, request).pipe(
+      tap((response) => {
+        if (!this.isBrowser) {
+          return;
+        }
 
-    return this.http
-      .post<AuthResponse>(
-        `${this.apiUrl}/Login`,
-        request
-      )
-      .pipe(
-        tap(response => {
-          localStorage.setItem(
-            'token',
-            response.token
-          );
+        localStorage.setItem('token', response.token);
 
-          localStorage.setItem(
-            'user',
-            JSON.stringify({
-              userId: response.userId,
-              fullName: response.fullName,
-              email: response.email,
-              role: response.role
-            })
-          );
-        })
-      );
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            userId: response.userId,
+            fullName: response.fullName,
+            email: response.email,
+            role: response.role,
+          }),
+        );
+      }),
+    );
   }
 
   // =========================
@@ -85,6 +73,9 @@ export class AuthService {
   // =========================
 
   logout(): void {
+    if (!this.isBrowser) {
+      return;
+    }
 
     localStorage.removeItem('token');
 
@@ -96,6 +87,9 @@ export class AuthService {
   // =========================
 
   getToken(): string | null {
+    if (!this.isBrowser) {
+      return null;
+    }
 
     return localStorage.getItem('token');
   }
@@ -105,6 +99,9 @@ export class AuthService {
   // =========================
 
   getCurrentUser(): any | null {
+    if (!this.isBrowser) {
+      return null;
+    }
 
     const user = localStorage.getItem('user');
 
@@ -124,7 +121,6 @@ export class AuthService {
   // =========================
 
   isLoggedIn(): boolean {
-
     return !!this.getToken();
   }
 
@@ -133,10 +129,8 @@ export class AuthService {
   // =========================
 
   hasRole(role: string): boolean {
-
     const user = this.getCurrentUser();
 
-    return user?.role?.toLowerCase() ===
-      role.toLowerCase();
+    return user?.role?.toLowerCase() === role.toLowerCase();
   }
 }

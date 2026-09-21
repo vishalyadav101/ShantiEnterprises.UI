@@ -1140,7 +1140,7 @@ export class ProductDetail implements OnInit {
     // CANONICAL URL
     // -----------------------------------------
 
-    const canonicalUrl = `${this.document.location.origin}/products/${product.productId}`;
+    const canonicalUrl = `https://shanti-enterprises-ui-qf9v.vercel.app/products/${product.productId}`;
 
     let canonicalLink = this.document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
 
