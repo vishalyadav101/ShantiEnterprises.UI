@@ -620,6 +620,7 @@ export class Home implements OnInit, OnDestroy {
       .pipe(
         finalize(() => {
           this.isLoadingImages[product.productId] = false;
+          this.cdr.detectChanges();
         }),
       )
       .subscribe({
@@ -694,6 +695,7 @@ export class Home implements OnInit, OnDestroy {
       .pipe(
         finalize(() => {
           this.isLoadingPriceTiers[product.productId] = false;
+          this.cdr.detectChanges();
         }),
       )
       .subscribe({
@@ -757,6 +759,7 @@ export class Home implements OnInit, OnDestroy {
       .pipe(
         finalize(() => {
           this.isLoadingReviews[product.productId] = false;
+          this.cdr.detectChanges();
         }),
       )
       .subscribe({
