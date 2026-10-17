@@ -11,12 +11,19 @@ import { WebsiteSetting } from '../../../core/models/website-setting.model';
 
 import { Notification } from '../../../core/models/notification.model';
 
+import { Tilt3dDirective } from './tilt3d.directive';
+import {
+  applyNavbarTheme,
+  loadCachedNavbarTheme,
+  themeFromSetting,
+} from './../../../core/utils/navbar-theme';
+
 @Component({
   selector: 'app-customer-layout',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet, Tilt3dDirective],
   templateUrl: './customer-layout.html',
-  styleUrl: './customer-layout.scss',
+  styleUrls: ['./customer-layout.scss', './customer-navbar.scss'],
 })
 export class CustomerLayout implements OnInit {
   // =========================================================
@@ -107,6 +114,9 @@ export class CustomerLayout implements OnInit {
   // =========================================================
 
   ngOnInit(): void {
+    // Last saved navbar color turant lagao (default color ka flash nahi dikhega)
+    applyNavbarTheme(loadCachedNavbarTheme());
+
     this.loadWebsiteSetting();
 
     // Cart, wishlist and notifications require authentication.
@@ -126,6 +136,7 @@ export class CustomerLayout implements OnInit {
     this.websiteSettingService.getSettings().subscribe({
       next: (setting) => {
         this.websiteSetting = setting;
+        applyNavbarTheme(themeFromSetting(setting), true);
         this.setFavicon(setting.faviconUrl);
       },
       error: (error) => {
@@ -140,10 +151,7 @@ export class CustomerLayout implements OnInit {
       return;
     }
 
-    let faviconLink =
-      this.document.head.querySelector<HTMLLinkElement>(
-        'link[rel~="icon"]'
-      );
+    let faviconLink = this.document.head.querySelector<HTMLLinkElement>('link[rel~="icon"]');
 
     if (!faviconLink) {
       faviconLink = this.document.createElement('link');
@@ -200,9 +208,7 @@ export class CustomerLayout implements OnInit {
     // karte hain. Document click unko Home par reset nahi karega.
     // =======================================================
 
-    const clickedNavbarItem = clickedElement.closest(
-      '.nav-home-button, .nav-action, .user-profile-btn',
-    );
+    const clickedNavbarItem = clickedElement.closest('.b3d');
 
     if (clickedNavbarItem) {
       // Clicking another navbar item must close any open dropdown.

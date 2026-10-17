@@ -3,97 +3,86 @@
   <!-- CUSTOMER NAVBAR -->
   <!-- ===================================================== -->
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary customer-navbar">
-    <div class="container">
+  <header class="s3-header container">
+    <div class="s3-nav">
       <!-- BRAND -->
-
-      <a class="navbar-brand fw-bold" routerLink="/home">
+      <a
+        class="s3-brand"
+        routerLink="/home"
+        [attr.aria-label]="(websiteSetting?.companyName || 'Shanti Enterprises') + ' home'"
+      >
         @if (websiteSetting?.logoUrl) {
-          <img
-            [src]="websiteSetting!.logoUrl!"
-            [alt]="websiteSetting?.companyName || 'Shanti Enterprises'"
-            class="customer-navbar-logo"
-          />
+          <span class="s3-logo-plate">
+            <img
+              [src]="websiteSetting!.logoUrl!"
+              [alt]="websiteSetting?.companyName || 'Shanti Enterprises'"
+              class="s3-logo-img"
+            />
+          </span>
         } @else {
-          {{ websiteSetting?.companyName || 'Shanti Enterprises' }}
+          <span class="s3-logo3d">{{
+            (websiteSetting?.companyName || 'Shanti Enterprises').charAt(0)
+          }}</span>
+          <span>{{ websiteSetting?.companyName || 'Shanti Enterprises' }}</span>
         }
       </a>
 
+      <span class="s3-spacer"></span>
+
       <!-- RIGHT SIDE -->
-
-      <div class="d-flex align-items-center gap-2 gap-md-3 navbar-right-actions">
+      <div class="s3-tools">
         <!-- HOME -->
-
         <a
           routerLink="/home"
-          class="nav-home-button"
-          [class.active]="activeNavItem === 'home'"
+          class="b3d s3-home"
+          [class.on]="activeNavItem === 'home'"
           (click)="setActiveNavItem('home')"
           title="Home"
           aria-label="Home"
         >
-          <i class="bi bi-house-door me-1"></i>
-          Home
+          <i class="bi bi-house-door"></i>
+          <span class="lbl">Home</span>
         </a>
 
-        <!-- ================================================= -->
-        <!-- GUEST AUTH BUTTONS -->
-        <!-- ================================================= -->
-
+        <!-- GUEST -->
         @if (!user) {
-          <a routerLink="/login" class="guest-auth-button login-button" title="Login">
-            <i class="bi bi-box-arrow-in-right me-1"></i>
-            Login
+          <a routerLink="/login" class="b3d s3-auth" title="Login">
+            <i class="bi bi-box-arrow-in-right"></i>
+            <span class="lbl">Login</span>
           </a>
 
-          <a routerLink="/register" class="guest-auth-button signup-button" title="Sign Up">
-            <i class="bi bi-person-plus me-1"></i>
-            Sign Up
+          <a routerLink="/register" class="b3d gold s3-auth" title="Sign Up">
+            <i class="bi bi-person-plus"></i>
+            <span class="lbl">Sign Up</span>
           </a>
         }
 
-        <!-- ================================================= -->
-        <!-- LOGGED-IN USER NAVBAR -->
-        <!-- ================================================= -->
-
+        <!-- LOGGED-IN USER -->
         @if (user) {
-          <!-- ================================================= -->
           <!-- NOTIFICATIONS -->
-          <!-- ================================================= -->
-
           <div class="notification-wrapper" #notificationWrapper>
-            <!-- NOTIFICATION BUTTON -->
-
-            <button
-              type="button"
-              class="nav-action notification-button"
-              [class.active]="activeNavItem === 'notification'"
-              title="Notifications"
-              aria-label="Notifications"
-              [attr.aria-expanded]="isNotificationMenuOpen"
-              (click)="toggleNotificationMenu()"
-            >
-              <i class="bi bi-bell"></i>
-
+            <span class="s3-badged">
+              <button
+                type="button"
+                class="b3d icon"
+                [class.on]="activeNavItem === 'notification'"
+                title="Notifications"
+                aria-label="Notifications"
+                [attr.aria-expanded]="isNotificationMenuOpen"
+                (click)="toggleNotificationMenu()"
+              >
+                <i class="bi bi-bell"></i>
+              </button>
               @if (notificationCount > 0) {
-                <span class="nav-badge">
-                  {{ notificationCount }}
-                </span>
+                <span class="s3-badge">{{ notificationCount }}</span>
               }
-            </button>
-
-            <!-- ================================================= -->
-            <!-- NOTIFICATION DROPDOWN -->
-            <!-- ================================================= -->
+            </span>
 
             @if (isNotificationMenuOpen) {
               <div class="notification-dropdown">
-                <!-- HEADER -->
-
                 <div class="notification-header">
                   <div>
                     <strong> Notifications </strong>
-
                     <span> {{ notificationCount }} unread </span>
                   </div>
 
@@ -115,37 +104,18 @@
 
                 <div class="notification-divider"></div>
 
-                <!-- ================================================= -->
-                <!-- LOADING -->
-                <!-- ================================================= -->
-
                 @if (isNotificationLoading) {
                   <div class="notification-loading">
                     <span class="spinner-border spinner-border-sm"></span>
-
                     Loading notifications...
                   </div>
-                }
-
-                <!-- ================================================= -->
-                <!-- EMPTY -->
-                <!-- ================================================= -->
-
-                @else if (notifications.length === 0) {
+                } @else if (notifications.length === 0) {
                   <div class="notification-empty">
                     <i class="bi bi-bell-slash"></i>
-
                     <strong> No Notifications </strong>
-
                     <span> You are all caught up. </span>
                   </div>
-                }
-
-                <!-- ================================================= -->
-                <!-- NOTIFICATION LIST -->
-                <!-- ================================================= -->
-
-                @else {
+                } @else {
                   <div class="notification-list">
                     @for (
                       notification of notifications.slice(0, 8);
@@ -157,32 +127,21 @@
                         [class.unread]="!notification.isRead"
                         (click)="markNotificationAsRead(notification)"
                       >
-                        <!-- ICON -->
-
                         <div class="notification-icon">
                           <i class="bi" [class]="getNotificationIcon(notification.type)"></i>
                         </div>
 
-                        <!-- CONTENT -->
-
                         <div class="notification-content">
                           <div class="notification-title-row">
-                            <strong>
-                              {{ notification.title }}
-                            </strong>
-
+                            <strong>{{ notification.title }}</strong>
                             @if (!notification.isRead) {
                               <span class="unread-dot"></span>
                             }
                           </div>
 
-                          <p>
-                            {{ notification.message }}
-                          </p>
+                          <p>{{ notification.message }}</p>
 
-                          <small>
-                            {{ formatNotificationDate(notification.createdDate) }}
-                          </small>
+                          <small>{{ formatNotificationDate(notification.createdDate) }}</small>
                         </div>
                       </button>
                     }
@@ -192,144 +151,101 @@
             }
           </div>
 
-          <!-- ================================================= -->
           <!-- WISHLIST -->
-          <!-- ================================================= -->
-
-          <a
-            routerLink="/wishlist"
-            class="nav-action"
-            [class.active]="activeNavItem === 'wishlist'"
-            (click)="setActiveNavItem('wishlist')"
-            title="Wishlist"
-          >
-            <i class="bi bi-heart"></i>
-
+          <span class="s3-badged">
+            <a
+              routerLink="/wishlist"
+              class="b3d icon"
+              [class.on]="activeNavItem === 'wishlist'"
+              (click)="setActiveNavItem('wishlist')"
+              title="Wishlist"
+              aria-label="Wishlist"
+            >
+              <i class="bi bi-heart"></i>
+            </a>
             @if (wishlistCount > 0) {
-              <span class="nav-badge">
-                {{ wishlistCount }}
-              </span>
+              <span class="s3-badge">{{ wishlistCount }}</span>
             }
-          </a>
+          </span>
 
-          <!-- ================================================= -->
           <!-- CART -->
-          <!-- ================================================= -->
-
-          <a
-            routerLink="/cart"
-            class="nav-action"
-            [class.active]="activeNavItem === 'cart'"
-            (click)="setActiveNavItem('cart')"
-            title="Cart"
-          >
-            <i class="bi bi-cart3"></i>
-
+          <span class="s3-badged">
+            <a
+              routerLink="/cart"
+              class="b3d icon"
+              [class.on]="activeNavItem === 'cart'"
+              (click)="setActiveNavItem('cart')"
+              title="Cart"
+              aria-label="Cart"
+            >
+              <i class="bi bi-cart3"></i>
+            </a>
             @if (cartItemCount > 0) {
-              <span class="nav-badge">
-                {{ cartItemCount }}
-              </span>
+              <span class="s3-badge">{{ cartItemCount }}</span>
             }
-          </a>
+          </span>
 
-          <!-- ================================================= -->
           <!-- USER PROFILE -->
-          <!-- ================================================= -->
-
           <div class="user-profile-wrapper" #profileWrapper>
             <button
               type="button"
-              class="user-profile-btn"
-              [class.active]="activeNavItem === 'profile'"
+              class="b3d icon"
+              [class.on]="activeNavItem === 'profile'"
               (click)="toggleProfileMenu()"
               [attr.aria-expanded]="isProfileMenuOpen"
               title="My Account"
+              aria-label="My Account"
             >
               <i class="bi bi-person-circle"></i>
             </button>
 
             @if (isProfileMenuOpen) {
               <div class="profile-dropdown">
-                <!-- PROFILE HEADER -->
-
                 <div class="profile-header">
                   <div class="profile-avatar">
                     <i class="bi bi-person-fill"></i>
                   </div>
 
                   <div class="profile-user-info">
-                    <strong>
-                      {{ user?.name || 'User' }}
-                    </strong>
-
-                    <span>
-                      {{ user?.email || '' }}
-                    </span>
+                    <strong>{{ user?.name || 'User' }}</strong>
+                    <span>{{ user?.email || '' }}</span>
                   </div>
                 </div>
 
                 <div class="profile-divider"></div>
 
-                <!-- MY PROFILE -->
-
                 <a routerLink="/profile" class="profile-menu-item" (click)="closeProfileMenu()">
-                  <i class="bi bi-person"></i>
-
-                  <span> My Profile </span>
+                  <i class="bi bi-person"></i><span> My Profile </span>
                 </a>
-
-                <!-- MY ORDERS -->
 
                 <a routerLink="/orders" class="profile-menu-item" (click)="closeProfileMenu()">
-                  <i class="bi bi-box-seam"></i>
-
-                  <span> My Orders </span>
+                  <i class="bi bi-box-seam"></i><span> My Orders </span>
                 </a>
-
-                <!-- WISHLIST -->
 
                 <a routerLink="/wishlist" class="profile-menu-item" (click)="closeProfileMenu()">
-                  <i class="bi bi-heart"></i>
-
-                  <span> My Wishlist </span>
+                  <i class="bi bi-heart"></i><span> My Wishlist </span>
                 </a>
-
-                <!-- CONTACT US -->
 
                 <a routerLink="/contact" class="profile-menu-item" (click)="closeProfileMenu()">
-                  <i class="bi bi-envelope"></i>
-
-                  <span> Contact Us </span>
+                  <i class="bi bi-envelope"></i><span> Contact Us </span>
                 </a>
 
-                <!-- ADDRESSES -->
-
                 <a routerLink="/addresses" class="profile-menu-item" (click)="closeProfileMenu()">
-                  <i class="bi bi-geo-alt"></i>
-
-                  <span> My Addresses </span>
+                  <i class="bi bi-geo-alt"></i><span> My Addresses </span>
                 </a>
 
                 <div class="profile-divider"></div>
 
-                <!-- ACCOUNT SETTINGS -->
-
                 <a routerLink="/settings" class="profile-menu-item" (click)="closeProfileMenu()">
-                  <i class="bi bi-gear"></i>
-
-                  <span> Account Settings </span>
+                  <i class="bi bi-gear"></i><span> Account Settings </span>
                 </a>
-
-                <!-- LOGOUT -->
 
                 <button
                   type="button"
                   class="profile-menu-item logout-item"
                   (click)="logoutFromProfile()"
                 >
-                  <i class="bi bi-box-arrow-right"></i>
-
-                  <span> Logout </span>
+                  <i class="bi bi-box-arrow-right"></i><span> Logout </span>
                 </button>
               </div>
             }
@@ -337,7 +253,7 @@
         }
       </div>
     </div>
-  </nav>
+  </header>
 
   <!-- ===================================================== -->
   <!-- CUSTOMER PAGE CONTENT -->

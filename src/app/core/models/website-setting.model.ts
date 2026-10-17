@@ -37,5 +37,13 @@ export interface WebsiteSetting {
 
   footerText: string | null;
 
+  navbarColor1: string | null;
+
+  navbarColor2: string | null;
+
+  navbarGlowColor: string | null;
+
+  navbarButtonColor: string | null;
+
   updatedDate: string | null;
 }

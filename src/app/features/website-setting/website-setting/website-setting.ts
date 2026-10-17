@@ -4,11 +4,18 @@ import { FormsModule } from '@angular/forms';
 
 import { WebsiteSettingService } from '../../../core/services/website-setting';
 import { WebsiteSetting } from '../../../core/models/website-setting.model';
+import {
+  DEFAULT_NAVBAR_THEME,
+  NavbarTheme,
+  applyNavbarTheme,
+  themeFromSetting,
+} from '../../../core/utils/navbar-theme';
+import { NavbarThemePickerComponent } from './navbar-theme-picker.component';
 
 @Component({
   selector: 'app-website-setting',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NavbarThemePickerComponent],
   templateUrl: './website-setting.html',
   styleUrl: './website-setting.scss',
 })
@@ -35,11 +42,17 @@ export class WebsiteSettingComponent implements OnInit {
     youTubeUrl: null,
     highlightText: null,
     footerText: null,
+    navbarColor1: null,
+    navbarColor2: null,
+    navbarGlowColor: null,
+    navbarButtonColor: null,
     updatedDate: null,
   };
 
   logoFile: File | null = null;
   faviconFile: File | null = null;
+
+  navbarTheme: NavbarTheme = { ...DEFAULT_NAVBAR_THEME };
 
   logoPreview: string | null = null;
   faviconPreview: string | null = null;
@@ -61,6 +74,7 @@ export class WebsiteSettingComponent implements OnInit {
     this.websiteSettingService.getSettings().subscribe({
       next: (response) => {
         this.setting = response;
+        this.navbarTheme = themeFromSetting(response);
         this.logoPreview = response.logoUrl;
         this.faviconPreview = response.faviconUrl;
         this.loading = false;
@@ -71,6 +85,10 @@ export class WebsiteSettingComponent implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  onNavbarThemeChange(theme: NavbarTheme): void {
+    this.navbarTheme = theme;
   }
 
   onLogoSelected(event: Event): void {
@@ -156,6 +174,12 @@ export class WebsiteSettingComponent implements OnInit {
     // Footer text
     this.appendIfValue(formData, 'FooterText', this.setting.footerText);
 
+    // Navbar theme
+    formData.append('NavbarColor1', this.navbarTheme.a);
+    formData.append('NavbarColor2', this.navbarTheme.b);
+    formData.append('NavbarGlowColor', this.navbarTheme.glow);
+    formData.append('NavbarButtonColor', this.navbarTheme.accent);
+
     if (this.logoFile) {
       formData.append('Logo', this.logoFile, this.logoFile.name);
     }
@@ -167,6 +191,9 @@ export class WebsiteSettingComponent implements OnInit {
     this.websiteSettingService.saveSettings(formData).subscribe({
       next: (response) => {
         this.setting = response;
+
+        this.navbarTheme = themeFromSetting(response);
+        applyNavbarTheme(this.navbarTheme, true);
 
         this.logoPreview = response.logoUrl;
         this.faviconPreview = response.faviconUrl;

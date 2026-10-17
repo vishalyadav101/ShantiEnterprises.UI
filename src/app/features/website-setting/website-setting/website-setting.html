@@ -150,6 +150,25 @@
         </section>
 
         <!-- =========================
+             NAVBAR COLOR
+        ========================== -->
+        <section class="settings-card">
+          <div class="card-title">
+            <i class="bi bi-palette"></i>
+
+            <div>
+              <h4>Navbar Color</h4>
+              <span>Choose the color of your website navbar</span>
+            </div>
+          </div>
+
+          <app-navbar-theme-picker
+            [theme]="navbarTheme"
+            (themeChange)="onNavbarThemeChange($event)"
+          ></app-navbar-theme-picker>
+        </section>
+
+        <!-- =========================
              CONTACT INFORMATION
         ========================== -->
         <section class="settings-card">
