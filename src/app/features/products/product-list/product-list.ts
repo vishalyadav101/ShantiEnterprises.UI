@@ -613,6 +613,7 @@ export class ProductList implements OnInit {
       .pipe(
         finalize(() => {
           this.isLoadingReviews[product.productId] = false;
+          this.cdr.detectChanges();
         }),
       )
       .subscribe({
@@ -800,6 +801,7 @@ export class ProductList implements OnInit {
       .pipe(
         finalize(() => {
           this.isLoadingPriceTiers[product.productId] = false;
+          this.cdr.detectChanges();
         }),
       )
       .subscribe({
