@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { FormsModule } from '@angular/forms';
@@ -49,6 +49,7 @@ export class ProductList implements OnInit {
   private readonly categoryService = inject(CategoryService);
 
   private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   // =========================================================
   // USER
@@ -195,6 +196,7 @@ export class ProductList implements OnInit {
       .pipe(
         finalize(() => {
           this.isLoading = false;
+          this.cdr.detectChanges();
         }),
       )
       .subscribe({
@@ -256,6 +258,7 @@ export class ProductList implements OnInit {
           // ---------------------------------------------------
 
           this.applyFilters();
+          this.cdr.detectChanges();
         },
 
         error: (error) => {
@@ -266,6 +269,7 @@ export class ProductList implements OnInit {
           this.filteredProducts = [];
 
           this.errorMessage = error?.error?.message || 'Unable to load products.';
+          this.cdr.detectChanges();
         },
       });
   }
