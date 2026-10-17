@@ -1,5 +1,5 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser';
 import { finalize } from 'rxjs';
@@ -45,6 +45,7 @@ export class ProductDetail implements OnInit {
   private readonly bulkEnquiryService = inject(BulkEnquiryService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   private readonly titleService = inject(Title);
   private readonly metaService = inject(Meta);
@@ -162,6 +163,7 @@ export class ProductDetail implements OnInit {
       .pipe(
         finalize(() => {
           this.isLoading = false;
+          this.cdr.detectChanges();
         }),
       )
       .subscribe({
@@ -197,6 +199,7 @@ export class ProductDetail implements OnInit {
       .pipe(
         finalize(() => {
           this.isLoadingImages = false;
+          this.cdr.detectChanges();
         }),
       )
       .subscribe({
@@ -784,6 +787,7 @@ export class ProductDetail implements OnInit {
       .pipe(
         finalize(() => {
           this.isLoadingReviews = false;
+          this.cdr.detectChanges();
         }),
       )
       .subscribe({
