@@ -541,6 +541,7 @@ export class ProductList implements OnInit {
       .pipe(
         finalize(() => {
           this.isLoadingImages[product.productId] = false;
+          this.cdr.detectChanges();
         }),
       )
       .subscribe({
