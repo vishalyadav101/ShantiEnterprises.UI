@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { forkJoin, finalize, of } from 'rxjs';
@@ -53,6 +53,7 @@ export class Home implements OnInit, OnDestroy {
   private readonly categoryService = inject(CategoryService);
 
   private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   // =========================================================
   // USER
@@ -232,6 +233,7 @@ export class Home implements OnInit, OnDestroy {
       .pipe(
         finalize(() => {
           this.isLoading = false;
+          this.cdr.detectChanges();
         }),
       )
       .subscribe({
