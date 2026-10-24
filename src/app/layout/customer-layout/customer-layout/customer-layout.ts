@@ -135,8 +135,22 @@ export class CustomerLayout implements OnInit {
   loadWebsiteSetting(): void {
     this.websiteSettingService.getSettings().subscribe({
       next: (setting) => {
+        console.log('GUEST WEBSITE SETTINGS:', setting);
+
         this.websiteSetting = setting;
-        applyNavbarTheme(themeFromSetting(setting), true);
+
+        const theme = themeFromSetting(setting);
+
+        console.log('THEME FROM SETTING:', theme);
+
+        applyNavbarTheme(theme, true);
+
+        console.log('CSS AFTER APPLY:', {
+          a: getComputedStyle(document.documentElement).getPropertyValue('--a').trim(),
+          b: getComputedStyle(document.documentElement).getPropertyValue('--b').trim(),
+          glow: getComputedStyle(document.documentElement).getPropertyValue('--glow').trim(),
+        });
+
         this.setFavicon(setting.faviconUrl);
       },
       error: (error) => {
